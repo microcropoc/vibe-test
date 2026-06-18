@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using VibeTest.Server.Data.Queries;
 using VibeTest.Server.Models.Entities;
 
 namespace VibeTest.Server.Data.Repositories;
@@ -19,6 +20,107 @@ public class TestRepository(AppDbContext db) : ITestRepository
 
     public async Task AddAsync(Test test, CancellationToken cancellationToken = default) =>
         await db.Tests.AddAsync(test, cancellationToken);
+
+    public Task DeleteAsync(Test test, CancellationToken cancellationToken = default)
+    {
+        db.Tests.Remove(test);
+        return Task.CompletedTask;
+    }
+
+    public async Task<int> GetMaxQuestionOrderAsync(int testId, CancellationToken cancellationToken = default)
+    {
+        var row = await db.Database
+            .SqlQueryRaw<ScalarIntRow>(
+                "SELECT COALESCE(MAX(QuestionOrder), -1) AS Value FROM TestQuestionAnswers WHERE TestId = {0}",
+                testId)
+            .FirstAsync(cancellationToken);
+
+        return row.Value;
+    }
+
+    public async Task<int> CountPublicTestsAsync(CancellationToken cancellationToken = default)
+    {
+        var row = await db.Database
+            .SqlQueryRaw<ScalarIntRow>("SELECT COUNT(*) AS Value FROM Tests WHERE IsPublic = 1")
+            .FirstAsync(cancellationToken);
+
+        return row.Value;
+    }
+
+    public Task<List<TestListItemRow>> GetPublicTestsPageAsync(int offset, int pageSize, CancellationToken cancellationToken = default) =>
+        db.Database
+            .SqlQueryRaw<TestListItemRow>(
+                """
+                SELECT
+                    t.Id AS Id,
+                    t.Name AS Name,
+                    t.Description AS Description,
+                    u.DisplayName AS AuthorName,
+                    CAST(COUNT(DISTINCT tqa.QuestionOrder) AS INTEGER) AS QuestionsCount,
+                    t.CreatedAt AS CreatedAt
+                FROM Tests t
+                INNER JOIN Users u ON u.Id = t.AuthorId
+                LEFT JOIN TestQuestionAnswers tqa ON tqa.TestId = t.Id
+                WHERE t.IsPublic = 1
+                GROUP BY t.Id, t.Name, t.Description, u.DisplayName, t.CreatedAt
+                ORDER BY t.CreatedAt DESC
+                LIMIT {0} OFFSET {1}
+                """,
+                pageSize,
+                offset)
+            .ToListAsync(cancellationToken);
+
+    public async Task<int> CountMyTestsAsync(int authorId, string filter, CancellationToken cancellationToken = default)
+    {
+        var row = await db.Database
+            .SqlQueryRaw<ScalarIntRow>(
+                """
+                SELECT COUNT(*) AS Value
+                FROM Tests t
+                WHERE t.AuthorId = {0}
+                  AND ({1} = 'all'
+                       OR ({1} = 'published' AND t.IsPublic = 1)
+                       OR ({1} = 'private' AND t.IsPublic = 0))
+                """,
+                authorId,
+                filter)
+            .FirstAsync(cancellationToken);
+
+        return row.Value;
+    }
+
+    public Task<List<TestListItemRow>> GetMyTestsPageAsync(
+        int authorId,
+        string filter,
+        int offset,
+        int pageSize,
+        CancellationToken cancellationToken = default) =>
+        db.Database
+            .SqlQueryRaw<TestListItemRow>(
+                """
+                SELECT
+                    t.Id AS Id,
+                    t.Name AS Name,
+                    t.Description AS Description,
+                    u.DisplayName AS AuthorName,
+                    CAST(COUNT(DISTINCT tqa.QuestionOrder) AS INTEGER) AS QuestionsCount,
+                    t.CreatedAt AS CreatedAt
+                FROM Tests t
+                INNER JOIN Users u ON u.Id = t.AuthorId
+                LEFT JOIN TestQuestionAnswers tqa ON tqa.TestId = t.Id
+                WHERE t.AuthorId = {2}
+                  AND ({3} = 'all'
+                       OR ({3} = 'published' AND t.IsPublic = 1)
+                       OR ({3} = 'private' AND t.IsPublic = 0))
+                GROUP BY t.Id, t.Name, t.Description, u.DisplayName, t.CreatedAt
+                ORDER BY t.CreatedAt DESC
+                LIMIT {0} OFFSET {1}
+                """,
+                pageSize,
+                offset,
+                authorId,
+                filter)
+            .ToListAsync(cancellationToken);
 
     public Task SaveChangesAsync(CancellationToken cancellationToken = default) =>
         db.SaveChangesAsync(cancellationToken);

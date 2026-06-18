@@ -15,6 +15,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ITestRepository, TestRepository>();
         services.AddScoped<IQuestionAnswerRepository, QuestionAnswerRepository>();
         services.AddScoped<IResultRepository, ResultRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
 
         services.AddScoped<ITestService, TestService>();
         services.AddScoped<IResultService, ResultService>();
