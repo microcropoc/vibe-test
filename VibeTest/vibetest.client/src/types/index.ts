@@ -33,3 +33,21 @@ export interface GuestTestResult {
   correctAnswers: number;
   completedAt: string;
 }
+
+export type {
+  ApiErrorBody,
+  AuthResponse,
+  PagedResponse,
+  QuestionDetailDto,
+  QuestionFullDto,
+  SubmitResponse,
+  TestDetailResponse,
+  TestFullResponse,
+  TestHistoryItem,
+  TestListItem,
+  TestResponse,
+  TestResultResponse,
+  TokenRefreshResponse,
+  UserDto,
+  UserStatsResponse,
+} from './api';

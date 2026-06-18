@@ -1,11 +1,39 @@
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { AuthProvider } from '@/full/context/AuthContext';
+import { ProtectedRoute } from '@/full/components/auth/ProtectedRoute';
+import { FullLayout } from '@/full/components/layout/FullLayout';
+import { HomePage } from '@/full/pages/HomePage';
+import { LoginPage } from '@/full/pages/LoginPage';
+import { MyTestsPage } from '@/full/pages/MyTestsPage';
+import { ProfilePage } from '@/full/pages/ProfilePage';
+import { PublicTestsPage } from '@/full/pages/PublicTestsPage';
+import { RegisterPage } from '@/full/pages/RegisterPage';
+import { TestPage } from '@/full/pages/TestPage';
+import { EditorPage } from '@/guest/pages/EditorPage';
+import { ImportPage } from '@/guest/pages/ImportPage';
+import { routerBasename } from '@/utils/router';
+
 export function FullApp() {
   return (
-    <div style={{ padding: '2rem', fontFamily: 'system-ui, sans-serif' }}>
-      <h1>VibeTest — полный режим</h1>
-      <p>
-        Запустите с <code>npm run dev:full</code> и поднимите <code>VibeTest.Server</code>.
-        Здесь будут публичные тесты, авторизация и облачное сохранение (Этапы 3–4).
-      </p>
-    </div>
+    <AuthProvider>
+      <BrowserRouter basename={routerBasename()}>
+        <Routes>
+          <Route element={<FullLayout />}>
+            <Route index element={<HomePage />} />
+            <Route path="login" element={<LoginPage />} />
+            <Route path="register" element={<RegisterPage />} />
+            <Route path="tests" element={<PublicTestsPage />} />
+            <Route path="tests/:id" element={<TestPage />} />
+            <Route path="editor" element={<EditorPage />} />
+            <Route path="import" element={<ImportPage />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="my/tests" element={<MyTestsPage />} />
+              <Route path="profile" element={<ProfilePage />} />
+            </Route>
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
