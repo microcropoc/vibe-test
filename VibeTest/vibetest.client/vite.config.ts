@@ -1,61 +1,75 @@
 import { fileURLToPath, URL } from 'node:url';
-
-import { defineConfig } from 'vite';
-import plugin from '@vitejs/plugin-react';
 import fs from 'fs';
 import path from 'path';
 import child_process from 'child_process';
-import { env } from 'process';
+import { defineConfig, loadEnv } from 'vite';
+import plugin from '@vitejs/plugin-react';
+import { env as processEnv } from 'process';
 
-const baseFolder =
-    env.APPDATA !== undefined && env.APPDATA !== ''
-        ? `${env.APPDATA}/ASP.NET/https`
-        : `${env.HOME}/.aspnet/https`;
+function readAspNetCert() {
+  const baseFolder =
+    processEnv.APPDATA !== undefined && processEnv.APPDATA !== ''
+      ? `${processEnv.APPDATA}/ASP.NET/https`
+      : `${processEnv.HOME}/.aspnet/https`;
 
-const certificateName = "vibetest.client";
-const certFilePath = path.join(baseFolder, `${certificateName}.pem`);
-const keyFilePath = path.join(baseFolder, `${certificateName}.key`);
+  const certificateName = 'vibetest.client';
+  const certFilePath = path.join(baseFolder, `${certificateName}.pem`);
+  const keyFilePath = path.join(baseFolder, `${certificateName}.key`);
 
-if (!fs.existsSync(baseFolder)) {
+  if (!fs.existsSync(baseFolder)) {
     fs.mkdirSync(baseFolder, { recursive: true });
-}
+  }
 
-if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
-    if (0 !== child_process.spawnSync('dotnet', [
-        'dev-certs',
-        'https',
-        '--export-path',
-        certFilePath,
-        '--format',
-        'Pem',
-        '--no-password',
-    ], { stdio: 'inherit', }).status) {
-        throw new Error("Could not create certificate.");
+  if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
+    const result = child_process.spawnSync(
+      'dotnet',
+      ['dev-certs', 'https', '--export-path', certFilePath, '--format', 'Pem', '--no-password'],
+      { stdio: 'inherit' },
+    );
+    if (result.status !== 0) {
+      throw new Error('Could not create ASP.NET dev certificate.');
     }
+  }
+
+  return {
+    key: fs.readFileSync(keyFilePath),
+    cert: fs.readFileSync(certFilePath),
+  };
 }
 
-const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
-    env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'https://localhost:7215';
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), 'VITE_');
+  const appMode = env.VITE_APP_MODE ?? 'guest';
+  const isFullMode = appMode === 'full';
+  const base = env.VITE_BASE_PATH || '/';
 
-// https://vitejs.dev/config/
-export default defineConfig({
+  const apiTarget = processEnv.ASPNETCORE_HTTPS_PORT
+    ? `https://localhost:${processEnv.ASPNETCORE_HTTPS_PORT}`
+    : processEnv.ASPNETCORE_URLS
+      ? processEnv.ASPNETCORE_URLS.split(';')[0]
+      : 'https://localhost:7215';
+
+  return {
+    base,
     plugins: [plugin()],
     resolve: {
-        alias: {
-            '@': fileURLToPath(new URL('./src', import.meta.url))
-        }
+      alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url)),
+      },
     },
-    server: {
-        proxy: {
-            '^/weatherforecast': {
-                target,
-                secure: false
-            }
-        },
-        port: parseInt(env.DEV_SERVER_PORT || '64028'),
-        https: {
-            key: fs.readFileSync(keyFilePath),
-            cert: fs.readFileSync(certFilePath),
+    server: isFullMode
+      ? {
+          port: parseInt(processEnv.DEV_SERVER_PORT || '64028'),
+          https: readAspNetCert(),
+          proxy: {
+            '^/api': {
+              target: apiTarget,
+              secure: false,
+            },
+          },
         }
-    }
-})
+      : {
+          port: parseInt(processEnv.DEV_SERVER_PORT || '5173'),
+        },
+  };
+});

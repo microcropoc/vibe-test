@@ -33,8 +33,10 @@
 
 **Стек технологий**:
 - **Бэкенд**: ASP.NET Core 10 (`VibeTest.Server`), Entity Framework Core, SQLite
-- **Фронтенд**: React + TypeScript + Vite (`vibetest.client`, шаблон Visual Studio SPA)
-- **Аутентификация**: JWT (access + refresh токены) — Этап 2
+- **Фронтенд**: React + TypeScript + Vite (`vibetest.client`)
+- **Режимы фронтенда**: `guest` (автономный, без API) и `full` (с бэкендом)
+- **Деплой гостевого SPA**: GitHub Pages (`npm run build:guest`)
+- **Аутентификация**: JWT (access + refresh токены) — только в режиме `full`, Этап 2
 - **Хранение на клиенте**: localStorage для гостевых тестов и прогресса
 
 **Пользовательские роли**:
@@ -51,10 +53,9 @@
 VibeTest/
 ├── VibeTest.slnx
 ├── VibeTest.Server/                       # ASP.NET Core + доменный слой
-│   ├── Controllers/                       # Этап 2 (пока WeatherForecast — заглушка VS)
-│   │   ├── WeatherForecastController.cs
-│   │   ├── AuthController.cs              # Этап 2
-│   │   └── TestsController.cs             # Этап 2
+│   ├── Controllers/                       # Этап 2
+│   │   ├── AuthController.cs
+│   │   └── TestsController.cs
 │   │
 │   ├── Services/
 │   │   ├── ITestService.cs
@@ -88,21 +89,35 @@ VibeTest/
 │   ├── Exceptions/
 │   │   └── DomainExceptions.cs            # NotFound, Forbidden, Validation
 │   │
-│   ├── ServiceCollectionExtensions.cs     # AddVibeTestServices() — Этап 2
-│   ├── Program.cs                         # SPA-proxy, статика; DI — на Этапе 2
+│   ├── ServiceCollectionExtensions.cs     # AddVibeTestServices()
+│   ├── Program.cs                         # API + SPA static (режим full)
 │   └── VibeTest.Server.csproj
 │
-├── vibetest.client/                       # React + Vite (шаблон VS, без переименования)
+├── vibetest.client/                       # React + Vite
+│   ├── .env.guest                         # VITE_APP_MODE=guest, VITE_BASE_PATH
+│   ├── .env.full                          # VITE_APP_MODE=full, proxy к API
 │   ├── src/
-│   │   ├── api/                           # Этап 3
-│   │   ├── components/                    # Этап 4
-│   │   ├── context/                       # Этап 3
-│   │   ├── pages/                         # Этап 4
-│   │   ├── types/                         # Этап 3
-│   │   ├── utils/                         # Этап 3
-│   │   ├── App.tsx
+│   │   ├── config/
+│   │   │   └── env.ts                     # appMode, basePath, isGuest
+│   │   ├── guest/                         # Автономный режим (GitHub Pages)
+│   │   │   ├── GuestApp.tsx               # Роутинг без API
+│   │   │   ├── pages/
+│   │   │   └── components/
+│   │   ├── full/                          # Режим с бэкендом
+│   │   │   ├── FullApp.tsx
+│   │   │   ├── api/
+│   │   │   ├── context/
+│   │   │   ├── pages/
+│   │   │   └── components/
+│   │   ├── types/                         # Общие типы (тест, вопрос, JSON)
+│   │   ├── utils/                         # storage, export, import
+│   │   ├── App.tsx                        # guest | full по VITE_APP_MODE
 │   │   └── main.tsx
-│   └── package.json
+│   ├── package.json                       # dev / dev:full / build:guest
+│   └── vite.config.ts
+│
+├── .github/workflows/
+│   └── deploy-guest.yml                   # GitHub Pages: build:guest
 │
 └── VibeTest.Tests/
     ├── Integration/
@@ -115,7 +130,29 @@ VibeTest/
 
 **Пространства имён**: `VibeTest.Server.{Entities|Data|Services|Models|Helpers|Exceptions}`.
 
-**Program.cs на Этапе 1** не меняется (SPA-proxy и `WeatherForecastController` остаются). Регистрация `AddVibeTestServices()` и `AddDbContext` — на Этапе 2.
+### Режимы фронтенда
+
+| Режим | `VITE_APP_MODE` | Запуск | API | Деплой |
+|-------|-----------------|--------|-----|--------|
+| **guest** | `guest` | `npm run dev` | Нет | GitHub Pages (`build:guest`) |
+| **full** | `full` | `npm run dev:full` + `VibeTest.Server` | Да | `VibeTest.Server` (статика из `dist`) |
+
+**Guest (standalone)** — подмножество гостевых сценариев без бэкенда:
+
+- Редактор → localStorage
+- Импорт / экспорт JSON
+- Локальные тесты, прохождение, результаты
+- **Нет**: публичные тесты с сервера, вход/регистрация, облачное сохранение
+
+**Full** — все сценарии: guest-функции + API (публичные тесты, аккаунт, статистика).
+
+Переменные окружения (Vite):
+
+| Переменная | guest | full |
+|------------|-------|------|
+| `VITE_APP_MODE` | `guest` | `full` |
+| `VITE_BASE_PATH` | `/` или `/repo-name/` для GH Pages | `/` |
+| `VITE_API_URL` | — | `/api` (proxy в dev) |
 
 ---
 
@@ -580,17 +617,18 @@ public interface IUserService
 
 ### Страницы
 
-**Гость:**
-- **Публичные тесты** — список с пагинацией, просмотр теста
-- **Редактор** — создание теста с сохранением в localStorage или экспорт в JSON
-- **Импорт** — загрузка JSON из файла или вставка из буфера обмена
-- **Локальные тесты** — список тестов из localStorage, прохождение, удаление
-- **Вход/Регистрация** — формы с валидацией
+**Guest (standalone, `VITE_APP_MODE=guest`):**
 
-**Пользователь (дополнительно):**
-- **Профиль** — статистика, история прохождений, мои тесты
-- В публичных тестах: кнопка «Пройти» с сохранением результатов на сервер
-- Индикатор новых вопросов в тестах, которые нужно дорешать
+- **Главная** — краткое описание, ссылки на разделы
+- **Редактор** — создание теста, сохранение в localStorage, экспорт JSON
+- **Импорт** — JSON из файла или буфера обмена
+- **Мои тесты** — список из localStorage, прохождение, удаление
+
+**Full (дополнительно к guest-функциям через API):**
+
+- **Публичные тесты** — список с пагинацией
+- **Вход / Регистрация**
+- **Профиль** — статистика, история, облачные тесты
 
 ### Прохождение теста (TestPlayer)
 
@@ -670,7 +708,6 @@ public interface IUserService
 2. Дополнить репозитории запросами для пагинации и агрегаций
 3. Миграция: `dotnet ef migrations add Initial --project VibeTest.Server`
 4. Интеграционные тесты в `VibeTest.Tests` на `SqliteTestDb` (общий connection на fixture)
-5. **Не трогать** `Program.cs`, `WeatherForecastController`, `vibetest.client`
 
 Приоритетные тест-кейсы:
 
@@ -683,24 +720,32 @@ public interface IUserService
 **Этап 2 — API**
 
 - `ServiceCollectionExtensions.AddVibeTestServices()` + `AddDbContext` в `Program.cs`
-- Контроллеры `AuthController`, `TestsController` (можно удалить `WeatherForecastController`)
+- Контроллеры `AuthController`, `TestsController`
 - JWT-аутентификация (`IAuthService`)
 - Маппинг `DomainException` → HTTP-коды
 - Интеграционные тесты API (`WebApplicationFactory`)
 
 **Этап 3 — Фронтенд-ядро**
 
-Новые папки в `vibetest.client/src/` (без переименования проекта):
+Параллельно два контура:
 
-- `types/`, `api/`, `utils/`, `context/`
-- React Router в `App.tsx`
+1. **guest** — `types/`, `utils/` (storage, import, export), `guest/GuestApp.tsx`, страницы-заглушки
+2. **full** — `full/api/client.ts`, `AuthContext`, расширение роутинга
+
+Скрипты: `dev` (guest), `dev:full`, `build:guest` (GitHub Pages).
 
 **Этап 4 — Фронтенд-UI**
-- Страницы и компоненты
-- TestPlayer, TestEditor
-- Пагинация, восстановление прогресса
-- Импорт/экспорт
+
+- Guest: TestEditor, TestPlayer, TestResult (только localStorage)
+- Full: публичные тесты, профиль, облачное сохранение
 
 **Этап 5 — E2E-тесты**
 - Playwright
 - Основные пользовательские сценарии
+
+### Деплой гостевого SPA на GitHub Pages
+
+1. В настройках репозитория: Pages → Source: **GitHub Actions**
+2. `VITE_BASE_PATH` в workflow должен совпадать с именем репозитория (`/vibe-test/` для `user/vibe-test`)
+3. Workflow `.github/workflows/deploy-guest.yml`: `npm ci` → `npm run build:guest` → deploy `dist/`
+4. Локальная проверка: `npm run build:guest && npm run preview`
