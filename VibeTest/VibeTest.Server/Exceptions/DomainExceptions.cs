@@ -7,3 +7,5 @@ public sealed class NotFoundException(string message) : DomainException(message)
 public sealed class ForbiddenException(string message) : DomainException(message);
 
 public sealed class ValidationException(string message) : DomainException(message);
+
+public sealed class UnauthorizedException(string message) : DomainException(message);

@@ -10,4 +10,5 @@ public class User
 
     public ICollection<Test> AuthoredTests { get; set; } = [];
     public ICollection<Result> Results { get; set; } = [];
+    public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
 }
