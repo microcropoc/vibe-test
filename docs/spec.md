@@ -32,9 +32,9 @@
 
 
 **Стек технологий**:
-- **Бэкенд**: ASP.NET Core 8, Entity Framework Core, SQLite
-- **Фронтенд**: React 18, TypeScript, React Router
-- **Аутентификация**: JWT (access + refresh токены)
+- **Бэкенд**: ASP.NET Core 10 (`VibeTest.Server`), Entity Framework Core, SQLite
+- **Фронтенд**: React + TypeScript + Vite (`vibetest.client`, шаблон Visual Studio SPA)
+- **Аутентификация**: JWT (access + refresh токены) — Этап 2
 - **Хранение на клиенте**: localStorage для гостевых тестов и прогресса
 
 **Пользовательские роли**:
@@ -45,107 +45,77 @@
 
 ## 2. Структура проекта
 
+Проект основан на **шаблоне Visual Studio «ASP.NET Core with React»**. Имена и расположение `VibeTest.Server` и `vibetest.client` не меняются — доменный слой добавляется внутрь серверного проекта.
+
 ```
 VibeTest/
-├── VibeTest.sln
-├── VibeTest.Api/                          # Единственный проект ASP.NET Core
-│   ├── Controllers/
-│   │   ├── AuthController.cs              # POST register/login/refresh, GET me
-│   │   └── TestsController.cs            # CRUD тестов, submit, results
+├── VibeTest.slnx
+├── VibeTest.Server/                       # ASP.NET Core + доменный слой
+│   ├── Controllers/                       # Этап 2 (пока WeatherForecast — заглушка VS)
+│   │   ├── WeatherForecastController.cs
+│   │   ├── AuthController.cs              # Этап 2
+│   │   └── TestsController.cs             # Этап 2
 │   │
 │   ├── Services/
-│   │   ├── IAuthService.cs
-│   │   ├── AuthService.cs                # Регистрация, логин, хеши, JWT
 │   │   ├── ITestService.cs
-│   │   ├── TestService.cs               # Бизнес-логика тестов
+│   │   ├── TestService.cs
 │   │   ├── IResultService.cs
-│   │   ├── ResultService.cs             # Логика прохождения
+│   │   ├── ResultService.cs
 │   │   ├── IUserService.cs
-│   │   └── UserService.cs              # Статистика
+│   │   ├── UserService.cs
+│   │   └── (IAuthService, AuthService)      # Этап 2
 │   │
 │   ├── Data/
-│   │   ├── AppDbContext.cs              # EF Core контекст
-│   │   └── Migrations/                  # Авто-миграции
+│   │   ├── AppDbContext.cs
+│   │   ├── Repositories/
+│   │   │   ├── ITestRepository.cs
+│   │   │   ├── TestRepository.cs
+│   │   │   ├── IQuestionAnswerRepository.cs
+│   │   │   ├── QuestionAnswerRepository.cs
+│   │   │   ├── IResultRepository.cs
+│   │   │   └── ResultRepository.cs
+│   │   └── Migrations/                    # dotnet ef migrations add
 │   │
 │   ├── Models/
 │   │   ├── Entities/
-│   │   │   ├── User.cs
-│   │   │   ├── Test.cs
-│   │   │   ├── Question.cs
-│   │   │   ├── Answer.cs
-│   │   │   ├── TestQuestionAnswer.cs
-│   │   │   └── Result.cs
 │   │   ├── Requests/
-│   │   │   ├── RegisterRequest.cs
-│   │   │   ├── LoginRequest.cs
-│   │   │   ├── CreateTestRequest.cs
-│   │   │   ├── AddQuestionsRequest.cs
-│   │   │   ├── UpdateTestInfoRequest.cs
-│   │   │   └── SubmitAnswerRequest.cs
 │   │   └── Responses/
-│   │       ├── AuthResponse.cs
-│   │       ├── TestResponse.cs
-│   │       ├── TestDetailResponse.cs
-│   │       ├── TestFullResponse.cs
-│   │       ├── TestResultResponse.cs
-│   │       ├── SubmitResponse.cs
-│   │       ├── UserStatsResponse.cs
-│   │       └── PagedResponse.cs
 │   │
-│   ├── appsettings.json
-│   ├── Program.cs                        # DI, JWT, CORS, middleware
-│   └── VibeTest.Api.csproj
+│   ├── Helpers/
+│   │   ├── TqaGrouper.cs                  # TQA → иерархия вопросов/ответов
+│   │   └── PaginationHelper.cs
+│   │
+│   ├── Exceptions/
+│   │   └── DomainExceptions.cs            # NotFound, Forbidden, Validation
+│   │
+│   ├── ServiceCollectionExtensions.cs     # AddVibeTestServices() — Этап 2
+│   ├── Program.cs                         # SPA-proxy, статика; DI — на Этапе 2
+│   └── VibeTest.Server.csproj
 │
-├── VibeTest.Api/ClientApp/               # React + TypeScript (стандартный шаблон VS)
+├── vibetest.client/                       # React + Vite (шаблон VS, без переименования)
 │   ├── src/
-│   │   ├── api/
-│   │   │   └── client.ts                # Функции для вызова API (fetch-обёртки)
-│   │   ├── components/
-│   │   │   ├── auth/
-│   │   │   │   ├── LoginForm.tsx
-│   │   │   │   └── RegisterForm.tsx
-│   │   │   ├── tests/
-│   │   │   │   ├── TestList.tsx         # Список тестов с пагинацией
-│   │   │   │   ├── TestCard.tsx         # Карточка теста
-│   │   │   │   ├── TestPlayer.tsx       # Прохождение теста
-│   │   │   │   ├── TestEditor.tsx       # Создание/редактирование
-│   │   │   │   └── TestResult.tsx       # Результаты прохождения
-│   │   │   ├── profile/
-│   │   │   │   ├── ProfileStats.tsx
-│   │   │   │   └── HistoryList.tsx
-│   │   │   └── layout/
-│   │   │       ├── Navbar.tsx
-│   │   │       └── Layout.tsx
-│   │   ├── context/
-│   │   │   └── AuthContext.tsx          # Контекст авторизации
-│   │   ├── pages/
-│   │   │   ├── HomePage.tsx
-│   │   │   ├── LoginPage.tsx
-│   │   │   ├── RegisterPage.tsx
-│   │   │   ├── PublicTestsPage.tsx
-│   │   │   ├── TestPage.tsx
-│   │   │   ├── EditorPage.tsx
-│   │   │   ├── MyTestsPage.tsx
-│   │   │   ├── ProfilePage.tsx
-│   │   │   └── ImportPage.tsx
-│   │   ├── types/
-│   │   │   └── index.ts                # Все TypeScript-типы
-│   │   ├── utils/
-│   │   │   ├── storage.ts              # Работа с localStorage
-│   │   │   ├── export.ts              # Экспорт теста в JSON
-│   │   │   └── import.ts             # Импорт теста из JSON
-│   │   ├── App.tsx                     # Роутинг
-│   │   └── main.tsx                    # Входная точка
-│   ├── package.json
-│   └── tsconfig.json
+│   │   ├── api/                           # Этап 3
+│   │   ├── components/                    # Этап 4
+│   │   ├── context/                       # Этап 3
+│   │   ├── pages/                         # Этап 4
+│   │   ├── types/                         # Этап 3
+│   │   ├── utils/                         # Этап 3
+│   │   ├── App.tsx
+│   │   └── main.tsx
+│   └── package.json
 │
-└── VibeTest.Tests/                       # Тестовый проект
+└── VibeTest.Tests/
     ├── Integration/
+    │   ├── SqliteTestDb.cs                # SQLite in-memory fixture
     │   ├── TestServiceTests.cs
     │   ├── ResultServiceTests.cs
-    │   └── AuthServiceTests.cs
+    │   └── UserServiceTests.cs
     └── VibeTest.Tests.csproj
 ```
+
+**Пространства имён**: `VibeTest.Server.{Entities|Data|Services|Models|Helpers|Exceptions}`.
+
+**Program.cs на Этапе 1** не меняется (SPA-proxy и `WeatherForecastController` остаются). Регистрация `AddVibeTestServices()` и `AddDbContext` — на Этапе 2.
 
 ---
 
@@ -164,7 +134,7 @@ CREATE TABLE Users (
 
 CREATE TABLE Tests (
     Id INTEGER PRIMARY KEY,
-    AuthorId TEXT NOT NULL,
+    AuthorId INTEGER NOT NULL,
     Name TEXT NOT NULL,
     Description TEXT,
     IsPublic INTEGER NOT NULL DEFAULT 0,
@@ -212,7 +182,18 @@ CREATE TABLE Results (
 );
 ```
 
+### Примечания к схеме
+
+- **Структура теста** хранится в `TestQuestionAnswers` (TQA): одна строка = один вариант ответа в вопросе.
+- **Question** и **Answer** — глобальный пул с дедупликацией по `Text` (UNIQUE).
+- **Result**: `UNIQUE(UserId, TestId, QuestionId)` — повторный submit обновляет ответ (UPSERT).
+- Порядок вопросов/ответов — **0-based** (`QuestionOrder`, `AnswerOrder`).
+
+---
+
 ## 4. Модели данных (C#)
+
+Сущности — в `VibeTest.Server/Models/Entities/`. Конфигурация FK и UNIQUE — в `AppDbContext.OnModelCreating`.
 
 ```csharp
 // User.cs
@@ -325,6 +306,29 @@ public interface IUserService
     Task<UserStatsResponse> GetStats(int userId);
 }
 ```
+
+### Репозитории
+
+| Интерфейс | Ответственность |
+|-----------|-----------------|
+| `ITestRepository` | CRUD теста, загрузка с TQA + Question + Answer |
+| `IQuestionAnswerRepository` | Find-or-create по `Text` (дедупликация) |
+| `IResultRepository` | UPSERT, удаление по user+test, выборки |
+
+Сервисы не содержат сложный LINQ — запросы в репозиториях.
+
+### Доменные исключения
+
+| Исключение | Когда | HTTP (Этап 2) |
+|------------|-------|---------------|
+| `NotFoundException` | Тест/вопрос не найден | 404 |
+| `ForbiddenException` | Не автор теста | 403 |
+| `ValidationException` | Невалидный request | 400 |
+
+### Вспомогательные классы
+
+- **`TqaGrouper`** — `List<TestQuestionAnswer>` → `QuestionDetailDto` / `QuestionFullDto`
+- **`PaginationHelper`** — расчёт `totalPages`, `hasNextPage`, `hasPreviousPage`
 
 ---
 
@@ -551,6 +555,18 @@ public interface IUserService
 6. Можно отвечать в любом порядке, переотвечивать
 7. `GET /api/tests/{id}/result` — полная статистика
 
+### Статистика пользователя (`averageScore`)
+
+- **Пройденный тест** — пользователь ответил на все текущие вопросы теста (`Results.Count == DISTINCT QuestionOrder` в TQA).
+- **Балл прохождения**: `correctAnswers / totalQuestions × 100`.
+- **averageScore** — среднее арифметическое баллов по всем пройденным тестам.
+- **totalPassed** — число уникальных тестов, пройденных полностью.
+- История (`GetUserResults`) — одна запись на `(UserId, TestId)`; после `DeleteResult` старая попытка не хранится.
+
+### Ошибки дедупликации
+
+При параллельном создании одинакового `Text` возможен конфликт UNIQUE. Паттерн: find → insert → при ошибке UNIQUE → find снова. В тестах — одна транзакция на сценарий.
+
 ### JWT-аутентификация
 
 - Access token: 15 минут, хранится в памяти
@@ -647,23 +663,37 @@ public interface IUserService
 ## 9. Этапы разработки
 
 **Этап 1 — Сервисы и БД (текущий)**
-- Модели, DbContext, миграции
-- Репозитории
-- Сервисы
-- Интеграционные тесты (SQLite in-memory)
-- Без Web, без JWT, без контроллеров
+
+Скелет уже в репозитории. Задачи:
+
+1. Реализовать `TestService`, `ResultService`, `UserService` (сейчас `NotImplementedException`)
+2. Дополнить репозитории запросами для пагинации и агрегаций
+3. Миграция: `dotnet ef migrations add Initial --project VibeTest.Server`
+4. Интеграционные тесты в `VibeTest.Tests` на `SqliteTestDb` (общий connection на fixture)
+5. **Не трогать** `Program.cs`, `WeatherForecastController`, `vibetest.client`
+
+Приоритетные тест-кейсы:
+
+| Сервис | Сценарии |
+|--------|----------|
+| TestService | CreateTest + дедупликация; AppendQuestions (`MAX+1`); Fork; GetTestDetail vs GetTestFull |
+| ResultService | Submit + переответ; дорешивание после AppendQuestions; DeleteResult |
+| UserService | GetStats, формула averageScore |
 
 **Этап 2 — API**
-- Контроллеры
-- JWT-аутентификация
-- Валидация запросов
-- Интеграционные тесты API
+
+- `ServiceCollectionExtensions.AddVibeTestServices()` + `AddDbContext` в `Program.cs`
+- Контроллеры `AuthController`, `TestsController` (можно удалить `WeatherForecastController`)
+- JWT-аутентификация (`IAuthService`)
+- Маппинг `DomainException` → HTTP-коды
+- Интеграционные тесты API (`WebApplicationFactory`)
 
 **Этап 3 — Фронтенд-ядро**
-- TypeScript-типы
-- API-клиент
-- Утилиты (storage, export, import)
-- AuthContext, роутинг
+
+Новые папки в `vibetest.client/src/` (без переименования проекта):
+
+- `types/`, `api/`, `utils/`, `context/`
+- React Router в `App.tsx`
 
 **Этап 4 — Фронтенд-UI**
 - Страницы и компоненты

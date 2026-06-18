@@ -1,0 +1,85 @@
+using Microsoft.EntityFrameworkCore;
+using VibeTest.Server.Models.Entities;
+
+namespace VibeTest.Server.Data;
+
+public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+{
+    public DbSet<User> Users => Set<User>();
+    public DbSet<Test> Tests => Set<Test>();
+    public DbSet<Question> Questions => Set<Question>();
+    public DbSet<Answer> Answers => Set<Answer>();
+    public DbSet<TestQuestionAnswer> TestQuestionAnswers => Set<TestQuestionAnswer>();
+    public DbSet<Result> Results => Set<Result>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasIndex(u => u.Email).IsUnique();
+        });
+
+        modelBuilder.Entity<Test>(entity =>
+        {
+            entity.HasOne(t => t.Author)
+                .WithMany(u => u.AuthoredTests)
+                .HasForeignKey(t => t.AuthorId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Question>(entity =>
+        {
+            entity.HasIndex(q => q.Text).IsUnique();
+        });
+
+        modelBuilder.Entity<Answer>(entity =>
+        {
+            entity.HasIndex(a => a.Text).IsUnique();
+        });
+
+        modelBuilder.Entity<TestQuestionAnswer>(entity =>
+        {
+            entity.HasIndex(tqa => new { tqa.TestId, tqa.QuestionOrder, tqa.AnswerOrder }).IsUnique();
+
+            entity.HasOne(tqa => tqa.Test)
+                .WithMany(t => t.QuestionAnswers)
+                .HasForeignKey(tqa => tqa.TestId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(tqa => tqa.Question)
+                .WithMany(q => q.TestQuestionAnswers)
+                .HasForeignKey(tqa => tqa.QuestionId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(tqa => tqa.Answer)
+                .WithMany(a => a.TestQuestionAnswers)
+                .HasForeignKey(tqa => tqa.AnswerId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Result>(entity =>
+        {
+            entity.HasIndex(r => new { r.UserId, r.TestId, r.QuestionId }).IsUnique();
+
+            entity.HasOne(r => r.User)
+                .WithMany(u => u.Results)
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(r => r.Test)
+                .WithMany(t => t.Results)
+                .HasForeignKey(r => r.TestId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(r => r.Question)
+                .WithMany(q => q.Results)
+                .HasForeignKey(r => r.QuestionId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(r => r.Answer)
+                .WithMany(a => a.Results)
+                .HasForeignKey(r => r.AnswerId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+    }
+}
