@@ -61,7 +61,8 @@ public static class ServiceCollectionExtensions
                 policy.WithOrigins(
                         "https://localhost:64028",
                         "http://localhost:5173",
-                        "http://localhost:64028")
+                        "http://localhost:64028",
+                        "http://localhost:4173")
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials();

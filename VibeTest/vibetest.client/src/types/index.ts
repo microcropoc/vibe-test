@@ -22,7 +22,8 @@ export interface LocalTest extends TestDefinition {
 }
 
 export interface TestProgress {
-  answers: Record<number, number>;
+  answers: Record<number, import('./player').QuestionAnswerRecord>;
+  currentQuestionOrder: number;
   updatedAt: string;
 }
 
@@ -33,6 +34,14 @@ export interface GuestTestResult {
   correctAnswers: number;
   completedAt: string;
 }
+
+export type {
+  PlayerAnswer,
+  PlayerPhase,
+  PlayerProgress,
+  PlayerQuestion,
+  QuestionAnswerRecord,
+} from './player';
 
 export type {
   ApiErrorBody,

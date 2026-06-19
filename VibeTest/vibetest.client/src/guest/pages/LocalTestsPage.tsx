@@ -1,19 +1,28 @@
-import { useSyncExternalStore } from 'react';
+import { useMemo, useSyncExternalStore } from 'react';
 import { Link } from 'react-router-dom';
-import { deleteLocalTest, getLocalTests } from '@/utils/storage';
+import { isFullMode } from '@/config/env';
+import type { LocalTest } from '@/types';
+import { deleteLocalTest, getLocalTestsSnapshot } from '@/utils/storage';
+import '@/guest/components/layout/GuestLayout.css';
 
 function subscribe(callback: () => void) {
-  window.addEventListener('storage', callback);
-  return () => window.removeEventListener('storage', callback);
+  const handler = () => callback();
+  window.addEventListener('storage', handler);
+  window.addEventListener('vibetest-storage', handler);
+  return () => {
+    window.removeEventListener('storage', handler);
+    window.removeEventListener('vibetest-storage', handler);
+  };
 }
 
 export function LocalTestsPage() {
-  const tests = useSyncExternalStore(subscribe, getLocalTests, getLocalTests);
+  const raw = useSyncExternalStore(subscribe, getLocalTestsSnapshot, getLocalTestsSnapshot);
+  const tests = useMemo(() => JSON.parse(raw) as LocalTest[], [raw]);
 
   return (
-    <section className="guest-page">
+    <section className={isFullMode ? 'full-page' : 'guest-page'}>
       <h1>Мои тесты</h1>
-      <p>Локальные тесты из браузера. Прохождение и редактор — на следующих этапах.</p>
+      <p>Локальные тесты из браузера.</p>
 
       {tests.length === 0 ? (
         <div className="guest-empty">
@@ -31,16 +40,21 @@ export function LocalTestsPage() {
                   {new Date(test.updatedAt).toLocaleString()}
                 </div>
               </div>
-              <button
-                type="button"
-                className="guest-button guest-button--danger"
-                onClick={() => {
-                  deleteLocalTest(test.id);
-                  window.dispatchEvent(new Event('storage'));
-                }}
-              >
-                Удалить
-              </button>
+              <div className="guest-list__actions">
+                <Link to={`/play/${test.id}`} className="guest-button">
+                  Пройти
+                </Link>
+                <Link to={`/editor/${test.id}`} className="guest-button guest-button--ghost">
+                  Редактировать
+                </Link>
+                <button
+                  type="button"
+                  className="guest-button guest-button--danger"
+                  onClick={() => deleteLocalTest(test.id)}
+                >
+                  Удалить
+                </button>
+              </div>
             </li>
           ))}
         </ul>

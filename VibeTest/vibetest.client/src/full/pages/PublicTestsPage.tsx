@@ -1,44 +1,45 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Pagination } from '@/components/common/Pagination';
 import { testsApi } from '@/full/api';
 import { getApiErrorMessage } from '@/full/context/AuthContext';
 import type { TestListItem } from '@/types';
 
+const PAGE_SIZE = 10;
+
 export function PublicTestsPage() {
+  const [page, setPage] = useState(1);
   const [items, setItems] = useState<TestListItem[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [hasPreviousPage, setHasPreviousPage] = useState(false);
+  const [hasNextPage, setHasNextPage] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    let cancelled = false;
-
-    async function load() {
-      try {
-        const page = await testsApi.getPublic(1, 20);
-        if (!cancelled) {
-          setItems(page.items);
-        }
-      } catch (err) {
-        if (!cancelled) {
-          setError(getApiErrorMessage(err));
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
+  const loadPage = useCallback(async (p: number) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await testsApi.getPublic(p, PAGE_SIZE);
+      setItems(response.items);
+      setPage(response.page);
+      setTotalPages(response.totalPages);
+      setHasPreviousPage(response.hasPreviousPage);
+      setHasNextPage(response.hasNextPage);
+    } catch (err) {
+      setError(getApiErrorMessage(err));
+    } finally {
+      setLoading(false);
     }
-
-    void load();
-    return () => {
-      cancelled = true;
-    };
   }, []);
+
+  useEffect(() => {
+    void loadPage(page);
+  }, [loadPage, page]);
 
   return (
     <section className="full-page">
       <h1>Публичные тесты</h1>
-      <p className="full-muted">Список с сервера. Пагинация и прохождение — на Этапе 4.</p>
 
       {loading && <p className="full-muted">Загрузка…</p>}
       {error && <p className="full-error">{error}</p>}
@@ -60,6 +61,14 @@ export function PublicTestsPage() {
           </li>
         ))}
       </ul>
+
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        hasPreviousPage={hasPreviousPage}
+        hasNextPage={hasNextPage}
+        onPageChange={setPage}
+      />
     </section>
   );
 }

@@ -49,11 +49,18 @@ export function TestPage() {
       {test.description && <p className="full-muted">{test.description}</p>}
       <p className="full-muted">Автор: {test.authorName}</p>
       <p className="full-muted">Вопросов: {test.questions.length}</p>
-      <p className="full-muted">
-        {isAuthenticated
-          ? 'TestPlayer с сохранением на сервер — Этап 4.'
-          : 'Войдите, чтобы пройти тест с сохранением результата.'}
-      </p>
+
+      {isAuthenticated ? (
+        <p>
+          <Link to={`/tests/${testId}/play`} className="full-button">
+            Пройти тест
+          </Link>
+        </p>
+      ) : (
+        <p className="full-muted">
+          <Link to="/login">Войдите</Link>, чтобы пройти тест с сохранением результата.
+        </p>
+      )}
     </section>
   );
 }

@@ -3,6 +3,11 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# sqlite
+*.db
+*.db-shm
+*.db-wal
+
 # User-specific files
 *.rsuser
 *.suo
@@ -427,3 +432,13 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Playwright E2E
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# E2E SQLite database
+VibeTest/VibeTest.Server/vibetest.e2e.db
+VibeTest/VibeTest.Server/vibetest.e2e.db-*

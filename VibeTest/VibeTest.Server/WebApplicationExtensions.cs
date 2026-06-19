@@ -24,7 +24,11 @@ public static class WebApplicationExtensions
             app.MapOpenApi();
         }
 
-        app.UseHttpsRedirection();
+        if (!app.Environment.IsEnvironment("E2E") && !app.Environment.IsEnvironment("Testing"))
+        {
+            app.UseHttpsRedirection();
+        }
+
         app.UseCors("Spa");
         app.UseAuthentication();
         app.UseAuthorization();

@@ -8,8 +8,10 @@ import { MyTestsPage } from '@/full/pages/MyTestsPage';
 import { ProfilePage } from '@/full/pages/ProfilePage';
 import { PublicTestsPage } from '@/full/pages/PublicTestsPage';
 import { RegisterPage } from '@/full/pages/RegisterPage';
+import { PlayPage } from '@/full/pages/PlayPage';
 import { TestPage } from '@/full/pages/TestPage';
 import { EditorPage } from '@/guest/pages/EditorPage';
+import { LocalTestsPage } from '@/guest/pages/LocalTestsPage';
 import { ImportPage } from '@/guest/pages/ImportPage';
 import { routerBasename } from '@/utils/router';
 
@@ -24,8 +26,11 @@ export function FullApp() {
             <Route path="register" element={<RegisterPage />} />
             <Route path="tests" element={<PublicTestsPage />} />
             <Route path="tests/:id" element={<TestPage />} />
+            <Route path="tests/:id/play" element={<PlayPage />} />
             <Route path="editor" element={<EditorPage />} />
+            <Route path="editor/:id" element={<EditorPage />} />
             <Route path="import" element={<ImportPage />} />
+            <Route path="local/tests" element={<LocalTestsPage />} />
             <Route element={<ProtectedRoute />}>
               <Route path="my/tests" element={<MyTestsPage />} />
               <Route path="profile" element={<ProfilePage />} />

@@ -27,6 +27,9 @@ export function FullLayout() {
           <NavLink to="/import" className={navLinkClass}>
             Импорт
           </NavLink>
+          <NavLink to="/local/tests" className={navLinkClass}>
+            Локальные
+          </NavLink>
           {isAuthenticated && (
             <>
               <NavLink to="/my/tests" className={navLinkClass}>

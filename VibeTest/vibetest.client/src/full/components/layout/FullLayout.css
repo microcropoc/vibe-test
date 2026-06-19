@@ -75,12 +75,18 @@
   color: #fff;
   cursor: pointer;
   font: inherit;
+  text-decoration: none;
+  display: inline-block;
 }
 
 .full-button--ghost {
   background: transparent;
   border: 1px solid #3a4f68;
   color: #c5d3e8;
+}
+
+.full-button--danger {
+  background: #7a2f3c;
 }
 
 .full-main {

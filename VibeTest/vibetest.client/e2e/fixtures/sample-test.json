@@ -1,0 +1,13 @@
+{
+  "name": "E2E Import Test",
+  "description": "Imported via Playwright",
+  "questions": [
+    {
+      "text": "2 + 2 = ?",
+      "answers": [
+        { "text": "4", "isCorrect": true },
+        { "text": "5", "isCorrect": false }
+      ]
+    }
+  ]
+}

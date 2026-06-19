@@ -1,26 +1,40 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Pagination } from '@/components/common/Pagination';
 import { resultsApi, testsApi } from '@/full/api';
 import { getApiErrorMessage } from '@/full/context/AuthContext';
 import type { TestHistoryItem, UserStatsResponse } from '@/types';
 
+const PAGE_SIZE = 10;
+
 export function ProfilePage() {
   const [stats, setStats] = useState<UserStatsResponse | null>(null);
   const [history, setHistory] = useState<TestHistoryItem[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [hasPreviousPage, setHasPreviousPage] = useState(false);
+  const [hasNextPage, setHasNextPage] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const loadHistory = useCallback(async (p: number) => {
+    const historyData = await resultsApi.getHistory(p, PAGE_SIZE);
+    setHistory(historyData.items);
+    setPage(historyData.page);
+    setTotalPages(historyData.totalPages);
+    setHasPreviousPage(historyData.hasPreviousPage);
+    setHasNextPage(historyData.hasNextPage);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
 
     async function load() {
       try {
-        const [statsData, historyData] = await Promise.all([
-          testsApi.getMyStats(),
-          resultsApi.getHistory(1, 10),
-        ]);
+        const [statsData] = await Promise.all([testsApi.getMyStats()]);
         if (!cancelled) {
           setStats(statsData);
-          setHistory(historyData.items);
         }
+        await loadHistory(page);
       } catch (err) {
         if (!cancelled) {
           setError(getApiErrorMessage(err));
@@ -32,7 +46,7 @@ export function ProfilePage() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [loadHistory, page]);
 
   return (
     <section className="full-page">
@@ -66,8 +80,10 @@ export function ProfilePage() {
       ) : (
         <ul className="full-list">
           {history.map((item) => (
-            <li key={item.testId} className="full-list__item">
-              <div className="full-list__title">{item.testName}</div>
+            <li key={`${item.testId}-${item.completedAt}`} className="full-list__item">
+              <Link to={`/tests/${item.testId}`} className="full-list__title">
+                {item.testName}
+              </Link>
               <div className="full-list__meta">
                 {item.correctAnswers}/{item.totalQuestions} · {item.scorePercent.toFixed(0)}% ·{' '}
                 {new Date(item.completedAt).toLocaleString()}
@@ -76,6 +92,14 @@ export function ProfilePage() {
           ))}
         </ul>
       )}
+
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        hasPreviousPage={hasPreviousPage}
+        hasNextPage={hasNextPage}
+        onPageChange={setPage}
+      />
     </section>
   );
 }
