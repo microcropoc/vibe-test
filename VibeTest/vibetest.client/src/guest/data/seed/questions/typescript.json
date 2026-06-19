@@ -1,0 +1,632 @@
+[
+  {
+    "text": "Что делает ключевое слово interface в TypeScript?",
+    "answers": [
+      {
+        "text": "Компилирует код в WebAssembly",
+        "isCorrect": false
+      },
+      {
+        "text": "Заменяет import в модулях ES",
+        "isCorrect": false
+      },
+      {
+        "text": "Создаёт экземпляр класса во время выполнения",
+        "isCorrect": false
+      },
+      {
+        "text": "Описывает форму объекта или контракт типа",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Какой тип означает «значение может быть T или null/undefined»?",
+    "answers": [
+      {
+        "text": "any",
+        "isCorrect": false
+      },
+      {
+        "text": "never",
+        "isCorrect": false
+      },
+      {
+        "text": "T | null | undefined (или optional ?)",
+        "isCorrect": true
+      },
+      {
+        "text": "object",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как объявить переменную с типом string?",
+    "answers": [
+      {
+        "text": "var string name",
+        "isCorrect": false
+      },
+      {
+        "text": "let name: string",
+        "isCorrect": true
+      },
+      {
+        "text": "name := string",
+        "isCorrect": false
+      },
+      {
+        "text": "string name",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой тип означает «любое значение» без проверок?",
+    "answers": [
+      {
+        "text": "any",
+        "isCorrect": true
+      },
+      {
+        "text": "unknown",
+        "isCorrect": false
+      },
+      {
+        "text": "void",
+        "isCorrect": false
+      },
+      {
+        "text": "object",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое union type?",
+    "answers": [
+      {
+        "text": "T | U — значение одного из перечисленных типов",
+        "isCorrect": true
+      },
+      {
+        "text": "T & U — пересечение",
+        "isCorrect": false
+      },
+      {
+        "text": "keyof T",
+        "isCorrect": false
+      },
+      {
+        "text": "T[] — кортеж",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой тип у функции, которая ничего не возвращает?",
+    "answers": [
+      {
+        "text": "undefined",
+        "isCorrect": false
+      },
+      {
+        "text": "void",
+        "isCorrect": true
+      },
+      {
+        "text": "never",
+        "isCorrect": false
+      },
+      {
+        "text": "null",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что делает keyof T?",
+    "answers": [
+      {
+        "text": "Создаёт Pick<T, K>",
+        "isCorrect": false
+      },
+      {
+        "text": "Возвращает typeof T",
+        "isCorrect": false
+      },
+      {
+        "text": "Извлекает enum",
+        "isCorrect": false
+      },
+      {
+        "text": "Union строковых литералов — имён свойств T",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Как аннотировать массив чисел?",
+    "answers": [
+      {
+        "text": "[]number",
+        "isCorrect": false
+      },
+      {
+        "text": "Array only in .d.ts",
+        "isCorrect": false
+      },
+      {
+        "text": "number[]",
+        "isCorrect": true
+      },
+      {
+        "text": "Vector<number>",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что делает as const?",
+    "answers": [
+      {
+        "text": "Компилирует в WASM",
+        "isCorrect": false
+      },
+      {
+        "text": "Делает deep clone",
+        "isCorrect": false
+      },
+      {
+        "text": "Сохраняет literal types и readonly",
+        "isCorrect": true
+      },
+      {
+        "text": "Приводит к any",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой utility type делает все свойства опциональными?",
+    "answers": [
+      {
+        "text": "Readonly<T>",
+        "isCorrect": false
+      },
+      {
+        "text": "Pick<T, K>",
+        "isCorrect": false
+      },
+      {
+        "text": "Partial<T>",
+        "isCorrect": true
+      },
+      {
+        "text": "Required<T>",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Для чего ключевое слово satisfies?",
+    "answers": [
+      {
+        "text": "Проверяет тип выражения без его расширения",
+        "isCorrect": true
+      },
+      {
+        "text": "Создаёт runtime guard",
+        "isCorrect": false
+      },
+      {
+        "text": "Экспортирует тип",
+        "isCorrect": false
+      },
+      {
+        "text": "Заменяет interface",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как объявить generic-функцию?",
+    "answers": [
+      {
+        "text": "template<typename T>",
+        "isCorrect": false
+      },
+      {
+        "text": "function id<T>(x: T): T",
+        "isCorrect": true
+      },
+      {
+        "text": "function id(x: T)",
+        "isCorrect": false
+      },
+      {
+        "text": "generic function id",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое enum в TypeScript?",
+    "answers": [
+      {
+        "text": "Набор именованных числовых или строковых литералов",
+        "isCorrect": true
+      },
+      {
+        "text": "Только const enum",
+        "isCorrect": false
+      },
+      {
+        "text": "Синоним any",
+        "isCorrect": false
+      },
+      {
+        "text": "Только runtime union",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Когда используют тип never?",
+    "answers": [
+      {
+        "text": "Функция никогда не завершается или в exhaustive check",
+        "isCorrect": true
+      },
+      {
+        "text": "Любое значение",
+        "isCorrect": false
+      },
+      {
+        "text": "Пустой объект",
+        "isCorrect": false
+      },
+      {
+        "text": "null и undefined",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое type assertion as?",
+    "answers": [
+      {
+        "text": "Утверждение типа на этапе компиляции",
+        "isCorrect": true
+      },
+      {
+        "text": "Приведение типа на runtime",
+        "isCorrect": false
+      },
+      {
+        "text": "Создание class instance",
+        "isCorrect": false
+      },
+      {
+        "text": "Import type alias",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как сделать поле только для чтения в interface?",
+    "answers": [
+      {
+        "text": "immutable name",
+        "isCorrect": false
+      },
+      {
+        "text": "fixed name",
+        "isCorrect": false
+      },
+      {
+        "text": "const name: string",
+        "isCorrect": false
+      },
+      {
+        "text": "readonly name: string",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Что делает Omit<T, K>?",
+    "answers": [
+      {
+        "text": "Выбирает только K",
+        "isCorrect": false
+      },
+      {
+        "text": "Удаляет union members",
+        "isCorrect": false
+      },
+      {
+        "text": "Создаёт тип без указанных свойств K",
+        "isCorrect": true
+      },
+      {
+        "text": "Объединяет T и K",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что делает Pick<T, K>?",
+    "answers": [
+      {
+        "text": "Превращает в Record",
+        "isCorrect": false
+      },
+      {
+        "text": "Исключает K",
+        "isCorrect": false
+      },
+      {
+        "text": "Делает K optional",
+        "isCorrect": false
+      },
+      {
+        "text": "Оставляет только указанные свойства K",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Что такое intersection type T & U?",
+    "answers": [
+      {
+        "text": "Union двух типов",
+        "isCorrect": false
+      },
+      {
+        "text": "Разность типов",
+        "isCorrect": false
+      },
+      {
+        "text": "Объект, удовлетворяющий обоим типам",
+        "isCorrect": true
+      },
+      {
+        "text": "Кортеж из T и U",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как пометить свойство как необязательное?",
+    "answers": [
+      {
+        "text": "name | void",
+        "isCorrect": false
+      },
+      {
+        "text": "name?: string",
+        "isCorrect": true
+      },
+      {
+        "text": "optional name",
+        "isCorrect": false
+      },
+      {
+        "text": "maybe name",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что означает extends в generic constraint?",
+    "answers": [
+      {
+        "text": "Import из модуля",
+        "isCorrect": false
+      },
+      {
+        "text": "Расширяет interface merge",
+        "isCorrect": false
+      },
+      {
+        "text": "Наследует class",
+        "isCorrect": false
+      },
+      {
+        "text": "Ограничивает T типом-родителем",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Чем unknown отличается от any?",
+    "answers": [
+      {
+        "text": "Только для catch",
+        "isCorrect": false
+      },
+      {
+        "text": "Запрещён в strict mode",
+        "isCorrect": false
+      },
+      {
+        "text": "Не совместим с union",
+        "isCorrect": false
+      },
+      {
+        "text": "Требует сужения типа перед использованием",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Как описать кортеж из string и number?",
+    "answers": [
+      {
+        "text": "{ string, number }",
+        "isCorrect": false
+      },
+      {
+        "text": "[string, number]",
+        "isCorrect": true
+      },
+      {
+        "text": "(string, number)",
+        "isCorrect": false
+      },
+      {
+        "text": "Tuple<string, number>",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что делает ReturnType<T>?",
+    "answers": [
+      {
+        "text": "Извлекает тип возвращаемого значения функции",
+        "isCorrect": true
+      },
+      {
+        "text": "Тип constructor",
+        "isCorrect": false
+      },
+      {
+        "text": "Тип this",
+        "isCorrect": false
+      },
+      {
+        "text": "Тип параметров функции",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что делает Parameters<T>?",
+    "answers": [
+      {
+        "text": "Тип arguments",
+        "isCorrect": false
+      },
+      {
+        "text": "Тип возврата",
+        "isCorrect": false
+      },
+      {
+        "text": "Union параметров",
+        "isCorrect": false
+      },
+      {
+        "text": "Кортеж типов параметров функции",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Как описать объект с ключами string и значениями number?",
+    "answers": [
+      {
+        "text": "Dictionary",
+        "isCorrect": false
+      },
+      {
+        "text": "Map<string, number>",
+        "isCorrect": false
+      },
+      {
+        "text": "{ [key: string]: any } only",
+        "isCorrect": false
+      },
+      {
+        "text": "Record<string, number>",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Для чего import type?",
+    "answers": [
+      {
+        "text": "Import default class",
+        "isCorrect": false
+      },
+      {
+        "text": "Импорт JSON",
+        "isCorrect": false
+      },
+      {
+        "text": "Dynamic import",
+        "isCorrect": false
+      },
+      {
+        "text": "Импорт только типов без runtime-эффекта",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Что делает non-null assertion !?",
+    "answers": [
+      {
+        "text": "Логическое NOT",
+        "isCorrect": false
+      },
+      {
+        "text": "Strict equal check",
+        "isCorrect": false
+      },
+      {
+        "text": "Сообщает компилятору, что значение не null/undefined",
+        "isCorrect": true
+      },
+      {
+        "text": "Optional chaining",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое discriminated union?",
+    "answers": [
+      {
+        "text": "Union с общим полем-дискриминатором для сужения",
+        "isCorrect": true
+      },
+      {
+        "text": "Intersection двух union",
+        "isCorrect": false
+      },
+      {
+        "text": "enum only",
+        "isCorrect": false
+      },
+      {
+        "text": "any | never",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что включает strictNullChecks?",
+    "answers": [
+      {
+        "text": "noImplicitAny only",
+        "isCorrect": false
+      },
+      {
+        "text": "null и undefined учитываются в типах явно",
+        "isCorrect": true
+      },
+      {
+        "text": "Запрет any",
+        "isCorrect": false
+      },
+      {
+        "text": "Только strict mode JS",
+        "isCorrect": false
+      }
+    ]
+  }
+]

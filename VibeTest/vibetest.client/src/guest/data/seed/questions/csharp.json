@@ -1,0 +1,632 @@
+[
+  {
+    "text": "Какой тип в C# является ссылочным?",
+    "answers": [
+      {
+        "text": "double",
+        "isCorrect": false
+      },
+      {
+        "text": "bool",
+        "isCorrect": false
+      },
+      {
+        "text": "string",
+        "isCorrect": true
+      },
+      {
+        "text": "int",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой модификатор доступа делает член класса доступным только внутри текущей сборки?",
+    "answers": [
+      {
+        "text": "protected",
+        "isCorrect": false
+      },
+      {
+        "text": "internal",
+        "isCorrect": true
+      },
+      {
+        "text": "private",
+        "isCorrect": false
+      },
+      {
+        "text": "public",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какое ключевое слово объявляет класс в C#?",
+    "answers": [
+      {
+        "text": "class",
+        "isCorrect": true
+      },
+      {
+        "text": "struct",
+        "isCorrect": false
+      },
+      {
+        "text": "record",
+        "isCorrect": false
+      },
+      {
+        "text": "interface",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой тип является базовым для всех типов в .NET?",
+    "answers": [
+      {
+        "text": "System.Object",
+        "isCorrect": true
+      },
+      {
+        "text": "System.Array",
+        "isCorrect": false
+      },
+      {
+        "text": "System.String",
+        "isCorrect": false
+      },
+      {
+        "text": "System.ValueType",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как объявить константу времени компиляции?",
+    "answers": [
+      {
+        "text": "static",
+        "isCorrect": false
+      },
+      {
+        "text": "const",
+        "isCorrect": true
+      },
+      {
+        "text": "readonly",
+        "isCorrect": false
+      },
+      {
+        "text": "fixed",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой оператор проверяет тип во время выполнения?",
+    "answers": [
+      {
+        "text": "typeof",
+        "isCorrect": false
+      },
+      {
+        "text": "is",
+        "isCorrect": true
+      },
+      {
+        "text": "as",
+        "isCorrect": false
+      },
+      {
+        "text": "sizeof",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что делает ключевое слово async в методе?",
+    "answers": [
+      {
+        "text": "Делает метод статическим",
+        "isCorrect": false
+      },
+      {
+        "text": "Отключает исключения",
+        "isCorrect": false
+      },
+      {
+        "text": "Запускает поток ОС",
+        "isCorrect": false
+      },
+      {
+        "text": "Позволяет использовать await внутри метода",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Какой тип представляет целое 32-битное число?",
+    "answers": [
+      {
+        "text": "byte",
+        "isCorrect": false
+      },
+      {
+        "text": "int",
+        "isCorrect": true
+      },
+      {
+        "text": "long",
+        "isCorrect": false
+      },
+      {
+        "text": "short",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как создать новый экземпляр класса?",
+    "answers": [
+      {
+        "text": "create ClassName",
+        "isCorrect": false
+      },
+      {
+        "text": "new ClassName()",
+        "isCorrect": true
+      },
+      {
+        "text": "instanceof ClassName",
+        "isCorrect": false
+      },
+      {
+        "text": "ClassName.new()",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой модификатор запрещает наследование класса?",
+    "answers": [
+      {
+        "text": "virtual",
+        "isCorrect": false
+      },
+      {
+        "text": "sealed",
+        "isCorrect": true
+      },
+      {
+        "text": "static",
+        "isCorrect": false
+      },
+      {
+        "text": "abstract",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое namespace в C#?",
+    "answers": [
+      {
+        "text": "Имя сборки",
+        "isCorrect": false
+      },
+      {
+        "text": "Логическая группировка типов",
+        "isCorrect": true
+      },
+      {
+        "text": "Физическая папка на диске",
+        "isCorrect": false
+      },
+      {
+        "text": "Корневой класс программы",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой цикл перебирает элементы коллекции?",
+    "answers": [
+      {
+        "text": "each",
+        "isCorrect": false
+      },
+      {
+        "text": "foreach",
+        "isCorrect": true
+      },
+      {
+        "text": "loop",
+        "isCorrect": false
+      },
+      {
+        "text": "iterate",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как обработать исключение?",
+    "answers": [
+      {
+        "text": "if / else",
+        "isCorrect": false
+      },
+      {
+        "text": "guard / rescue",
+        "isCorrect": false
+      },
+      {
+        "text": "try / catch",
+        "isCorrect": true
+      },
+      {
+        "text": "handle / throw",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой тип используют для произвольного текста?",
+    "answers": [
+      {
+        "text": "text",
+        "isCorrect": false
+      },
+      {
+        "text": "string",
+        "isCorrect": true
+      },
+      {
+        "text": "char[]",
+        "isCorrect": false
+      },
+      {
+        "text": "StringBuilder только",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что возвращает метод с типом void?",
+    "answers": [
+      {
+        "text": "0",
+        "isCorrect": false
+      },
+      {
+        "text": "Ничего (void)",
+        "isCorrect": true
+      },
+      {
+        "text": "null",
+        "isCorrect": false
+      },
+      {
+        "text": "false",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как объявить интерфейс?",
+    "answers": [
+      {
+        "text": "interface = { }",
+        "isCorrect": false
+      },
+      {
+        "text": "trait IName { }",
+        "isCorrect": false
+      },
+      {
+        "text": "interface IName { }",
+        "isCorrect": true
+      },
+      {
+        "text": "protocol IName { }",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой тип хранит список элементов T?",
+    "answers": [
+      {
+        "text": "List<T>",
+        "isCorrect": true
+      },
+      {
+        "text": "Vector<T>",
+        "isCorrect": false
+      },
+      {
+        "text": "Collection<T>",
+        "isCorrect": false
+      },
+      {
+        "text": "Array<T>",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой оператор объединяет строки?",
+    "answers": [
+      {
+        "text": "&",
+        "isCorrect": false
+      },
+      {
+        "text": "||",
+        "isCorrect": false
+      },
+      {
+        "text": "+",
+        "isCorrect": true
+      },
+      {
+        "text": "??",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что делает ключевое слово override?",
+    "answers": [
+      {
+        "text": "Объявляет абстрактный метод",
+        "isCorrect": false
+      },
+      {
+        "text": "Создаёт partial-метод",
+        "isCorrect": false
+      },
+      {
+        "text": "Переопределяет виртуальный метод базового класса",
+        "isCorrect": true
+      },
+      {
+        "text": "Скрывает статический метод",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой тип подходит для «может отсутствовать»?",
+    "answers": [
+      {
+        "text": "nullable int",
+        "isCorrect": false
+      },
+      {
+        "text": "int?",
+        "isCorrect": true
+      },
+      {
+        "text": "int",
+        "isCorrect": false
+      },
+      {
+        "text": "Optional<int>",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой LINQ-метод фильтрует коллекцию?",
+    "answers": [
+      {
+        "text": "Where",
+        "isCorrect": true
+      },
+      {
+        "text": "SelectMany",
+        "isCorrect": false
+      },
+      {
+        "text": "GroupBy",
+        "isCorrect": false
+      },
+      {
+        "text": "OrderBy",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое boxing?",
+    "answers": [
+      {
+        "text": "Копирование строки в StringBuilder",
+        "isCorrect": false
+      },
+      {
+        "text": "Упаковка сборки в NuGet",
+        "isCorrect": false
+      },
+      {
+        "text": "Сериализация struct",
+        "isCorrect": false
+      },
+      {
+        "text": "Преобразование value type в ссылочный object на куче",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Какой модификатор разрешает доступ из производного класса?",
+    "answers": [
+      {
+        "text": "protected",
+        "isCorrect": true
+      },
+      {
+        "text": "internal only",
+        "isCorrect": false
+      },
+      {
+        "text": "private set",
+        "isCorrect": false
+      },
+      {
+        "text": "public static",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой тип для пар «ключ-значение»?",
+    "answers": [
+      {
+        "text": "Func<T>",
+        "isCorrect": false
+      },
+      {
+        "text": "delegate",
+        "isCorrect": false
+      },
+      {
+        "text": "Dictionary<K, V>",
+        "isCorrect": true
+      },
+      {
+        "text": "dynamic",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое свойство с get/set?",
+    "answers": [
+      {
+        "text": "Глобальная переменная",
+        "isCorrect": false
+      },
+      {
+        "text": "Статический импорт",
+        "isCorrect": false
+      },
+      {
+        "text": "Член класса с аксессорами доступа",
+        "isCorrect": true
+      },
+      {
+        "text": "Поле только в Release",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой тип представляет логическое true/false?",
+    "answers": [
+      {
+        "text": "logical",
+        "isCorrect": false
+      },
+      {
+        "text": "bit",
+        "isCorrect": false
+      },
+      {
+        "text": "bool",
+        "isCorrect": true
+      },
+      {
+        "text": "Boolean только в Java",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что делает оператор ??",
+    "answers": [
+      {
+        "text": "Проверяет равенство null",
+        "isCorrect": false
+      },
+      {
+        "text": "Выбрасывает NullReferenceException",
+        "isCorrect": false
+      },
+      {
+        "text": "Возвращает левый операнд, если он не null, иначе правый",
+        "isCorrect": true
+      },
+      {
+        "text": "Приводит тип к nullable",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как объявить массив целых чисел?",
+    "answers": [
+      {
+        "text": "int[]",
+        "isCorrect": true
+      },
+      {
+        "text": "array int",
+        "isCorrect": false
+      },
+      {
+        "text": "vector<int>",
+        "isCorrect": false
+      },
+      {
+        "text": "int array[]",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой тип C# 9+ описывает immutable data class?",
+    "answers": [
+      {
+        "text": "readonly struct data",
+        "isCorrect": false
+      },
+      {
+        "text": "record",
+        "isCorrect": true
+      },
+      {
+        "text": "data class",
+        "isCorrect": false
+      },
+      {
+        "text": "immutable",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой метод StringBuilder эффективно наращивает текст?",
+    "answers": [
+      {
+        "text": "Concat static only",
+        "isCorrect": false
+      },
+      {
+        "text": "Add char",
+        "isCorrect": false
+      },
+      {
+        "text": "Append",
+        "isCorrect": true
+      },
+      {
+        "text": "Push",
+        "isCorrect": false
+      }
+    ]
+  }
+]

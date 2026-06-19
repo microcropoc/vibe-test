@@ -49,6 +49,11 @@ export function saveLocalTest(test: LocalTest): void {
   notifyStorageChange();
 }
 
+export function saveLocalTestsBulk(tests: LocalTest[]): void {
+  writeJson(KEYS.localTests, tests);
+  notifyStorageChange();
+}
+
 export function deleteLocalTest(id: string): void {
   writeJson(
     KEYS.localTests,

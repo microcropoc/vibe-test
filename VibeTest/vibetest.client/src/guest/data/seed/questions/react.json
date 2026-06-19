@@ -1,0 +1,632 @@
+[
+  {
+    "text": "Для чего используется хук useState?",
+    "answers": [
+      {
+        "text": "Для доступа к контексту без Provider",
+        "isCorrect": false
+      },
+      {
+        "text": "Для мемоизации тяжёлых вычислений",
+        "isCorrect": false
+      },
+      {
+        "text": "Для хранения локального состояния в функциональном компоненте",
+        "isCorrect": true
+      },
+      {
+        "text": "Для выполнения побочных эффектов при монтировании",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое JSX?",
+    "answers": [
+      {
+        "text": "Библиотека для работы с DOM без React",
+        "isCorrect": false
+      },
+      {
+        "text": "Отдельный язык шаблонов, компилируемый в PHP",
+        "isCorrect": false
+      },
+      {
+        "text": "Формат сериализации компонентов в JSON",
+        "isCorrect": false
+      },
+      {
+        "text": "Синтаксическое расширение, похожее на HTML, для описания UI",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Для чего useEffect?",
+    "answers": [
+      {
+        "text": "Побочные эффекты после рендера",
+        "isCorrect": true
+      },
+      {
+        "text": "Локальное состояние",
+        "isCorrect": false
+      },
+      {
+        "text": "Refs only",
+        "isCorrect": false
+      },
+      {
+        "text": "Context only",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое props?",
+    "answers": [
+      {
+        "text": "Входные параметры компонента",
+        "isCorrect": true
+      },
+      {
+        "text": "CSS modules",
+        "isCorrect": false
+      },
+      {
+        "text": "Global store",
+        "isCorrect": false
+      },
+      {
+        "text": "Internal state",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как передать обработчик клика?",
+    "answers": [
+      {
+        "text": "onClick={handleClick}",
+        "isCorrect": true
+      },
+      {
+        "text": "click={handleClick}",
+        "isCorrect": false
+      },
+      {
+        "text": "onPress only",
+        "isCorrect": false
+      },
+      {
+        "text": "@click",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что делает key в списке?",
+    "answers": [
+      {
+        "text": "Sort order",
+        "isCorrect": false
+      },
+      {
+        "text": "Скрывает элемент",
+        "isCorrect": false
+      },
+      {
+        "text": "CSS class",
+        "isCorrect": false
+      },
+      {
+        "text": "Помогает React идентифицировать элементы",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Что такое Virtual DOM?",
+    "answers": [
+      {
+        "text": "SSR cache",
+        "isCorrect": false
+      },
+      {
+        "text": "Browser DOM clone",
+        "isCorrect": false
+      },
+      {
+        "text": "Легковесное представление UI для diff",
+        "isCorrect": true
+      },
+      {
+        "text": "Shadow DOM",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Для чего useRef?",
+    "answers": [
+      {
+        "text": "Context",
+        "isCorrect": false
+      },
+      {
+        "text": "Ссылка на DOM или mutable value без re-render",
+        "isCorrect": true
+      },
+      {
+        "text": "Memo cache",
+        "isCorrect": false
+      },
+      {
+        "text": "State storage",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое controlled input?",
+    "answers": [
+      {
+        "text": "Readonly input",
+        "isCorrect": false
+      },
+      {
+        "text": "Native form only",
+        "isCorrect": false
+      },
+      {
+        "text": "Uncontrolled only",
+        "isCorrect": false
+      },
+      {
+        "text": "value управляется state React",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Как условно рендерить?",
+    "answers": [
+      {
+        "text": "v-if",
+        "isCorrect": false
+      },
+      {
+        "text": "<if condition>",
+        "isCorrect": false
+      },
+      {
+        "text": "ng-if",
+        "isCorrect": false
+      },
+      {
+        "text": "{condition && <Comp />}",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Что делает React.Fragment?",
+    "answers": [
+      {
+        "text": "Lazy load",
+        "isCorrect": false
+      },
+      {
+        "text": "Error boundary",
+        "isCorrect": false
+      },
+      {
+        "text": "Создаёт portal",
+        "isCorrect": false
+      },
+      {
+        "text": "Группирует children без лишнего DOM-узла",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Для чего useMemo?",
+    "answers": [
+      {
+        "text": "useEffect alias",
+        "isCorrect": false
+      },
+      {
+        "text": "Мемоизация вычисленного значения",
+        "isCorrect": true
+      },
+      {
+        "text": "Ref cache",
+        "isCorrect": false
+      },
+      {
+        "text": "Memo component",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое поднятие состояния (lifting state up)?",
+    "answers": [
+      {
+        "text": "Context always",
+        "isCorrect": false
+      },
+      {
+        "text": "Передача state общему родителю",
+        "isCorrect": true
+      },
+      {
+        "text": "useReducer only",
+        "isCorrect": false
+      },
+      {
+        "text": "Global Redux",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как создать контекст?",
+    "answers": [
+      {
+        "text": "useContext only",
+        "isCorrect": false
+      },
+      {
+        "text": "Provider.create",
+        "isCorrect": false
+      },
+      {
+        "text": "createContext(defaultValue)",
+        "isCorrect": true
+      },
+      {
+        "text": "React.context()",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что делает useCallback?",
+    "answers": [
+      {
+        "text": "Мемоизирует функцию между рендерами",
+        "isCorrect": true
+      },
+      {
+        "text": "Async wrapper",
+        "isCorrect": false
+      },
+      {
+        "text": "Debounce handler",
+        "isCorrect": false
+      },
+      {
+        "text": "Callback DOM event",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое SPA в React-приложении?",
+    "answers": [
+      {
+        "text": "MPA always",
+        "isCorrect": false
+      },
+      {
+        "text": "Один HTML, навигация на клиенте",
+        "isCorrect": true
+      },
+      {
+        "text": "Static HTML only",
+        "isCorrect": false
+      },
+      {
+        "text": "Server pages only",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как импортировать компонент?",
+    "answers": [
+      {
+        "text": "include Comp",
+        "isCorrect": false
+      },
+      {
+        "text": "import Comp from './Comp'",
+        "isCorrect": true
+      },
+      {
+        "text": "require('./Comp')",
+        "isCorrect": false
+      },
+      {
+        "text": "using Comp",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое StrictMode?",
+    "answers": [
+      {
+        "text": "SSR only",
+        "isCorrect": false
+      },
+      {
+        "text": "Production optimizer",
+        "isCorrect": false
+      },
+      {
+        "text": "Router mode",
+        "isCorrect": false
+      },
+      {
+        "text": "Режим доп. проверок в dev",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Для чего React Router?",
+    "answers": [
+      {
+        "text": "CSS routing",
+        "isCorrect": false
+      },
+      {
+        "text": "Маршрутизация на клиенте",
+        "isCorrect": true
+      },
+      {
+        "text": "State routing",
+        "isCorrect": false
+      },
+      {
+        "text": "API routing",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что делает setState / setter из useState?",
+    "answers": [
+      {
+        "text": "Batch skip render",
+        "isCorrect": false
+      },
+      {
+        "text": "Mutates DOM sync",
+        "isCorrect": false
+      },
+      {
+        "text": "Replace entire app",
+        "isCorrect": false
+      },
+      {
+        "text": "Планирует обновление и re-render",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Что такое children prop?",
+    "answers": [
+      {
+        "text": "Array keys",
+        "isCorrect": false
+      },
+      {
+        "text": "Child routes only",
+        "isCorrect": false
+      },
+      {
+        "text": "Portal target",
+        "isCorrect": false
+      },
+      {
+        "text": "Вложенное содержимое компонента",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Как избежать лишних рендеров с React.memo?",
+    "answers": [
+      {
+        "text": "StrictMode off",
+        "isCorrect": false
+      },
+      {
+        "text": "useMemo on component",
+        "isCorrect": false
+      },
+      {
+        "text": "key prop",
+        "isCorrect": false
+      },
+      {
+        "text": "Оборачивают компонент в memo",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Что такое custom hook?",
+    "answers": [
+      {
+        "text": "HOC only",
+        "isCorrect": false
+      },
+      {
+        "text": "Redux middleware",
+        "isCorrect": false
+      },
+      {
+        "text": "Class component",
+        "isCorrect": false
+      },
+      {
+        "text": "Функция use* с переиспользуемой логикой",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Что делает createRoot (React 18+)?",
+    "answers": [
+      {
+        "text": "Создаёт корень concurrent rendering",
+        "isCorrect": true
+      },
+      {
+        "text": "SSR entry only",
+        "isCorrect": false
+      },
+      {
+        "text": "Hydrate only",
+        "isCorrect": false
+      },
+      {
+        "text": "Legacy render",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Для чего Suspense?",
+    "answers": [
+      {
+        "text": "Показ fallback при lazy loading",
+        "isCorrect": true
+      },
+      {
+        "text": "Error catching",
+        "isCorrect": false
+      },
+      {
+        "text": "Portal wrapper",
+        "isCorrect": false
+      },
+      {
+        "text": "State batching",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое prop drilling?",
+    "answers": [
+      {
+        "text": "Router params",
+        "isCorrect": false
+      },
+      {
+        "text": "Ref forwarding",
+        "isCorrect": false
+      },
+      {
+        "text": "Передача props через многие уровни",
+        "isCorrect": true
+      },
+      {
+        "text": "Context abuse",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как обработать форму controlled?",
+    "answers": [
+      {
+        "text": "action attribute only",
+        "isCorrect": false
+      },
+      {
+        "text": "native submit only",
+        "isCorrect": false
+      },
+      {
+        "text": "onSubmit + preventDefault + state",
+        "isCorrect": true
+      },
+      {
+        "text": "uncontrolled always",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое reconciliation?",
+    "answers": [
+      {
+        "text": "Key generation",
+        "isCorrect": false
+      },
+      {
+        "text": "Сравнение Virtual DOM и обновление реального",
+        "isCorrect": true
+      },
+      {
+        "text": "Bundle split",
+        "isCorrect": false
+      },
+      {
+        "text": "SSR hydration only",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Для чего useReducer?",
+    "answers": [
+      {
+        "text": "Global store only",
+        "isCorrect": false
+      },
+      {
+        "text": "API calls only",
+        "isCorrect": false
+      },
+      {
+        "text": "Replace useState always",
+        "isCorrect": false
+      },
+      {
+        "text": "Сложное state через reducer",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Что такое компонент в React?",
+    "answers": [
+      {
+        "text": "CSS module",
+        "isCorrect": false
+      },
+      {
+        "text": "Функция или класс, возвращающие UI",
+        "isCorrect": true
+      },
+      {
+        "text": "HTML template file",
+        "isCorrect": false
+      },
+      {
+        "text": "Web component only",
+        "isCorrect": false
+      }
+    ]
+  }
+]

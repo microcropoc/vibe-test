@@ -16,7 +16,8 @@
     "e2e": "playwright test --config=playwright.guest.config.ts && playwright test --config=playwright.full.config.ts",
     "e2e:guest": "playwright test --config=playwright.guest.config.ts",
     "e2e:full": "playwright test --config=playwright.full.config.ts",
-    "e2e:install": "playwright install chromium"
+    "e2e:install": "playwright install chromium",
+    "generate:seed": "node scripts/generate-seed-data.mjs"
   },
   "dependencies": {
     "react": "^19.2.6",

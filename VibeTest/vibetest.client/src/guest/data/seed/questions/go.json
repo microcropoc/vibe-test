@@ -1,0 +1,632 @@
+[
+  {
+    "text": "Как объявить переменную с явным типом в Go?",
+    "answers": [
+      {
+        "text": "let x: int = 10",
+        "isCorrect": false
+      },
+      {
+        "text": "x := int(10)",
+        "isCorrect": false
+      },
+      {
+        "text": "var x int = 10",
+        "isCorrect": true
+      },
+      {
+        "text": "int x = 10",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что возвращает функция, если не указать return?",
+    "answers": [
+      {
+        "text": "nil для любого типа",
+        "isCorrect": false
+      },
+      {
+        "text": "Ошибку компиляции всегда",
+        "isCorrect": false
+      },
+      {
+        "text": "undefined",
+        "isCorrect": false
+      },
+      {
+        "text": "Нулевые значения типов результатов",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Как объявить переменную с выводом типа?",
+    "answers": [
+      {
+        "text": "var x = 10 only",
+        "isCorrect": false
+      },
+      {
+        "text": "let x = 10",
+        "isCorrect": false
+      },
+      {
+        "text": "x := 10",
+        "isCorrect": true
+      },
+      {
+        "text": "auto x = 10",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой тип для ошибок в идиоматичном Go?",
+    "answers": [
+      {
+        "text": "failure",
+        "isCorrect": false
+      },
+      {
+        "text": "Err",
+        "isCorrect": false
+      },
+      {
+        "text": "error",
+        "isCorrect": true
+      },
+      {
+        "text": "Exception",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как объявить функцию?",
+    "answers": [
+      {
+        "text": "fn name() { }",
+        "isCorrect": false
+      },
+      {
+        "text": "def name():",
+        "isCorrect": false
+      },
+      {
+        "text": "func name() { }",
+        "isCorrect": true
+      },
+      {
+        "text": "function name() { }",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое goroutine?",
+    "answers": [
+      {
+        "text": "Process",
+        "isCorrect": false
+      },
+      {
+        "text": "OS thread only",
+        "isCorrect": false
+      },
+      {
+        "text": "Channel",
+        "isCorrect": false
+      },
+      {
+        "text": "Легковесный поток выполнения",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Какой тип для канала int?",
+    "answers": [
+      {
+        "text": "int chan",
+        "isCorrect": false
+      },
+      {
+        "text": "Channel int",
+        "isCorrect": false
+      },
+      {
+        "text": "channel<int>",
+        "isCorrect": false
+      },
+      {
+        "text": "chan int",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Как импортировать пакет fmt?",
+    "answers": [
+      {
+        "text": "#include fmt",
+        "isCorrect": false
+      },
+      {
+        "text": "using fmt",
+        "isCorrect": false
+      },
+      {
+        "text": "require fmt",
+        "isCorrect": false
+      },
+      {
+        "text": "import \"fmt\"",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Что делает defer?",
+    "answers": [
+      {
+        "text": "Запускает goroutine",
+        "isCorrect": false
+      },
+      {
+        "text": "Создаёт mutex",
+        "isCorrect": false
+      },
+      {
+        "text": "Откладывает вызов до выхода из функции",
+        "isCorrect": true
+      },
+      {
+        "text": "Panic recover",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как проверить ошибку после вызова?",
+    "answers": [
+      {
+        "text": "except err",
+        "isCorrect": false
+      },
+      {
+        "text": "try / catch",
+        "isCorrect": false
+      },
+      {
+        "text": "check error()",
+        "isCorrect": false
+      },
+      {
+        "text": "if err != nil { }",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Какой zero value у int?",
+    "answers": [
+      {
+        "text": "undefined",
+        "isCorrect": false
+      },
+      {
+        "text": "0",
+        "isCorrect": true
+      },
+      {
+        "text": "null",
+        "isCorrect": false
+      },
+      {
+        "text": "nil",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как объявить slice?",
+    "answers": [
+      {
+        "text": "array[]int",
+        "isCorrect": false
+      },
+      {
+        "text": "Vector int",
+        "isCorrect": false
+      },
+      {
+        "text": "[]int или make([]int, n)",
+        "isCorrect": true
+      },
+      {
+        "text": "list<int>",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое struct?",
+    "answers": [
+      {
+        "text": "Составной тип с именованными полями",
+        "isCorrect": true
+      },
+      {
+        "text": "Map only",
+        "isCorrect": false
+      },
+      {
+        "text": "Interface",
+        "isCorrect": false
+      },
+      {
+        "text": "Class с методами only",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как экспортировать имя?",
+    "answers": [
+      {
+        "text": "Имя с заглавной буквы",
+        "isCorrect": true
+      },
+      {
+        "text": "keyword export",
+        "isCorrect": false
+      },
+      {
+        "text": "@Export",
+        "isCorrect": false
+      },
+      {
+        "text": "public modifier",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что делает range по slice?",
+    "answers": [
+      {
+        "text": "Создаёт map",
+        "isCorrect": false
+      },
+      {
+        "text": "Итерирует индекс и значение",
+        "isCorrect": true
+      },
+      {
+        "text": "Сортирует slice",
+        "isCorrect": false
+      },
+      {
+        "text": "Фильтрует элементы",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой тип map строка→int?",
+    "answers": [
+      {
+        "text": "hash string int",
+        "isCorrect": false
+      },
+      {
+        "text": "Map string int",
+        "isCorrect": false
+      },
+      {
+        "text": "map[string]int",
+        "isCorrect": true
+      },
+      {
+        "text": "dict<string, int>",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое interface{} / any?",
+    "answers": [
+      {
+        "text": "nil type",
+        "isCorrect": false
+      },
+      {
+        "text": "void pointer",
+        "isCorrect": false
+      },
+      {
+        "text": "Пустой struct only",
+        "isCorrect": false
+      },
+      {
+        "text": "Любой тип удовлетворяет interface",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Как создать pointer?",
+    "answers": [
+      {
+        "text": "ptr(x)",
+        "isCorrect": false
+      },
+      {
+        "text": "*x",
+        "isCorrect": false
+      },
+      {
+        "text": "addressof x",
+        "isCorrect": false
+      },
+      {
+        "text": "&x или new(T)",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Что делает go keyword?",
+    "answers": [
+      {
+        "text": "Channel send",
+        "isCorrect": false
+      },
+      {
+        "text": "Defer call",
+        "isCorrect": false
+      },
+      {
+        "text": "Запускает функцию как goroutine",
+        "isCorrect": true
+      },
+      {
+        "text": "Import package",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой пакет для HTTP-сервера?",
+    "answers": [
+      {
+        "text": "gin only",
+        "isCorrect": false
+      },
+      {
+        "text": "http/server",
+        "isCorrect": false
+      },
+      {
+        "text": "web.go",
+        "isCorrect": false
+      },
+      {
+        "text": "net/http",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Что такое package main?",
+    "answers": [
+      {
+        "text": "Test package",
+        "isCorrect": false
+      },
+      {
+        "text": "Точка входа исполняемой программы",
+        "isCorrect": true
+      },
+      {
+        "text": "Library package",
+        "isCorrect": false
+      },
+      {
+        "text": "Internal only",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как форматировать строку с %?",
+    "answers": [
+      {
+        "text": "printf only stdout",
+        "isCorrect": false
+      },
+      {
+        "text": "fmt.Sprintf",
+        "isCorrect": true
+      },
+      {
+        "text": "format! macro",
+        "isCorrect": false
+      },
+      {
+        "text": "string.format",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что делает len для slice?",
+    "answers": [
+      {
+        "text": "Размер в байтах",
+        "isCorrect": false
+      },
+      {
+        "text": "Количество элементов",
+        "isCorrect": true
+      },
+      {
+        "text": "Ёмкость cap",
+        "isCorrect": false
+      },
+      {
+        "text": "Max index",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как append в slice?",
+    "answers": [
+      {
+        "text": "s.concat(x)",
+        "isCorrect": false
+      },
+      {
+        "text": "s.push(x)",
+        "isCorrect": false
+      },
+      {
+        "text": "s.add(x)",
+        "isCorrect": false
+      },
+      {
+        "text": "append(s, x)",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Что такое select?",
+    "answers": [
+      {
+        "text": "SQL query",
+        "isCorrect": false
+      },
+      {
+        "text": "Sort slice",
+        "isCorrect": false
+      },
+      {
+        "text": "Выбор готового case среди channel ops",
+        "isCorrect": true
+      },
+      {
+        "text": "Switch type",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как объявить константу?",
+    "answers": [
+      {
+        "text": "constexpr Pi",
+        "isCorrect": false
+      },
+      {
+        "text": "final Pi",
+        "isCorrect": false
+      },
+      {
+        "text": "define Pi",
+        "isCorrect": false
+      },
+      {
+        "text": "const Pi = 3.14",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Что делает go mod init?",
+    "answers": [
+      {
+        "text": "Создаёт новый модуль Go",
+        "isCorrect": true
+      },
+      {
+        "text": "Build binary",
+        "isCorrect": false
+      },
+      {
+        "text": "Запускает тесты",
+        "isCorrect": false
+      },
+      {
+        "text": "Скачивает deps",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой тип rune?",
+    "answers": [
+      {
+        "text": "Rune class",
+        "isCorrect": false
+      },
+      {
+        "text": "Alias для int32 (Unicode code point)",
+        "isCorrect": true
+      },
+      {
+        "text": "Byte",
+        "isCorrect": false
+      },
+      {
+        "text": "String char",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что делает panic?",
+    "answers": [
+      {
+        "text": "Recover always",
+        "isCorrect": false
+      },
+      {
+        "text": "Log warning",
+        "isCorrect": false
+      },
+      {
+        "text": "Return error",
+        "isCorrect": false
+      },
+      {
+        "text": "Останавливает goroutine с stack trace",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Как читать из channel?",
+    "answers": [
+      {
+        "text": "x := <-ch",
+        "isCorrect": true
+      },
+      {
+        "text": "read(ch)",
+        "isCorrect": false
+      },
+      {
+        "text": "receive ch",
+        "isCorrect": false
+      },
+      {
+        "text": "ch.read()",
+        "isCorrect": false
+      }
+    ]
+  }
+]

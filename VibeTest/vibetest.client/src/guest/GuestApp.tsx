@@ -1,4 +1,7 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { isGuestMode } from '@/config/env';
+import { seedGuestTestsIfEmpty } from '@/guest/bootstrap/seedLocalTests';
 import { GuestLayout } from '@/guest/components/layout/GuestLayout';
 import { EditorPage } from '@/guest/pages/EditorPage';
 import { HomePage } from '@/guest/pages/HomePage';
@@ -8,6 +11,12 @@ import { PlayPage } from '@/guest/pages/PlayPage';
 import { routerBasename } from '@/utils/router';
 
 export function GuestApp() {
+  useEffect(() => {
+    if (isGuestMode) {
+      seedGuestTestsIfEmpty();
+    }
+  }, []);
+
   return (
     <BrowserRouter basename={routerBasename()}>
       <Routes>

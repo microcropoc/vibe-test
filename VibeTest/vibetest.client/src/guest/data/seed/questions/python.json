@@ -1,0 +1,632 @@
+[
+  {
+    "text": "Как создать список в Python?",
+    "answers": [
+      {
+        "text": "set()",
+        "isCorrect": false
+      },
+      {
+        "text": "[] или list()",
+        "isCorrect": true
+      },
+      {
+        "text": "{}",
+        "isCorrect": false
+      },
+      {
+        "text": "()",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой оператор используется для возведения в степень?",
+    "answers": [
+      {
+        "text": "^^",
+        "isCorrect": false
+      },
+      {
+        "text": "pow only",
+        "isCorrect": false
+      },
+      {
+        "text": "**",
+        "isCorrect": true
+      },
+      {
+        "text": "^",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как объявить функцию в Python?",
+    "answers": [
+      {
+        "text": "function name():",
+        "isCorrect": false
+      },
+      {
+        "text": "func name():",
+        "isCorrect": false
+      },
+      {
+        "text": "def name():",
+        "isCorrect": true
+      },
+      {
+        "text": "fn name():",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой тип неизменяемой последовательности?",
+    "answers": [
+      {
+        "text": "dict",
+        "isCorrect": false
+      },
+      {
+        "text": "set",
+        "isCorrect": false
+      },
+      {
+        "text": "list",
+        "isCorrect": false
+      },
+      {
+        "text": "tuple",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Как создать словарь?",
+    "answers": [
+      {
+        "text": "[]",
+        "isCorrect": false
+      },
+      {
+        "text": "()",
+        "isCorrect": false
+      },
+      {
+        "text": "{} или dict()",
+        "isCorrect": true
+      },
+      {
+        "text": "set()",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой оператор проверяет принадлежность элементу?",
+    "answers": [
+      {
+        "text": "in",
+        "isCorrect": true
+      },
+      {
+        "text": "contains",
+        "isCorrect": false
+      },
+      {
+        "text": "includes",
+        "isCorrect": false
+      },
+      {
+        "text": "has",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что выводит print(type(3.14))?",
+    "answers": [
+      {
+        "text": "number",
+        "isCorrect": false
+      },
+      {
+        "text": "<class 'double'>",
+        "isCorrect": false
+      },
+      {
+        "text": "float",
+        "isCorrect": false
+      },
+      {
+        "text": "<class 'float'>",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Как импортировать модуль?",
+    "answers": [
+      {
+        "text": "import module",
+        "isCorrect": true
+      },
+      {
+        "text": "#include module",
+        "isCorrect": false
+      },
+      {
+        "text": "require module",
+        "isCorrect": false
+      },
+      {
+        "text": "using module",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой метод списка добавляет элемент в конец?",
+    "answers": [
+      {
+        "text": "append",
+        "isCorrect": true
+      },
+      {
+        "text": "push",
+        "isCorrect": false
+      },
+      {
+        "text": "add",
+        "isCorrect": false
+      },
+      {
+        "text": "insert always last",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое None?",
+    "answers": [
+      {
+        "text": "0",
+        "isCorrect": false
+      },
+      {
+        "text": "Пустая строка",
+        "isCorrect": false
+      },
+      {
+        "text": "False",
+        "isCorrect": false
+      },
+      {
+        "text": "Аналог отсутствующего значения",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Как получить срез list[1:3]?",
+    "answers": [
+      {
+        "text": "Последние три",
+        "isCorrect": false
+      },
+      {
+        "text": "Только индекс 1",
+        "isCorrect": false
+      },
+      {
+        "text": "Элементы с индексами 1 и 2",
+        "isCorrect": true
+      },
+      {
+        "text": "Элементы 1, 2 и 3",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой цикл перебирает iterable?",
+    "answers": [
+      {
+        "text": "loop item",
+        "isCorrect": false
+      },
+      {
+        "text": "each item",
+        "isCorrect": false
+      },
+      {
+        "text": "foreach item",
+        "isCorrect": false
+      },
+      {
+        "text": "for item in items",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Как обработать исключение?",
+    "answers": [
+      {
+        "text": "guard / else",
+        "isCorrect": false
+      },
+      {
+        "text": "try / catch",
+        "isCorrect": false
+      },
+      {
+        "text": "handle / rescue",
+        "isCorrect": false
+      },
+      {
+        "text": "try / except",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Что делает len(x)?",
+    "answers": [
+      {
+        "text": "Возвращает количество элементов",
+        "isCorrect": true
+      },
+      {
+        "text": "Длину строки в байтах",
+        "isCorrect": false
+      },
+      {
+        "text": "Максимальный индекс",
+        "isCorrect": false
+      },
+      {
+        "text": "Размер в памяти",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как создать множество уникальных элементов?",
+    "answers": [
+      {
+        "text": "distinct()",
+        "isCorrect": false
+      },
+      {
+        "text": "hash()",
+        "isCorrect": false
+      },
+      {
+        "text": "unique()",
+        "isCorrect": false
+      },
+      {
+        "text": "set() или {1, 2}",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Какой оператор целочисленного деления?",
+    "answers": [
+      {
+        "text": "div",
+        "isCorrect": false
+      },
+      {
+        "text": "//",
+        "isCorrect": true
+      },
+      {
+        "text": "/",
+        "isCorrect": false
+      },
+      {
+        "text": "\\\\",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое list comprehension?",
+    "answers": [
+      {
+        "text": "Sort in place",
+        "isCorrect": false
+      },
+      {
+        "text": "Import list",
+        "isCorrect": false
+      },
+      {
+        "text": "Deep copy list",
+        "isCorrect": false
+      },
+      {
+        "text": "Краткий синтаксис создания списка из iterable",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Как открыть файл для чтения?",
+    "answers": [
+      {
+        "text": "fopen('file.txt')",
+        "isCorrect": false
+      },
+      {
+        "text": "open('file.txt', 'r')",
+        "isCorrect": true
+      },
+      {
+        "text": "read('file.txt')",
+        "isCorrect": false
+      },
+      {
+        "text": "File.open",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой метод строки убирает пробелы по краям?",
+    "answers": [
+      {
+        "text": "pad",
+        "isCorrect": false
+      },
+      {
+        "text": "chomp",
+        "isCorrect": false
+      },
+      {
+        "text": "strip",
+        "isCorrect": true
+      },
+      {
+        "text": "trim",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что делает range(5)?",
+    "answers": [
+      {
+        "text": "Генерирует float",
+        "isCorrect": false
+      },
+      {
+        "text": "Создаёт список [1..5]",
+        "isCorrect": false
+      },
+      {
+        "text": "Создаёт tuple only",
+        "isCorrect": false
+      },
+      {
+        "text": "Создаёт последовательность 0..4",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Как проверить тип isinstance(x, int)?",
+    "answers": [
+      {
+        "text": "Проверяет, является ли x экземпляром int",
+        "isCorrect": true
+      },
+      {
+        "text": "Cast to int",
+        "isCorrect": false
+      },
+      {
+        "text": "Сравнивает type name",
+        "isCorrect": false
+      },
+      {
+        "text": "Приводит x к int",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое __init__?",
+    "answers": [
+      {
+        "text": "Static method",
+        "isCorrect": false
+      },
+      {
+        "text": "Деструктор",
+        "isCorrect": false
+      },
+      {
+        "text": "Module init only",
+        "isCorrect": false
+      },
+      {
+        "text": "Конструктор экземпляра класса",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Как объединить списки?",
+    "answers": [
+      {
+        "text": "list1 & list2",
+        "isCorrect": false
+      },
+      {
+        "text": "concat only",
+        "isCorrect": false
+      },
+      {
+        "text": "list1 + list2 или extend",
+        "isCorrect": true
+      },
+      {
+        "text": "merge(list1, list2) builtin",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что возвращает dict.get(key, default)?",
+    "answers": [
+      {
+        "text": "Значение или default, если ключа нет",
+        "isCorrect": true
+      },
+      {
+        "text": "KeyError всегда",
+        "isCorrect": false
+      },
+      {
+        "text": "Index key",
+        "isCorrect": false
+      },
+      {
+        "text": "None only",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой модуль для работы с JSON?",
+    "answers": [
+      {
+        "text": "json",
+        "isCorrect": true
+      },
+      {
+        "text": "serialize",
+        "isCorrect": false
+      },
+      {
+        "text": "yaml",
+        "isCorrect": false
+      },
+      {
+        "text": "pickle only",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что делает pass?",
+    "answers": [
+      {
+        "text": "Raise exception",
+        "isCorrect": false
+      },
+      {
+        "text": "Пропуск итерации",
+        "isCorrect": false
+      },
+      {
+        "text": "Заглушка без операций",
+        "isCorrect": true
+      },
+      {
+        "text": "Выход из функции",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как создать виртуальное окружение?",
+    "answers": [
+      {
+        "text": "pip env",
+        "isCorrect": false
+      },
+      {
+        "text": "conda only",
+        "isCorrect": false
+      },
+      {
+        "text": "python -m venv",
+        "isCorrect": true
+      },
+      {
+        "text": "virtualenv only",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Где описывают зависимости проекта?",
+    "answers": [
+      {
+        "text": "setup.cfg only",
+        "isCorrect": false
+      },
+      {
+        "text": "Pipfile.lock only",
+        "isCorrect": false
+      },
+      {
+        "text": "package.json",
+        "isCorrect": false
+      },
+      {
+        "text": "requirements.txt или pyproject.toml",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Какой оператор распаковывает iterable?",
+    "answers": [
+      {
+        "text": "||",
+        "isCorrect": false
+      },
+      {
+        "text": "*",
+        "isCorrect": true
+      },
+      {
+        "text": "...",
+        "isCorrect": false
+      },
+      {
+        "text": "spread",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что делает if __name__ == \"__main__\"?",
+    "answers": [
+      {
+        "text": "Запускает код только при прямом запуске модуля",
+        "isCorrect": true
+      },
+      {
+        "text": "Экспортирует main",
+        "isCorrect": false
+      },
+      {
+        "text": "Создаёт entry point",
+        "isCorrect": false
+      },
+      {
+        "text": "Strict mode guard",
+        "isCorrect": false
+      }
+    ]
+  }
+]

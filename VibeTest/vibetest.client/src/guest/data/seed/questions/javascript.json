@@ -1,0 +1,632 @@
+[
+  {
+    "text": "Какой оператор используется для строгого сравнения без приведения типов?",
+    "answers": [
+      {
+        "text": "!==",
+        "isCorrect": false
+      },
+      {
+        "text": "==",
+        "isCorrect": false
+      },
+      {
+        "text": "=",
+        "isCorrect": false
+      },
+      {
+        "text": "===",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Как объявить блочную область видимости для переменной?",
+    "answers": [
+      {
+        "text": "global",
+        "isCorrect": false
+      },
+      {
+        "text": "function",
+        "isCorrect": false
+      },
+      {
+        "text": "let или const",
+        "isCorrect": true
+      },
+      {
+        "text": "var",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой метод массива добавляет элемент в конец?",
+    "answers": [
+      {
+        "text": "push",
+        "isCorrect": true
+      },
+      {
+        "text": "append",
+        "isCorrect": false
+      },
+      {
+        "text": "insert",
+        "isCorrect": false
+      },
+      {
+        "text": "addLast",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что возвращает typeof null?",
+    "answers": [
+      {
+        "text": "'object'",
+        "isCorrect": true
+      },
+      {
+        "text": "undefined",
+        "isCorrect": false
+      },
+      {
+        "text": "null",
+        "isCorrect": false
+      },
+      {
+        "text": "'null'",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как создать объект без прототипа?",
+    "answers": [
+      {
+        "text": "Object.assign({})",
+        "isCorrect": false
+      },
+      {
+        "text": "Object.freeze({})",
+        "isCorrect": false
+      },
+      {
+        "text": "Object.create(null)",
+        "isCorrect": true
+      },
+      {
+        "text": "new Object(null)",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой метод строки приводит текст к верхнему регистру?",
+    "answers": [
+      {
+        "text": "toUpper()",
+        "isCorrect": false
+      },
+      {
+        "text": "toUpperCase()",
+        "isCorrect": true
+      },
+      {
+        "text": "upper()",
+        "isCorrect": false
+      },
+      {
+        "text": "capitalize()",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое замыкание (closure)?",
+    "answers": [
+      {
+        "text": "Способ импорта JSON",
+        "isCorrect": false
+      },
+      {
+        "text": "Функция, захватывающая переменные из внешней области видимости",
+        "isCorrect": true
+      },
+      {
+        "text": "Способ закрыть React-компонент",
+        "isCorrect": false
+      },
+      {
+        "text": "Тип модуля ES",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой метод массива проверяет условие для всех элементов?",
+    "answers": [
+      {
+        "text": "all",
+        "isCorrect": false
+      },
+      {
+        "text": "checkAll",
+        "isCorrect": false
+      },
+      {
+        "text": "every",
+        "isCorrect": true
+      },
+      {
+        "text": "validate",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что делает оператор ... для объектов?",
+    "answers": [
+      {
+        "text": "Разворачивает rest в объект",
+        "isCorrect": false
+      },
+      {
+        "text": "Копирует перечислимые свойства в новый объект",
+        "isCorrect": true
+      },
+      {
+        "text": "Удаляет свойства из объекта",
+        "isCorrect": false
+      },
+      {
+        "text": "Создаёт deep clone",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой тип у функции в typeof?",
+    "answers": [
+      {
+        "text": "object",
+        "isCorrect": false
+      },
+      {
+        "text": "method",
+        "isCorrect": false
+      },
+      {
+        "text": "function",
+        "isCorrect": true
+      },
+      {
+        "text": "callable",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое NaN в JavaScript?",
+    "answers": [
+      {
+        "text": "Результат некорректной числовой операции",
+        "isCorrect": true
+      },
+      {
+        "text": "Строка \"Not a Number\"",
+        "isCorrect": false
+      },
+      {
+        "text": "Ошибка парсинга JSON",
+        "isCorrect": false
+      },
+      {
+        "text": "Специальное значение null",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как проверить, что значение — массив?",
+    "answers": [
+      {
+        "text": "value.isArray()",
+        "isCorrect": false
+      },
+      {
+        "text": "typeof value === \"array\"",
+        "isCorrect": false
+      },
+      {
+        "text": "Array.isArray(value)",
+        "isCorrect": true
+      },
+      {
+        "text": "value instanceof []",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой метод Promise продолжает цепочку асинхронных операций?",
+    "answers": [
+      {
+        "text": "await",
+        "isCorrect": false
+      },
+      {
+        "text": "resolve",
+        "isCorrect": false
+      },
+      {
+        "text": "then",
+        "isCorrect": true
+      },
+      {
+        "text": "chain",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что делает деструктуризация const { a, b } = obj?",
+    "answers": [
+      {
+        "text": "Удаляет поля из obj",
+        "isCorrect": false
+      },
+      {
+        "text": "Преобразует obj в массив",
+        "isCorrect": false
+      },
+      {
+        "text": "Создаёт копию obj",
+        "isCorrect": false
+      },
+      {
+        "text": "Извлекает свойства a и b из obj",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Какой цикл перебирает свойства объекта?",
+    "answers": [
+      {
+        "text": "for...in или Object.keys",
+        "isCorrect": true
+      },
+      {
+        "text": "for...of для plain object",
+        "isCorrect": false
+      },
+      {
+        "text": "while...in",
+        "isCorrect": false
+      },
+      {
+        "text": "loop...each",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое undefined?",
+    "answers": [
+      {
+        "text": "Ошибка ReferenceError",
+        "isCorrect": false
+      },
+      {
+        "text": "Значение переменной, которой не присвоено значение",
+        "isCorrect": true
+      },
+      {
+        "text": "Пустой объект",
+        "isCorrect": false
+      },
+      {
+        "text": "Тип void в JS",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как объявить стрелочную функцию?",
+    "answers": [
+      {
+        "text": "function => { }",
+        "isCorrect": false
+      },
+      {
+        "text": "lambda () { }",
+        "isCorrect": false
+      },
+      {
+        "text": "() => { }",
+        "isCorrect": true
+      },
+      {
+        "text": "fn () { }",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой метод превращает JSON-строку в объект?",
+    "answers": [
+      {
+        "text": "JSON.parse",
+        "isCorrect": true
+      },
+      {
+        "text": "parseJSON",
+        "isCorrect": false
+      },
+      {
+        "text": "Object.fromJSON",
+        "isCorrect": false
+      },
+      {
+        "text": "JSON.stringify",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что делает Array.prototype.map?",
+    "answers": [
+      {
+        "text": "Удаляет falsy-значения",
+        "isCorrect": false
+      },
+      {
+        "text": "Создаёт новый массив, вызывая функцию для каждого элемента",
+        "isCorrect": true
+      },
+      {
+        "text": "Сортирует массив по ключам",
+        "isCorrect": false
+      },
+      {
+        "text": "Клонирует через structuredClone",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что делает оператор optional chaining ?.",
+    "answers": [
+      {
+        "text": "Заменяет undefined на null",
+        "isCorrect": false
+      },
+      {
+        "text": "Работает только с Promise",
+        "isCorrect": false
+      },
+      {
+        "text": "Безопасно прерывает цепочку при null/undefined",
+        "isCorrect": true
+      },
+      {
+        "text": "Эквивалентен логическому OR",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое hoisting для function declaration?",
+    "answers": [
+      {
+        "text": "Запрещён в strict mode",
+        "isCorrect": false
+      },
+      {
+        "text": "class поднимается выше import",
+        "isCorrect": false
+      },
+      {
+        "text": "Объявление function доступно до строки объявления",
+        "isCorrect": true
+      },
+      {
+        "text": "let поднимается без TDZ",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой тип коллекции хранит уникальные значения?",
+    "answers": [
+      {
+        "text": "Array",
+        "isCorrect": false
+      },
+      {
+        "text": "Queue",
+        "isCorrect": false
+      },
+      {
+        "text": "Map",
+        "isCorrect": false
+      },
+      {
+        "text": "Set",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Что делает оператор **?",
+    "answers": [
+      {
+        "text": "Конкатенирует строки",
+        "isCorrect": false
+      },
+      {
+        "text": "Возводит число в степень",
+        "isCorrect": true
+      },
+      {
+        "text": "Побитовое XOR",
+        "isCorrect": false
+      },
+      {
+        "text": "Создаёт объект с числовым ключом",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой тип у результата typeof []?",
+    "answers": [
+      {
+        "text": "'object'",
+        "isCorrect": true
+      },
+      {
+        "text": "'array'",
+        "isCorrect": false
+      },
+      {
+        "text": "'list'",
+        "isCorrect": false
+      },
+      {
+        "text": "'collection'",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое event loop в браузере?",
+    "answers": [
+      {
+        "text": "Механизм обработки задач и колбэков из очереди",
+        "isCorrect": true
+      },
+      {
+        "text": "Цикл React useEffect",
+        "isCorrect": false
+      },
+      {
+        "text": "Очередь microtask только в Node",
+        "isCorrect": false
+      },
+      {
+        "text": "Синхронный вызов stack",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой метод Object проверяет собственное свойство?",
+    "answers": [
+      {
+        "text": "in",
+        "isCorrect": false
+      },
+      {
+        "text": "propertyIsEnumerable",
+        "isCorrect": false
+      },
+      {
+        "text": "containsKey",
+        "isCorrect": false
+      },
+      {
+        "text": "hasOwnProperty",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Зачем нужен Symbol.iterator?",
+    "answers": [
+      {
+        "text": "Позволяет for...of перебирать пользовательские значения",
+        "isCorrect": true
+      },
+      {
+        "text": "Заменяет ключ на string",
+        "isCorrect": false
+      },
+      {
+        "text": "Создаёт private field",
+        "isCorrect": false
+      },
+      {
+        "text": "Делает объект readonly",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой метод строки ищет подстроку?",
+    "answers": [
+      {
+        "text": "contains()",
+        "isCorrect": false
+      },
+      {
+        "text": "searchSubstring()",
+        "isCorrect": false
+      },
+      {
+        "text": "includes()",
+        "isCorrect": true
+      },
+      {
+        "text": "indexOfSubstring()",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Для чего используют BigInt?",
+    "answers": [
+      {
+        "text": "Для JSON.stringify",
+        "isCorrect": false
+      },
+      {
+        "text": "Для parseInt",
+        "isCorrect": false
+      },
+      {
+        "text": "Для целых чисел больше Number.MAX_SAFE_INTEGER",
+        "isCorrect": true
+      },
+      {
+        "text": "Для float64",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой метод массива возвращает копию части массива?",
+    "answers": [
+      {
+        "text": "splice",
+        "isCorrect": false
+      },
+      {
+        "text": "fill",
+        "isCorrect": false
+      },
+      {
+        "text": "slice",
+        "isCorrect": true
+      },
+      {
+        "text": "copyWithin",
+        "isCorrect": false
+      }
+    ]
+  }
+]

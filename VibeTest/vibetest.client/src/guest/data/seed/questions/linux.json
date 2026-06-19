@@ -1,0 +1,632 @@
+[
+  {
+    "text": "Какая команда показывает содержимое текущей директории?",
+    "answers": [
+      {
+        "text": "pwd",
+        "isCorrect": false
+      },
+      {
+        "text": "ls",
+        "isCorrect": true
+      },
+      {
+        "text": "cat",
+        "isCorrect": false
+      },
+      {
+        "text": "cd",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Какой файл в большинстве дистрибутивов содержит список пользователей?",
+    "answers": [
+      {
+        "text": "/etc/passwd",
+        "isCorrect": true
+      },
+      {
+        "text": "/home/users",
+        "isCorrect": false
+      },
+      {
+        "text": "/var/log/auth.log",
+        "isCorrect": false
+      },
+      {
+        "text": "/etc/shadow",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как показать текущую директорию?",
+    "answers": [
+      {
+        "text": "cd",
+        "isCorrect": false
+      },
+      {
+        "text": "dir",
+        "isCorrect": false
+      },
+      {
+        "text": "ls",
+        "isCorrect": false
+      },
+      {
+        "text": "pwd",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Как сменить директорию?",
+    "answers": [
+      {
+        "text": "goto path",
+        "isCorrect": false
+      },
+      {
+        "text": "chdir only win",
+        "isCorrect": false
+      },
+      {
+        "text": "pushd only",
+        "isCorrect": false
+      },
+      {
+        "text": "cd path",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Как вывести содержимое файла?",
+    "answers": [
+      {
+        "text": "ls file",
+        "isCorrect": false
+      },
+      {
+        "text": "echo file only",
+        "isCorrect": false
+      },
+      {
+        "text": "cat file",
+        "isCorrect": true
+      },
+      {
+        "text": "type file win",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как искать текст в файле?",
+    "answers": [
+      {
+        "text": "search pattern",
+        "isCorrect": false
+      },
+      {
+        "text": "find pattern",
+        "isCorrect": false
+      },
+      {
+        "text": "locate text",
+        "isCorrect": false
+      },
+      {
+        "text": "grep pattern file",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Как найти файлы по имени?",
+    "answers": [
+      {
+        "text": "find . -name \"pattern\"",
+        "isCorrect": true
+      },
+      {
+        "text": "grep name",
+        "isCorrect": false
+      },
+      {
+        "text": "locate only always",
+        "isCorrect": false
+      },
+      {
+        "text": "which pattern",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как изменить права файла?",
+    "answers": [
+      {
+        "text": "rights file",
+        "isCorrect": false
+      },
+      {
+        "text": "chown only",
+        "isCorrect": false
+      },
+      {
+        "text": "perm file",
+        "isCorrect": false
+      },
+      {
+        "text": "chmod 755 file",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Как сменить владельца?",
+    "answers": [
+      {
+        "text": "chmod user",
+        "isCorrect": false
+      },
+      {
+        "text": "chgrp only always",
+        "isCorrect": false
+      },
+      {
+        "text": "chown user:group file",
+        "isCorrect": true
+      },
+      {
+        "text": "owner file",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как запустить процесс в фоне?",
+    "answers": [
+      {
+        "text": "daemon command",
+        "isCorrect": false
+      },
+      {
+        "text": "command &",
+        "isCorrect": true
+      },
+      {
+        "text": "bg only without start",
+        "isCorrect": false
+      },
+      {
+        "text": "nohup only",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как посмотреть процессы?",
+    "answers": [
+      {
+        "text": "tasks",
+        "isCorrect": false
+      },
+      {
+        "text": "ps aux или top",
+        "isCorrect": true
+      },
+      {
+        "text": "proc list",
+        "isCorrect": false
+      },
+      {
+        "text": "jobs only shell",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как завершить процесс по PID?",
+    "answers": [
+      {
+        "text": "kill PID",
+        "isCorrect": true
+      },
+      {
+        "text": "stop PID",
+        "isCorrect": false
+      },
+      {
+        "text": "end PID",
+        "isCorrect": false
+      },
+      {
+        "text": "terminate only win",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое pipe |?",
+    "answers": [
+      {
+        "text": "OR operator",
+        "isCorrect": false
+      },
+      {
+        "text": "Передаёт stdout в stdin следующей команды",
+        "isCorrect": true
+      },
+      {
+        "text": "Parallel run",
+        "isCorrect": false
+      },
+      {
+        "text": "Redirect file",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как перенаправить stdout в файл?",
+    "answers": [
+      {
+        "text": "command > file",
+        "isCorrect": true
+      },
+      {
+        "text": "command >> file only append",
+        "isCorrect": false
+      },
+      {
+        "text": "command < file",
+        "isCorrect": false
+      },
+      {
+        "text": "command | file",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что делает sudo?",
+    "answers": [
+      {
+        "text": "Выполняет команду с правами root",
+        "isCorrect": true
+      },
+      {
+        "text": "Mount disk",
+        "isCorrect": false
+      },
+      {
+        "text": "Start daemon",
+        "isCorrect": false
+      },
+      {
+        "text": "Switch user always",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Где хранятся хеши паролей?",
+    "answers": [
+      {
+        "text": "/var/auth",
+        "isCorrect": false
+      },
+      {
+        "text": "/etc/shadow",
+        "isCorrect": true
+      },
+      {
+        "text": "/etc/passwd",
+        "isCorrect": false
+      },
+      {
+        "text": "/etc/users",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как архивировать tar?",
+    "answers": [
+      {
+        "text": "tar extract only",
+        "isCorrect": false
+      },
+      {
+        "text": "zip only",
+        "isCorrect": false
+      },
+      {
+        "text": "gzip files only",
+        "isCorrect": false
+      },
+      {
+        "text": "tar -cvf archive.tar files",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Как распаковать tar.gz?",
+    "answers": [
+      {
+        "text": "tar -xzf file.tar.gz",
+        "isCorrect": true
+      },
+      {
+        "text": "gzip -d only without tar",
+        "isCorrect": false
+      },
+      {
+        "text": "tar -cvf",
+        "isCorrect": false
+      },
+      {
+        "text": "unzip file.tar.gz",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое SSH?",
+    "answers": [
+      {
+        "text": "DNS protocol",
+        "isCorrect": false
+      },
+      {
+        "text": "Безопасный удалённый shell",
+        "isCorrect": true
+      },
+      {
+        "text": "File sync only",
+        "isCorrect": false
+      },
+      {
+        "text": "Package manager",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как проверить сеть ping?",
+    "answers": [
+      {
+        "text": "curl host only",
+        "isCorrect": false
+      },
+      {
+        "text": "netstat host",
+        "isCorrect": false
+      },
+      {
+        "text": "ping host",
+        "isCorrect": true
+      },
+      {
+        "text": "ssh host",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как посмотреть открытые порты?",
+    "answers": [
+      {
+        "text": "ports",
+        "isCorrect": false
+      },
+      {
+        "text": "ping ports",
+        "isCorrect": false
+      },
+      {
+        "text": "ss -tuln или netstat",
+        "isCorrect": true
+      },
+      {
+        "text": "lsof only win",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что такое systemd?",
+    "answers": [
+      {
+        "text": "Shell",
+        "isCorrect": false
+      },
+      {
+        "text": "Kernel module",
+        "isCorrect": false
+      },
+      {
+        "text": "Init/system manager в современных дистрибутивах",
+        "isCorrect": true
+      },
+      {
+        "text": "Package format",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как перезапустить сервис?",
+    "answers": [
+      {
+        "text": "kill service",
+        "isCorrect": false
+      },
+      {
+        "text": "init.d always",
+        "isCorrect": false
+      },
+      {
+        "text": "systemctl restart name",
+        "isCorrect": true
+      },
+      {
+        "text": "service restart only old",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что делает env?",
+    "answers": [
+      {
+        "text": "Показывает переменные окружения",
+        "isCorrect": true
+      },
+      {
+        "text": "Set env only",
+        "isCorrect": false
+      },
+      {
+        "text": "Export all always",
+        "isCorrect": false
+      },
+      {
+        "text": "Load .env docker",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как создать директорию?",
+    "answers": [
+      {
+        "text": "touch dir",
+        "isCorrect": false
+      },
+      {
+        "text": "create dir",
+        "isCorrect": false
+      },
+      {
+        "text": "md only win",
+        "isCorrect": false
+      },
+      {
+        "text": "mkdir name",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Как удалить файл?",
+    "answers": [
+      {
+        "text": "remove file",
+        "isCorrect": false
+      },
+      {
+        "text": "unlink dir only",
+        "isCorrect": false
+      },
+      {
+        "text": "del only win",
+        "isCorrect": false
+      },
+      {
+        "text": "rm file",
+        "isCorrect": true
+      }
+    ]
+  },
+  {
+    "text": "Что такое симлинк?",
+    "answers": [
+      {
+        "text": "Copy file",
+        "isCorrect": false
+      },
+      {
+        "text": "Ссылка на другой путь",
+        "isCorrect": true
+      },
+      {
+        "text": "Hard link same inode only always",
+        "isCorrect": false
+      },
+      {
+        "text": "Mount point",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Как создать симлинк?",
+    "answers": [
+      {
+        "text": "cp -s target",
+        "isCorrect": false
+      },
+      {
+        "text": "symlink target",
+        "isCorrect": false
+      },
+      {
+        "text": "ln -s target link",
+        "isCorrect": true
+      },
+      {
+        "text": "link target",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что показывает df -h?",
+    "answers": [
+      {
+        "text": "Использование дисковых файловых систем",
+        "isCorrect": true
+      },
+      {
+        "text": "Memory usage",
+        "isCorrect": false
+      },
+      {
+        "text": "Network IO",
+        "isCorrect": false
+      },
+      {
+        "text": "CPU load",
+        "isCorrect": false
+      }
+    ]
+  },
+  {
+    "text": "Что показывает free -h?",
+    "answers": [
+      {
+        "text": "Swap config file",
+        "isCorrect": false
+      },
+      {
+        "text": "Disk free",
+        "isCorrect": false
+      },
+      {
+        "text": "Process memory only",
+        "isCorrect": false
+      },
+      {
+        "text": "Использование оперативной памяти",
+        "isCorrect": true
+      }
+    ]
+  }
+]
