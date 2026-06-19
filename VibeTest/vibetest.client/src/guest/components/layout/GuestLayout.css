@@ -219,3 +219,16 @@
   margin-top: 1rem;
   color: #7ddea2;
 }
+
+.guest-code {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid #2a3a50;
+  background: #0c1117;
+  color: #e7ecf3;
+  font-family: ui-monospace, monospace;
+  font-size: 0.9rem;
+  overflow-x: auto;
+  white-space: pre;
+}

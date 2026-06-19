@@ -26,6 +26,9 @@ export function GuestLayout() {
           <NavLink to="/import" className={navLinkClass}>
             Импорт
           </NavLink>
+          <NavLink to="/info" className={navLinkClass}>
+            Инфо
+          </NavLink>
         </nav>
       </header>
       <main className="guest-main">

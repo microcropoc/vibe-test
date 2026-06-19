@@ -13,6 +13,7 @@ import { TestPage } from '@/full/pages/TestPage';
 import { EditorPage } from '@/guest/pages/EditorPage';
 import { LocalTestsPage } from '@/guest/pages/LocalTestsPage';
 import { ImportPage } from '@/guest/pages/ImportPage';
+import { InfoPage } from '@/guest/pages/InfoPage';
 import { routerBasename } from '@/utils/router';
 
 export function FullApp() {
@@ -30,6 +31,7 @@ export function FullApp() {
             <Route path="editor" element={<EditorPage />} />
             <Route path="editor/:id" element={<EditorPage />} />
             <Route path="import" element={<ImportPage />} />
+            <Route path="info" element={<InfoPage />} />
             <Route path="local/tests" element={<LocalTestsPage />} />
             <Route element={<ProtectedRoute />}>
               <Route path="my/tests" element={<MyTestsPage />} />
