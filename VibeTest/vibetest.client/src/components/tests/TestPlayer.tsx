@@ -329,7 +329,11 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
   const activeRecord = showingResult ? currentRecord : null;
 
   return (
-    <div className="vt-player">
+    <div
+      className="vt-player"
+      onCopy={(e) => e.preventDefault()}
+      onCut={(e) => e.preventDefault()}
+    >
       <header>
         <h2>{testName}</h2>
         {hasNewQuestions && (

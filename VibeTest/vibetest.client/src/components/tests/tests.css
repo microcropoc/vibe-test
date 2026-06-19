@@ -5,6 +5,12 @@
   gap: 1rem;
 }
 
+.vt-player {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
 .vt-field {
   display: grid;
   gap: 0.35rem;
