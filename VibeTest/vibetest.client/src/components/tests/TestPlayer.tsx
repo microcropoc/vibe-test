@@ -189,9 +189,10 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
     };
   }, [apiResult, phase, progress, questions.length, source.type, testName]);
 
-  async function handleCheck() {
-    if (selectedOrder === null || !currentQuestion) return;
+  async function handleAnswer(answerOrder: number) {
+    if (showingResult || phase === 'checking' || !currentQuestion) return;
 
+    setSelectedOrder(answerOrder);
     setPhase('checking');
     setError(null);
 
@@ -202,14 +203,14 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
       if (source.type === 'local') {
         const def = localDefinitions[currentOrder];
         correctOrder = getCorrectAnswerOrder(def);
-        isCorrect = selectedOrder === correctOrder;
+        isCorrect = answerOrder === correctOrder;
       } else {
         const response = await testsApi.submitAnswer(source.testId, {
           questionOrder: currentOrder,
-          selectedAnswerOrder: selectedOrder,
+          selectedAnswerOrder: answerOrder,
         });
         correctOrder = response.correctAnswerOrder;
-        isCorrect = selectedOrder === correctOrder;
+        isCorrect = answerOrder === correctOrder;
       }
 
       const nextProgress: PlayerProgress = {
@@ -217,7 +218,7 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
         answers: {
           ...progress.answers,
           [currentOrder]: {
-            selectedAnswerOrder: selectedOrder,
+            selectedAnswerOrder: answerOrder,
             correctAnswerOrder: correctOrder,
             isCorrect,
           },
@@ -379,8 +380,8 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
                   type="radio"
                   name={`q-${currentOrder}`}
                   checked={isSelected}
-                  disabled={showingResult}
-                  onChange={() => setSelectedOrder(answer.order)}
+                  disabled={showingResult || phase === 'checking'}
+                  onChange={() => void handleAnswer(answer.order)}
                 />
                 <span>{answer.text}</span>
               </label>
@@ -406,16 +407,7 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
               Назад
             </button>
           )}
-          {!showingResult ? (
-            <button
-              type="button"
-              className="vt-btn"
-              disabled={selectedOrder === null || phase === 'checking'}
-              onClick={() => void handleCheck()}
-            >
-              {phase === 'checking' ? 'Проверка…' : 'Проверить'}
-            </button>
-          ) : (
+          {showingResult && (
             <button type="button" className="vt-btn" onClick={handleNext}>
               {isTestFullyAnswered(questions.length, progress) ? 'Итог' : 'Далее'}
             </button>
