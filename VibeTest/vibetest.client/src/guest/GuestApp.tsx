@@ -9,6 +9,7 @@ import { ImportPage } from '@/guest/pages/ImportPage';
 import { InfoPage } from '@/guest/pages/InfoPage';
 import { LocalTestsPage } from '@/guest/pages/LocalTestsPage';
 import { PlayPage } from '@/guest/pages/PlayPage';
+import { PwaUpdatePrompt } from '@/components/pwa/PwaUpdatePrompt';
 import { routerBasename } from '@/utils/router';
 
 export function GuestApp() {
@@ -20,6 +21,7 @@ export function GuestApp() {
 
   return (
     <BrowserRouter basename={routerBasename()}>
+      <PwaUpdatePrompt />
       <Routes>
         <Route element={<GuestLayout />}>
           <Route index element={<HomePage />} />

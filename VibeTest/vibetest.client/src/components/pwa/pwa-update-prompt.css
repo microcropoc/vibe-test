@@ -1,0 +1,24 @@
+.pwa-update {
+  position: fixed;
+  left: 50%;
+  bottom: 1rem;
+  z-index: 1000;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: min(28rem, calc(100vw - 2rem));
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid #2a3a50;
+  background: #151f2b;
+  color: #e7ecf3;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 35%);
+  transform: translateX(-50%);
+}
+
+.pwa-update__text {
+  flex: 1;
+  min-width: 10rem;
+  font-size: 0.95rem;
+}

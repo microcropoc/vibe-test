@@ -4,6 +4,7 @@ import path from 'path';
 import child_process from 'child_process';
 import { defineConfig, loadEnv } from 'vite';
 import plugin from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
 import { env as processEnv } from 'process';
 
 function readAspNetCert() {
@@ -41,6 +42,8 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), 'VITE_');
   const appMode = env.VITE_APP_MODE ?? 'guest';
   const isFullMode = appMode === 'full';
+  const isGuestMode = appMode === 'guest';
+  const enablePwa = isGuestMode && mode !== 'e2e-guest';
   const base = env.VITE_BASE_PATH || '/';
 
   const apiTarget = processEnv.ASPNETCORE_HTTPS_PORT
@@ -49,12 +52,53 @@ export default defineConfig(({ mode }) => {
       ? processEnv.ASPNETCORE_URLS.split(';')[0]
       : 'https://localhost:7215';
 
+  const pwaPlugin = enablePwa
+    ? VitePWA({
+        registerType: 'prompt',
+        injectRegister: false,
+        includeAssets: ['favicon.svg'],
+        manifest: {
+          name: 'VibeTest',
+          short_name: 'VibeTest',
+          display: 'standalone',
+          start_url: base,
+          scope: base,
+          theme_color: '#0c1117',
+          background_color: '#0c1117',
+          icons: [
+            { src: 'pwa-192.png', sizes: '192x192', type: 'image/png' },
+            { src: 'pwa-512.png', sizes: '512x512', type: 'image/png' },
+            {
+              src: 'pwa-512.png',
+              sizes: '512x512',
+              type: 'image/png',
+              purpose: 'any maskable',
+            },
+          ],
+        },
+        workbox: {
+          navigateFallback: 'index.html',
+          globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        },
+        devOptions: {
+          enabled: false,
+        },
+      })
+    : null;
+
   return {
     base,
-    plugins: [plugin()],
+    plugins: [plugin(), ...(pwaPlugin ? [pwaPlugin] : [])],
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
+        ...(enablePwa
+          ? {}
+          : {
+              'virtual:pwa-register': fileURLToPath(
+                new URL('./src/pwa/pwa-register-stub.ts', import.meta.url),
+              ),
+            }),
       },
     },
     server: isFullMode
