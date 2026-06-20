@@ -38,10 +38,8 @@ test('импорт JSON из буфера', async ({ page }) => {
     questions: [
       {
         text: 'Цвет неба?',
-        answers: [
-          { text: 'Голубой', isCorrect: true },
-          { text: 'Зелёный', isCorrect: false },
-        ],
+        answers: ['Голубой', 'Зелёный'],
+        correct: 0,
       },
     ],
   });

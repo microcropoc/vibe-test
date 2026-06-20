@@ -42,22 +42,20 @@ export function parseTestJson(raw: string): TestDefinition {
     }
 
     const answers = question.answers.map((a, ai) => {
-      if (!a || typeof a !== 'object') {
-        throw new ImportValidationError(`Вопрос ${qi + 1}, ответ ${ai + 1}: неверный формат`);
+      if (typeof a !== 'string' || a.trim() === '') {
+        throw new ImportValidationError(`Вопрос ${qi + 1}, ответ ${ai + 1}: текст обязателен`);
       }
-      const answer = a as Record<string, unknown>;
-      if (typeof answer.text !== 'string' || answer.text.trim() === '') {
-        throw new ImportValidationError(`Вопрос ${qi + 1}, ответ ${ai + 1}: text обязателен`);
-      }
-      return { text: answer.text, isCorrect: Boolean(answer.isCorrect) };
+      return a;
     });
 
-    const correctCount = answers.filter((a) => a.isCorrect).length;
-    if (correctCount !== 1) {
-      throw new ImportValidationError(`Вопрос ${qi + 1}: ровно один правильный ответ`);
+    if (typeof question.correct !== 'number' || !Number.isInteger(question.correct)) {
+      throw new ImportValidationError(`Вопрос ${qi + 1}: correct должен быть целым числом`);
+    }
+    if (question.correct < 0 || question.correct >= answers.length) {
+      throw new ImportValidationError(`Вопрос ${qi + 1}: correct вне диапазона ответов`);
     }
 
-    return { text: question.text, answers };
+    return { text: question.text, answers, correct: question.correct };
   });
 
   return {

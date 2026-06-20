@@ -19,12 +19,15 @@ function validateQuestion(question: QuestionDefinition, index: number): void {
   if (!question.answers || question.answers.length < 2) {
     throw new ImportValidationError(`Вопрос ${index + 1}: минимум 2 ответа`);
   }
-  const correctCount = question.answers.filter((a) => a.isCorrect).length;
-  if (correctCount !== 1) {
-    throw new ImportValidationError(`Вопрос ${index + 1}: ровно один правильный ответ`);
+  if (
+    !Number.isInteger(question.correct) ||
+    question.correct < 0 ||
+    question.correct >= question.answers.length
+  ) {
+    throw new ImportValidationError(`Вопрос ${index + 1}: неверный индекс correct`);
   }
-  question.answers.forEach((a, ai) => {
-    if (!a.text?.trim()) {
+  question.answers.forEach((text, ai) => {
+    if (!text?.trim()) {
       throw new ImportValidationError(`Вопрос ${index + 1}, ответ ${ai + 1}: текст обязателен`);
     }
   });
@@ -33,10 +36,8 @@ function validateQuestion(question: QuestionDefinition, index: number): void {
 export function createEmptyQuestion(): QuestionDefinition {
   return {
     text: '',
-    answers: [
-      { text: '', isCorrect: true },
-      { text: '', isCorrect: false },
-    ],
+    answers: ['', ''],
+    correct: 0,
   };
 }
 

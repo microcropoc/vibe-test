@@ -2,631 +2,301 @@
   {
     "text": "Какой тип данных PostgreSQL хранит JSON с проверкой структуры?",
     "answers": [
-      {
-        "text": "jsonb",
-        "isCorrect": true
-      },
-      {
-        "text": "text",
-        "isCorrect": false
-      },
-      {
-        "text": "blob",
-        "isCorrect": false
-      },
-      {
-        "text": "xml",
-        "isCorrect": false
-      }
-    ]
+      "jsonb",
+      "text",
+      "blob",
+      "xml"
+    ],
+    "correct": 0
   },
   {
     "text": "Какой оператор выбирает строки, удовлетворяющие условию?",
     "answers": [
-      {
-        "text": "GROUP BY",
-        "isCorrect": false
-      },
-      {
-        "text": "WHERE",
-        "isCorrect": true
-      },
-      {
-        "text": "ORDER BY",
-        "isCorrect": false
-      },
-      {
-        "text": "HAVING",
-        "isCorrect": false
-      }
-    ]
+      "GROUP BY",
+      "WHERE",
+      "ORDER BY",
+      "HAVING"
+    ],
+    "correct": 1
   },
   {
     "text": "Как выбрать все столбцы из таблицы users?",
     "answers": [
-      {
-        "text": "SELECT * FROM users",
-        "isCorrect": true
-      },
-      {
-        "text": "GET * FROM users",
-        "isCorrect": false
-      },
-      {
-        "text": "FETCH users",
-        "isCorrect": false
-      },
-      {
-        "text": "READ users",
-        "isCorrect": false
-      }
-    ]
+      "SELECT * FROM users",
+      "GET * FROM users",
+      "FETCH users",
+      "READ users"
+    ],
+    "correct": 0
   },
   {
     "text": "Как добавить строку?",
     "answers": [
-      {
-        "text": "ADD ROW",
-        "isCorrect": false
-      },
-      {
-        "text": "CREATE ROW",
-        "isCorrect": false
-      },
-      {
-        "text": "INSERT INTO ... VALUES",
-        "isCorrect": true
-      },
-      {
-        "text": "APPEND INTO",
-        "isCorrect": false
-      }
-    ]
+      "ADD ROW",
+      "CREATE ROW",
+      "INSERT INTO ... VALUES",
+      "APPEND INTO"
+    ],
+    "correct": 2
   },
   {
     "text": "Как обновить данные?",
     "answers": [
-      {
-        "text": "UPDATE ... SET ... WHERE",
-        "isCorrect": true
-      },
-      {
-        "text": "MODIFY TABLE",
-        "isCorrect": false
-      },
-      {
-        "text": "CHANGE ROW",
-        "isCorrect": false
-      },
-      {
-        "text": "PATCH TABLE",
-        "isCorrect": false
-      }
-    ]
+      "UPDATE ... SET ... WHERE",
+      "MODIFY TABLE",
+      "CHANGE ROW",
+      "PATCH TABLE"
+    ],
+    "correct": 0
   },
   {
     "text": "Как удалить строки?",
     "answers": [
-      {
-        "text": "DELETE FROM ... WHERE",
-        "isCorrect": true
-      },
-      {
-        "text": "REMOVE FROM",
-        "isCorrect": false
-      },
-      {
-        "text": "DROP ROW",
-        "isCorrect": false
-      },
-      {
-        "text": "TRUNCATE ROW only",
-        "isCorrect": false
-      }
-    ]
+      "DELETE FROM ... WHERE",
+      "REMOVE FROM",
+      "DROP ROW",
+      "TRUNCATE ROW only"
+    ],
+    "correct": 0
   },
   {
     "text": "Что делает PRIMARY KEY?",
     "answers": [
-      {
-        "text": "Index name",
-        "isCorrect": false
-      },
-      {
-        "text": "Auto increment only",
-        "isCorrect": false
-      },
-      {
-        "text": "Foreign link only",
-        "isCorrect": false
-      },
-      {
-        "text": "Уникально идентифицирует строку",
-        "isCorrect": true
-      }
-    ]
+      "Index name",
+      "Auto increment only",
+      "Foreign link only",
+      "Уникально идентифицирует строку"
+    ],
+    "correct": 3
   },
   {
     "text": "Что такое FOREIGN KEY?",
     "answers": [
-      {
-        "text": "Unique constraint",
-        "isCorrect": false
-      },
-      {
-        "text": "Sequence",
-        "isCorrect": false
-      },
-      {
-        "text": "Ссылка на PRIMARY KEY другой таблицы",
-        "isCorrect": true
-      },
-      {
-        "text": "Check constraint",
-        "isCorrect": false
-      }
-    ]
+      "Unique constraint",
+      "Sequence",
+      "Ссылка на PRIMARY KEY другой таблицы",
+      "Check constraint"
+    ],
+    "correct": 2
   },
   {
     "text": "Как отсортировать результат?",
     "answers": [
-      {
-        "text": "GROUP BY",
-        "isCorrect": false
-      },
-      {
-        "text": "ORDER BY column",
-        "isCorrect": true
-      },
-      {
-        "text": "SORT BY",
-        "isCorrect": false
-      },
-      {
-        "text": "ARRANGE BY",
-        "isCorrect": false
-      }
-    ]
+      "GROUP BY",
+      "ORDER BY column",
+      "SORT BY",
+      "ARRANGE BY"
+    ],
+    "correct": 1
   },
   {
     "text": "Что делает GROUP BY?",
     "answers": [
-      {
-        "text": "Join tables",
-        "isCorrect": false
-      },
-      {
-        "text": "Группирует строки для агрегатов",
-        "isCorrect": true
-      },
-      {
-        "text": "Sort only",
-        "isCorrect": false
-      },
-      {
-        "text": "Filter rows",
-        "isCorrect": false
-      }
-    ]
+      "Join tables",
+      "Группирует строки для агрегатов",
+      "Sort only",
+      "Filter rows"
+    ],
+    "correct": 1
   },
   {
     "text": "Какой агрегат считает количество?",
     "answers": [
-      {
-        "text": "COUNT(*)",
-        "isCorrect": true
-      },
-      {
-        "text": "SUM(*)",
-        "isCorrect": false
-      },
-      {
-        "text": "TOTAL()",
-        "isCorrect": false
-      },
-      {
-        "text": "LEN()",
-        "isCorrect": false
-      }
-    ]
+      "COUNT(*)",
+      "SUM(*)",
+      "TOTAL()",
+      "LEN()"
+    ],
+    "correct": 0
   },
   {
     "text": "Как объединить две таблицы по условию?",
     "answers": [
-      {
-        "text": "COMBINE",
-        "isCorrect": false
-      },
-      {
-        "text": "JOIN ... ON",
-        "isCorrect": true
-      },
-      {
-        "text": "UNION only",
-        "isCorrect": false
-      },
-      {
-        "text": "MERGE ... WHERE",
-        "isCorrect": false
-      }
-    ]
+      "COMBINE",
+      "JOIN ... ON",
+      "UNION only",
+      "MERGE ... WHERE"
+    ],
+    "correct": 1
   },
   {
     "text": "Чем DISTINCT отличается?",
     "answers": [
-      {
-        "text": "Sort unique",
-        "isCorrect": false
-      },
-      {
-        "text": "Index unique",
-        "isCorrect": false
-      },
-      {
-        "text": "Убирает дубликаты строк",
-        "isCorrect": true
-      },
-      {
-        "text": "Primary key",
-        "isCorrect": false
-      }
-    ]
+      "Sort unique",
+      "Index unique",
+      "Убирает дубликаты строк",
+      "Primary key"
+    ],
+    "correct": 2
   },
   {
     "text": "Что такое транзакция?",
     "answers": [
-      {
-        "text": "Replication",
-        "isCorrect": false
-      },
-      {
-        "text": "Атомарная группа операций",
-        "isCorrect": true
-      },
-      {
-        "text": "Single SELECT",
-        "isCorrect": false
-      },
-      {
-        "text": "Backup",
-        "isCorrect": false
-      }
-    ]
+      "Replication",
+      "Атомарная группа операций",
+      "Single SELECT",
+      "Backup"
+    ],
+    "correct": 1
   },
   {
     "text": "Какой уровень изоляции по умолчанию в PG?",
     "answers": [
-      {
-        "text": "NONE",
-        "isCorrect": false
-      },
-      {
-        "text": "READ UNCOMMITTED",
-        "isCorrect": false
-      },
-      {
-        "text": "READ COMMITTED",
-        "isCorrect": true
-      },
-      {
-        "text": "SERIALIZABLE always",
-        "isCorrect": false
-      }
-    ]
+      "NONE",
+      "READ UNCOMMITTED",
+      "READ COMMITTED",
+      "SERIALIZABLE always"
+    ],
+    "correct": 2
   },
   {
     "text": "Как создать индекс?",
     "answers": [
-      {
-        "text": "MAKE INDEX",
-        "isCorrect": false
-      },
-      {
-        "text": "ADD INDEX",
-        "isCorrect": false
-      },
-      {
-        "text": "INDEX CREATE",
-        "isCorrect": false
-      },
-      {
-        "text": "CREATE INDEX idx ON table(col)",
-        "isCorrect": true
-      }
-    ]
+      "MAKE INDEX",
+      "ADD INDEX",
+      "INDEX CREATE",
+      "CREATE INDEX idx ON table(col)"
+    ],
+    "correct": 3
   },
   {
     "text": "Что делает LIMIT?",
     "answers": [
-      {
-        "text": "Limit column size",
-        "isCorrect": false
-      },
-      {
-        "text": "Lock rows",
-        "isCorrect": false
-      },
-      {
-        "text": "Ограничивает число строк",
-        "isCorrect": true
-      },
-      {
-        "text": "Transaction timeout",
-        "isCorrect": false
-      }
-    ]
+      "Limit column size",
+      "Lock rows",
+      "Ограничивает число строк",
+      "Transaction timeout"
+    ],
+    "correct": 2
   },
   {
     "text": "Какой тип для автоинкремента?",
     "answers": [
-      {
-        "text": "AUTO_INT",
-        "isCorrect": false
-      },
-      {
-        "text": "UUID only",
-        "isCorrect": false
-      },
-      {
-        "text": "SERIAL или IDENTITY",
-        "isCorrect": true
-      },
-      {
-        "text": "SEQUENCE only manual",
-        "isCorrect": false
-      }
-    ]
+      "AUTO_INT",
+      "UUID only",
+      "SERIAL или IDENTITY",
+      "SEQUENCE only manual"
+    ],
+    "correct": 2
   },
   {
     "text": "Что такое VIEW?",
     "answers": [
-      {
-        "text": "Materialized storage",
-        "isCorrect": false
-      },
-      {
-        "text": "Role",
-        "isCorrect": false
-      },
-      {
-        "text": "Сохранённый SELECT как виртуальная таблица",
-        "isCorrect": true
-      },
-      {
-        "text": "Trigger",
-        "isCorrect": false
-      }
-    ]
+      "Materialized storage",
+      "Role",
+      "Сохранённый SELECT как виртуальная таблица",
+      "Trigger"
+    ],
+    "correct": 2
   },
   {
     "text": "Как проверить NULL?",
     "answers": [
-      {
-        "text": "== NULL",
-        "isCorrect": false
-      },
-      {
-        "text": "IS NULL",
-        "isCorrect": true
-      },
-      {
-        "text": "= NULL",
-        "isCorrect": false
-      },
-      {
-        "text": "EQUALS NULL",
-        "isCorrect": false
-      }
-    ]
+      "== NULL",
+      "IS NULL",
+      "= NULL",
+      "EQUALS NULL"
+    ],
+    "correct": 1
   },
   {
     "text": "Что делает COALESCE(a, b)?",
     "answers": [
-      {
-        "text": "Merge JSON",
-        "isCorrect": false
-      },
-      {
-        "text": "Concat strings",
-        "isCorrect": false
-      },
-      {
-        "text": "Coalesce tables",
-        "isCorrect": false
-      },
-      {
-        "text": "Первый не-NULL аргумент",
-        "isCorrect": true
-      }
-    ]
+      "Merge JSON",
+      "Concat strings",
+      "Coalesce tables",
+      "Первый не-NULL аргумент"
+    ],
+    "correct": 3
   },
   {
     "text": "Какой оператор для текстового поиска LIKE?",
     "answers": [
-      {
-        "text": "LIKE или ILIKE",
-        "isCorrect": true
-      },
-      {
-        "text": "MATCH",
-        "isCorrect": false
-      },
-      {
-        "text": "CONTAINS",
-        "isCorrect": false
-      },
-      {
-        "text": "SEARCH",
-        "isCorrect": false
-      }
-    ]
+      "LIKE или ILIKE",
+      "MATCH",
+      "CONTAINS",
+      "SEARCH"
+    ],
+    "correct": 0
   },
   {
     "text": "Что такое схема schema?",
     "answers": [
-      {
-        "text": "Namespace для таблиц",
-        "isCorrect": true
-      },
-      {
-        "text": "Table structure only",
-        "isCorrect": false
-      },
-      {
-        "text": "Backup file",
-        "isCorrect": false
-      },
-      {
-        "text": "User password",
-        "isCorrect": false
-      }
-    ]
+      "Namespace для таблиц",
+      "Table structure only",
+      "Backup file",
+      "User password"
+    ],
+    "correct": 0
   },
   {
     "text": "Какой клиент подключается к PG?",
     "answers": [
-      {
-        "text": "psql или любой SQL-клиент",
-        "isCorrect": true
-      },
-      {
-        "text": "mongo shell",
-        "isCorrect": false
-      },
-      {
-        "text": "redis-cli",
-        "isCorrect": false
-      },
-      {
-        "text": "mysql client",
-        "isCorrect": false
-      }
-    ]
+      "psql или любой SQL-клиент",
+      "mongo shell",
+      "redis-cli",
+      "mysql client"
+    ],
+    "correct": 0
   },
   {
     "text": "Что делает EXPLAIN?",
     "answers": [
-      {
-        "text": "Execute query",
-        "isCorrect": false
-      },
-      {
-        "text": "Export data",
-        "isCorrect": false
-      },
-      {
-        "text": "Describe table only",
-        "isCorrect": false
-      },
-      {
-        "text": "План выполнения запроса",
-        "isCorrect": true
-      }
-    ]
+      "Execute query",
+      "Export data",
+      "Describe table only",
+      "План выполнения запроса"
+    ],
+    "correct": 3
   },
   {
     "text": "Как добавить столбец?",
     "answers": [
-      {
-        "text": "ALTER TABLE ... ADD COLUMN",
-        "isCorrect": true
-      },
-      {
-        "text": "MODIFY TABLE ADD",
-        "isCorrect": false
-      },
-      {
-        "text": "INSERT COLUMN",
-        "isCorrect": false
-      },
-      {
-        "text": "UPDATE SCHEMA",
-        "isCorrect": false
-      }
-    ]
+      "ALTER TABLE ... ADD COLUMN",
+      "MODIFY TABLE ADD",
+      "INSERT COLUMN",
+      "UPDATE SCHEMA"
+    ],
+    "correct": 0
   },
   {
     "text": "Что такое constraint CHECK?",
     "answers": [
-      {
-        "text": "Unique only",
-        "isCorrect": false
-      },
-      {
-        "text": "Проверка условия на строку",
-        "isCorrect": true
-      },
-      {
-        "text": "Not null only",
-        "isCorrect": false
-      },
-      {
-        "text": "Foreign key",
-        "isCorrect": false
-      }
-    ]
+      "Unique only",
+      "Проверка условия на строку",
+      "Not null only",
+      "Foreign key"
+    ],
+    "correct": 1
   },
   {
     "text": "Какой тип для UUID?",
     "answers": [
-      {
-        "text": "guid",
-        "isCorrect": false
-      },
-      {
-        "text": "string only",
-        "isCorrect": false
-      },
-      {
-        "text": "uuid",
-        "isCorrect": true
-      },
-      {
-        "text": "binary only",
-        "isCorrect": false
-      }
-    ]
+      "guid",
+      "string only",
+      "uuid",
+      "binary only"
+    ],
+    "correct": 2
   },
   {
     "text": "Что делает ON CONFLICT?",
     "answers": [
-      {
-        "text": "Ignore all errors",
-        "isCorrect": false
-      },
-      {
-        "text": "Upsert при нарушении unique",
-        "isCorrect": true
-      },
-      {
-        "text": "Rollback",
-        "isCorrect": false
-      },
-      {
-        "text": "Deadlock retry",
-        "isCorrect": false
-      }
-    ]
+      "Ignore all errors",
+      "Upsert при нарушении unique",
+      "Rollback",
+      "Deadlock retry"
+    ],
+    "correct": 1
   },
   {
     "text": "Чем json отличается от jsonb?",
     "answers": [
-      {
-        "text": "json хранит текст, jsonb — бинарный разобранный формат",
-        "isCorrect": true
-      },
-      {
-        "text": "Нет разницы",
-        "isCorrect": false
-      },
-      {
-        "text": "jsonb без индекса",
-        "isCorrect": false
-      },
-      {
-        "text": "json быстрее для индексов",
-        "isCorrect": false
-      }
-    ]
+      "json хранит текст, jsonb — бинарный разобранный формат",
+      "Нет разницы",
+      "jsonb без индекса",
+      "json быстрее для индексов"
+    ],
+    "correct": 0
   }
 ]

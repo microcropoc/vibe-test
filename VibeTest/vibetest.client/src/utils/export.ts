@@ -6,7 +6,8 @@ export function exportTestToJson(test: TestDefinition): string {
     description: test.description,
     questions: test.questions.map((q) => ({
       text: q.text,
-      answers: q.answers.map((a) => ({ text: a.text, isCorrect: a.isCorrect })),
+      answers: [...q.answers],
+      correct: q.correct,
     })),
   };
   return JSON.stringify(payload, null, 2);

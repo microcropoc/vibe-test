@@ -4,10 +4,8 @@
   "questions": [
     {
       "text": "2 + 2 = ?",
-      "answers": [
-        { "text": "4", "isCorrect": true },
-        { "text": "5", "isCorrect": false }
-      ]
+      "answers": ["4", "5"],
+      "correct": 0
     }
   ]
 }

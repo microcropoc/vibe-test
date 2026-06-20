@@ -5,15 +5,15 @@ export function toPlayerQuestions(questions: QuestionDefinition[]): PlayerQuesti
   return questions.map((q, order) => ({
     order,
     text: q.text,
-    answers: q.answers.map((a, answerOrder) => ({
+    answers: q.answers.map((text, answerOrder) => ({
       order: answerOrder,
-      text: a.text,
+      text,
     })),
   }));
 }
 
 export function getCorrectAnswerOrder(question: QuestionDefinition): number {
-  return question.answers.findIndex((a) => a.isCorrect);
+  return question.correct;
 }
 
 export function countAnswered(progress: { answers: Record<number, unknown> }): number {

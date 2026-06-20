@@ -194,8 +194,8 @@ public class TestService(
 
             for (var ai = 0; ai < questionInput.Answers.Count; ai++)
             {
-                var answerInput = questionInput.Answers[ai];
-                var answer = await questionAnswers.FindOrCreateAnswerAsync(answerInput.Text.Trim());
+                var answerText = questionInput.Answers[ai];
+                var answer = await questionAnswers.FindOrCreateAnswerAsync(answerText.Trim());
 
                 test.QuestionAnswers.Add(new TestQuestionAnswer
                 {
@@ -204,7 +204,7 @@ public class TestService(
                     Answer = answer,
                     QuestionOrder = startQuestionOrder + qi,
                     AnswerOrder = ai,
-                    IsCorrect = answerInput.IsCorrect
+                    IsCorrect = ai == questionInput.Correct
                 });
             }
         }

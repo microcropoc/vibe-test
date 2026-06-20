@@ -13,12 +13,6 @@ public class QuestionFullDto
 {
     public int Order { get; set; }
     public string Text { get; set; } = string.Empty;
-    public List<AnswerFullDto> Answers { get; set; } = [];
-}
-
-public class AnswerFullDto
-{
-    public int Order { get; set; }
-    public string Text { get; set; } = string.Empty;
-    public bool IsCorrect { get; set; }
+    public List<string> Answers { get; set; } = [];
+    public int Correct { get; set; }
 }

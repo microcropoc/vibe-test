@@ -2,631 +2,301 @@
   {
     "text": "Что такое Docker-образ?",
     "answers": [
-      {
-        "text": "Файл docker-compose.yml",
-        "isCorrect": false
-      },
-      {
-        "text": "Неизменяемый шаблон файловой системы и метаданных для контейнера",
-        "isCorrect": true
-      },
-      {
-        "text": "Запущенный процесс контейнера",
-        "isCorrect": false
-      },
-      {
-        "text": "Виртуальная машина с собственным ядром",
-        "isCorrect": false
-      }
-    ]
+      "Файл docker-compose.yml",
+      "Неизменяемый шаблон файловой системы и метаданных для контейнера",
+      "Запущенный процесс контейнера",
+      "Виртуальная машина с собственным ядром"
+    ],
+    "correct": 1
   },
   {
     "text": "Какая команда собирает образ из Dockerfile в текущей директории?",
     "answers": [
-      {
-        "text": "docker compose up",
-        "isCorrect": false
-      },
-      {
-        "text": "docker build .",
-        "isCorrect": true
-      },
-      {
-        "text": "docker run .",
-        "isCorrect": false
-      },
-      {
-        "text": "docker pull .",
-        "isCorrect": false
-      }
-    ]
+      "docker compose up",
+      "docker build .",
+      "docker run .",
+      "docker pull ."
+    ],
+    "correct": 1
   },
   {
     "text": "Что такое контейнер?",
     "answers": [
-      {
-        "text": "Kubernetes pod only",
-        "isCorrect": false
-      },
-      {
-        "text": "VM",
-        "isCorrect": false
-      },
-      {
-        "text": "Image layer",
-        "isCorrect": false
-      },
-      {
-        "text": "Запущенный изолированный процесс из образа",
-        "isCorrect": true
-      }
-    ]
+      "Kubernetes pod only",
+      "VM",
+      "Image layer",
+      "Запущенный изолированный процесс из образа"
+    ],
+    "correct": 3
   },
   {
     "text": "Как запустить контейнер из образа?",
     "answers": [
-      {
-        "text": "docker create only interactive",
-        "isCorrect": false
-      },
-      {
-        "text": "docker run image",
-        "isCorrect": true
-      },
-      {
-        "text": "docker start image only",
-        "isCorrect": false
-      },
-      {
-        "text": "docker exec image",
-        "isCorrect": false
-      }
-    ]
+      "docker create only interactive",
+      "docker run image",
+      "docker start image only",
+      "docker exec image"
+    ],
+    "correct": 1
   },
   {
     "text": "Как посмотреть запущенные контейнеры?",
     "answers": [
-      {
-        "text": "docker ps",
-        "isCorrect": true
-      },
-      {
-        "text": "docker list",
-        "isCorrect": false
-      },
-      {
-        "text": "docker containers",
-        "isCorrect": false
-      },
-      {
-        "text": "docker show",
-        "isCorrect": false
-      }
-    ]
+      "docker ps",
+      "docker list",
+      "docker containers",
+      "docker show"
+    ],
+    "correct": 0
   },
   {
     "text": "Что такое Dockerfile?",
     "answers": [
-      {
-        "text": "Volume spec",
-        "isCorrect": false
-      },
-      {
-        "text": "Инструкции сборки образа",
-        "isCorrect": true
-      },
-      {
-        "text": "Compose file",
-        "isCorrect": false
-      },
-      {
-        "text": "Registry config",
-        "isCorrect": false
-      }
-    ]
+      "Volume spec",
+      "Инструкции сборки образа",
+      "Compose file",
+      "Registry config"
+    ],
+    "correct": 1
   },
   {
     "text": "Что делает FROM в Dockerfile?",
     "answers": [
-      {
-        "text": "Copy files",
-        "isCorrect": false
-      },
-      {
-        "text": "Run command",
-        "isCorrect": false
-      },
-      {
-        "text": "Базовый образ",
-        "isCorrect": true
-      },
-      {
-        "text": "Expose port",
-        "isCorrect": false
-      }
-    ]
+      "Copy files",
+      "Run command",
+      "Базовый образ",
+      "Expose port"
+    ],
+    "correct": 2
   },
   {
     "text": "Что делает EXPOSE?",
     "answers": [
-      {
-        "text": "Firewall rule",
-        "isCorrect": false
-      },
-      {
-        "text": "Документирует порт контейнера",
-        "isCorrect": true
-      },
-      {
-        "text": "Публикует порт на хост автоматически",
-        "isCorrect": false
-      },
-      {
-        "text": "Network create",
-        "isCorrect": false
-      }
-    ]
+      "Firewall rule",
+      "Документирует порт контейнера",
+      "Публикует порт на хост автоматически",
+      "Network create"
+    ],
+    "correct": 1
   },
   {
     "text": "Как пробросить порт 8080→80?",
     "answers": [
-      {
-        "text": "docker port 8080",
-        "isCorrect": false
-      },
-      {
-        "text": "docker map 8080",
-        "isCorrect": false
-      },
-      {
-        "text": "docker run -p 8080:80",
-        "isCorrect": true
-      },
-      {
-        "text": "docker expose 8080",
-        "isCorrect": false
-      }
-    ]
+      "docker port 8080",
+      "docker map 8080",
+      "docker run -p 8080:80",
+      "docker expose 8080"
+    ],
+    "correct": 2
   },
   {
     "text": "Что такое volume?",
     "answers": [
-      {
-        "text": "Network",
-        "isCorrect": false
-      },
-      {
-        "text": "Персистентное хранилище вне слоёв контейнера",
-        "isCorrect": true
-      },
-      {
-        "text": "Secret only",
-        "isCorrect": false
-      },
-      {
-        "text": "Image layer",
-        "isCorrect": false
-      }
-    ]
+      "Network",
+      "Персистентное хранилище вне слоёв контейнера",
+      "Secret only",
+      "Image layer"
+    ],
+    "correct": 1
   },
   {
     "text": "Как остановить контейнер?",
     "answers": [
-      {
-        "text": "docker stop",
-        "isCorrect": true
-      },
-      {
-        "text": "docker rm",
-        "isCorrect": false
-      },
-      {
-        "text": "docker pause only",
-        "isCorrect": false
-      },
-      {
-        "text": "docker kill always first",
-        "isCorrect": false
-      }
-    ]
+      "docker stop",
+      "docker rm",
+      "docker pause only",
+      "docker kill always first"
+    ],
+    "correct": 0
   },
   {
     "text": "Что делает docker compose up?",
     "answers": [
-      {
-        "text": "Push registry",
-        "isCorrect": false
-      },
-      {
-        "text": "Create network only",
-        "isCorrect": false
-      },
-      {
-        "text": "Build only",
-        "isCorrect": false
-      },
-      {
-        "text": "Запускает сервисы из compose-файла",
-        "isCorrect": true
-      }
-    ]
+      "Push registry",
+      "Create network only",
+      "Build only",
+      "Запускает сервисы из compose-файла"
+    ],
+    "correct": 3
   },
   {
     "text": "Что такое registry?",
     "answers": [
-      {
-        "text": "Хранилище образов (Docker Hub и др.)",
-        "isCorrect": true
-      },
-      {
-        "text": "Container runtime",
-        "isCorrect": false
-      },
-      {
-        "text": "Log aggregator",
-        "isCorrect": false
-      },
-      {
-        "text": "Volume server",
-        "isCorrect": false
-      }
-    ]
+      "Хранилище образов (Docker Hub и др.)",
+      "Container runtime",
+      "Log aggregator",
+      "Volume server"
+    ],
+    "correct": 0
   },
   {
     "text": "Как скачать образ?",
     "answers": [
-      {
-        "text": "docker get",
-        "isCorrect": false
-      },
-      {
-        "text": "docker fetch",
-        "isCorrect": false
-      },
-      {
-        "text": "docker pull name:tag",
-        "isCorrect": true
-      },
-      {
-        "text": "docker import only",
-        "isCorrect": false
-      }
-    ]
+      "docker get",
+      "docker fetch",
+      "docker pull name:tag",
+      "docker import only"
+    ],
+    "correct": 2
   },
   {
     "text": "Что делает docker exec?",
     "answers": [
-      {
-        "text": "Выполняет команду в running container",
-        "isCorrect": true
-      },
-      {
-        "text": "Start container",
-        "isCorrect": false
-      },
-      {
-        "text": "Build image",
-        "isCorrect": false
-      },
-      {
-        "text": "Push image",
-        "isCorrect": false
-      }
-    ]
+      "Выполняет команду в running container",
+      "Start container",
+      "Build image",
+      "Push image"
+    ],
+    "correct": 0
   },
   {
     "text": "Что такое .dockerignore?",
     "answers": [
-      {
-        "text": "Network ACL",
-        "isCorrect": false
-      },
-      {
-        "text": "Secret file",
-        "isCorrect": false
-      },
-      {
-        "text": "Исключения из build context",
-        "isCorrect": true
-      },
-      {
-        "text": "Ignore running containers",
-        "isCorrect": false
-      }
-    ]
+      "Network ACL",
+      "Secret file",
+      "Исключения из build context",
+      "Ignore running containers"
+    ],
+    "correct": 2
   },
   {
     "text": "Как удалить контейнер?",
     "answers": [
-      {
-        "text": "docker delete",
-        "isCorrect": false
-      },
-      {
-        "text": "docker prune container only after stop sometimes",
-        "isCorrect": false
-      },
-      {
-        "text": "docker rm",
-        "isCorrect": true
-      },
-      {
-        "text": "docker remove image",
-        "isCorrect": false
-      }
-    ]
+      "docker delete",
+      "docker prune container only after stop sometimes",
+      "docker rm",
+      "docker remove image"
+    ],
+    "correct": 2
   },
   {
     "text": "Что делает WORKDIR?",
     "answers": [
-      {
-        "text": "Volume mount",
-        "isCorrect": false
-      },
-      {
-        "text": "User switch",
-        "isCorrect": false
-      },
-      {
-        "text": "Рабочая директория в образе",
-        "isCorrect": true
-      },
-      {
-        "text": "Entrypoint",
-        "isCorrect": false
-      }
-    ]
+      "Volume mount",
+      "User switch",
+      "Рабочая директория в образе",
+      "Entrypoint"
+    ],
+    "correct": 2
   },
   {
     "text": "Что такое multi-stage build?",
     "answers": [
-      {
-        "text": "Multi arch only",
-        "isCorrect": false
-      },
-      {
-        "text": "Несколько FROM для меньшего финального образа",
-        "isCorrect": true
-      },
-      {
-        "text": "Compose stages",
-        "isCorrect": false
-      },
-      {
-        "text": "Parallel builds",
-        "isCorrect": false
-      }
-    ]
+      "Multi arch only",
+      "Несколько FROM для меньшего финального образа",
+      "Compose stages",
+      "Parallel builds"
+    ],
+    "correct": 1
   },
   {
     "text": "Как передать env в контейнер?",
     "answers": [
-      {
-        "text": "ENV host only",
-        "isCorrect": false
-      },
-      {
-        "text": "docker env file only compose",
-        "isCorrect": false
-      },
-      {
-        "text": "export docker",
-        "isCorrect": false
-      },
-      {
-        "text": "docker run -e KEY=val",
-        "isCorrect": true
-      }
-    ]
+      "ENV host only",
+      "docker env file only compose",
+      "export docker",
+      "docker run -e KEY=val"
+    ],
+    "correct": 3
   },
   {
     "text": "Что делает CMD?",
     "answers": [
-      {
-        "text": "Команда по умолчанию при запуске",
-        "isCorrect": true
-      },
-      {
-        "text": "Build step",
-        "isCorrect": false
-      },
-      {
-        "text": "Copy files",
-        "isCorrect": false
-      },
-      {
-        "text": "User id",
-        "isCorrect": false
-      }
-    ]
+      "Команда по умолчанию при запуске",
+      "Build step",
+      "Copy files",
+      "User id"
+    ],
+    "correct": 0
   },
   {
     "text": "Чем ENTRYPOINT отличается от CMD?",
     "answers": [
-      {
-        "text": "Нет разницы",
-        "isCorrect": false
-      },
-      {
-        "text": "ENTRYPOINT only in compose",
-        "isCorrect": false
-      },
-      {
-        "text": "ENTRYPOINT — фиксированная точка входа",
-        "isCorrect": true
-      },
-      {
-        "text": "CMD only at build",
-        "isCorrect": false
-      }
-    ]
+      "Нет разницы",
+      "ENTRYPOINT only in compose",
+      "ENTRYPOINT — фиксированная точка входа",
+      "CMD only at build"
+    ],
+    "correct": 2
   },
   {
     "text": "Как посмотреть логи контейнера?",
     "answers": [
-      {
-        "text": "docker print",
-        "isCorrect": false
-      },
-      {
-        "text": "docker tail only file",
-        "isCorrect": false
-      },
-      {
-        "text": "docker logs",
-        "isCorrect": true
-      },
-      {
-        "text": "docker inspect logs",
-        "isCorrect": false
-      }
-    ]
+      "docker print",
+      "docker tail only file",
+      "docker logs",
+      "docker inspect logs"
+    ],
+    "correct": 2
   },
   {
     "text": "Что такое bridge network?",
     "answers": [
-      {
-        "text": "Default сеть контейнеров на хосте",
-        "isCorrect": true
-      },
-      {
-        "text": "Host network only",
-        "isCorrect": false
-      },
-      {
-        "text": "Overlay k8s only",
-        "isCorrect": false
-      },
-      {
-        "text": "None always",
-        "isCorrect": false
-      }
-    ]
+      "Default сеть контейнеров на хосте",
+      "Host network only",
+      "Overlay k8s only",
+      "None always"
+    ],
+    "correct": 0
   },
   {
     "text": "Как очистить неиспользуемые ресурсы?",
     "answers": [
-      {
-        "text": "docker reset",
-        "isCorrect": false
-      },
-      {
-        "text": "docker system prune",
-        "isCorrect": true
-      },
-      {
-        "text": "docker clean all",
-        "isCorrect": false
-      },
-      {
-        "text": "docker wipe",
-        "isCorrect": false
-      }
-    ]
+      "docker reset",
+      "docker system prune",
+      "docker clean all",
+      "docker wipe"
+    ],
+    "correct": 1
   },
   {
     "text": "Что делает COPY в Dockerfile?",
     "answers": [
-      {
-        "text": "Download URL",
-        "isCorrect": false
-      },
-      {
-        "text": "Mount volume",
-        "isCorrect": false
-      },
-      {
-        "text": "Копирует файлы в образ",
-        "isCorrect": true
-      },
-      {
-        "text": "Copy from container",
-        "isCorrect": false
-      }
-    ]
+      "Download URL",
+      "Mount volume",
+      "Копирует файлы в образ",
+      "Copy from container"
+    ],
+    "correct": 2
   },
   {
     "text": "Что такое tag образа?",
     "answers": [
-      {
-        "text": "Метка версии name:tag",
-        "isCorrect": true
-      },
-      {
-        "text": "Layer id",
-        "isCorrect": false
-      },
-      {
-        "text": "Container name",
-        "isCorrect": false
-      },
-      {
-        "text": "Git tag only",
-        "isCorrect": false
-      }
-    ]
+      "Метка версии name:tag",
+      "Layer id",
+      "Container name",
+      "Git tag only"
+    ],
+    "correct": 0
   },
   {
     "text": "Как войти в shell контейнера?",
     "answers": [
-      {
-        "text": "docker login container",
-        "isCorrect": false
-      },
-      {
-        "text": "docker exec -it container sh",
-        "isCorrect": true
-      },
-      {
-        "text": "docker ssh",
-        "isCorrect": false
-      },
-      {
-        "text": "docker attach shell",
-        "isCorrect": false
-      }
-    ]
+      "docker login container",
+      "docker exec -it container sh",
+      "docker ssh",
+      "docker attach shell"
+    ],
+    "correct": 1
   },
   {
     "text": "Что делает HEALTHCHECK?",
     "answers": [
-      {
-        "text": "Startup probe k8s only",
-        "isCorrect": false
-      },
-      {
-        "text": "Liveness manual",
-        "isCorrect": false
-      },
-      {
-        "text": "Периодическая проверка здоровья",
-        "isCorrect": true
-      },
-      {
-        "text": "Readiness only",
-        "isCorrect": false
-      }
-    ]
+      "Startup probe k8s only",
+      "Liveness manual",
+      "Периодическая проверка здоровья",
+      "Readiness only"
+    ],
+    "correct": 2
   },
   {
     "text": "Зачем docker compose down?",
     "answers": [
-      {
-        "text": "Остановить и удалить ресурсы compose",
-        "isCorrect": true
-      },
-      {
-        "text": "Stop only",
-        "isCorrect": false
-      },
-      {
-        "text": "Delete images",
-        "isCorrect": false
-      },
-      {
-        "text": "Remove volumes always default",
-        "isCorrect": false
-      }
-    ]
+      "Остановить и удалить ресурсы compose",
+      "Stop only",
+      "Delete images",
+      "Remove volumes always default"
+    ],
+    "correct": 0
   }
 ]

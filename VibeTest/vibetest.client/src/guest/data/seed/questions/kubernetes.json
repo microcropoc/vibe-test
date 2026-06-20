@@ -2,631 +2,301 @@
   {
     "text": "Какой объект Kubernetes описывает желаемое состояние набора pod'ов?",
     "answers": [
-      {
-        "text": "Ingress",
-        "isCorrect": false
-      },
-      {
-        "text": "Secret",
-        "isCorrect": false
-      },
-      {
-        "text": "Deployment",
-        "isCorrect": true
-      },
-      {
-        "text": "ConfigMap",
-        "isCorrect": false
-      }
-    ]
+      "Ingress",
+      "Secret",
+      "Deployment",
+      "ConfigMap"
+    ],
+    "correct": 2
   },
   {
     "text": "Минимальная единица развёртывания в Kubernetes — это:",
     "answers": [
-      {
-        "text": "Node",
-        "isCorrect": false
-      },
-      {
-        "text": "Namespace",
-        "isCorrect": false
-      },
-      {
-        "text": "Pod",
-        "isCorrect": true
-      },
-      {
-        "text": "Cluster",
-        "isCorrect": false
-      }
-    ]
+      "Node",
+      "Namespace",
+      "Pod",
+      "Cluster"
+    ],
+    "correct": 2
   },
   {
     "text": "Что такое Node?",
     "answers": [
-      {
-        "text": "Pod container",
-        "isCorrect": false
-      },
-      {
-        "text": "Deployment replica",
-        "isCorrect": false
-      },
-      {
-        "text": "Worker-машина в кластере",
-        "isCorrect": true
-      },
-      {
-        "text": "Service IP",
-        "isCorrect": false
-      }
-    ]
+      "Pod container",
+      "Deployment replica",
+      "Worker-машина в кластере",
+      "Service IP"
+    ],
+    "correct": 2
   },
   {
     "text": "Что такое Service?",
     "answers": [
-      {
-        "text": "Стабильная сетевая точка доступа к pod",
-        "isCorrect": true
-      },
-      {
-        "text": "Deployment",
-        "isCorrect": false
-      },
-      {
-        "text": "Volume",
-        "isCorrect": false
-      },
-      {
-        "text": "Config file",
-        "isCorrect": false
-      }
-    ]
+      "Стабильная сетевая точка доступа к pod",
+      "Deployment",
+      "Volume",
+      "Config file"
+    ],
+    "correct": 0
   },
   {
     "text": "Для чего ConfigMap?",
     "answers": [
-      {
-        "text": "Persistent data",
-        "isCorrect": false
-      },
-      {
-        "text": "Хранение конфигурации как key-value",
-        "isCorrect": true
-      },
-      {
-        "text": "Secrets encryption",
-        "isCorrect": false
-      },
-      {
-        "text": "Ingress TLS",
-        "isCorrect": false
-      }
-    ]
+      "Persistent data",
+      "Хранение конфигурации как key-value",
+      "Secrets encryption",
+      "Ingress TLS"
+    ],
+    "correct": 1
   },
   {
     "text": "Для чего Secret?",
     "answers": [
-      {
-        "text": "Хранение чувствительных данных",
-        "isCorrect": true
-      },
-      {
-        "text": "Public config",
-        "isCorrect": false
-      },
-      {
-        "text": "Log storage",
-        "isCorrect": false
-      },
-      {
-        "text": "Node label",
-        "isCorrect": false
-      }
-    ]
+      "Хранение чувствительных данных",
+      "Public config",
+      "Log storage",
+      "Node label"
+    ],
+    "correct": 0
   },
   {
     "text": "Что делает kubectl apply -f?",
     "answers": [
-      {
-        "text": "Only create once",
-        "isCorrect": false
-      },
-      {
-        "text": "Run pod shell",
-        "isCorrect": false
-      },
-      {
-        "text": "Delete resources",
-        "isCorrect": false
-      },
-      {
-        "text": "Создаёт/обновляет ресурсы из YAML",
-        "isCorrect": true
-      }
-    ]
+      "Only create once",
+      "Run pod shell",
+      "Delete resources",
+      "Создаёт/обновляет ресурсы из YAML"
+    ],
+    "correct": 3
   },
   {
     "text": "Что такое Namespace?",
     "answers": [
-      {
-        "text": "Виртуальное разделение ресурсов кластера",
-        "isCorrect": true
-      },
-      {
-        "text": "Container name",
-        "isCorrect": false
-      },
-      {
-        "text": "Network policy only",
-        "isCorrect": false
-      },
-      {
-        "text": "Node pool",
-        "isCorrect": false
-      }
-    ]
+      "Виртуальное разделение ресурсов кластера",
+      "Container name",
+      "Network policy only",
+      "Node pool"
+    ],
+    "correct": 0
   },
   {
     "text": "Что такое ReplicaSet?",
     "answers": [
-      {
-        "text": "Поддерживает заданное число pod replicas",
-        "isCorrect": true
-      },
-      {
-        "text": "Load balancer",
-        "isCorrect": false
-      },
-      {
-        "text": "Ingress controller",
-        "isCorrect": false
-      },
-      {
-        "text": "Storage class",
-        "isCorrect": false
-      }
-    ]
+      "Поддерживает заданное число pod replicas",
+      "Load balancer",
+      "Ingress controller",
+      "Storage class"
+    ],
+    "correct": 0
   },
   {
     "text": "Для чего Ingress?",
     "answers": [
-      {
-        "text": "Volume mount",
-        "isCorrect": false
-      },
-      {
-        "text": "Secret mount only",
-        "isCorrect": false
-      },
-      {
-        "text": "Pod scheduling",
-        "isCorrect": false
-      },
-      {
-        "text": "HTTP-маршрутизация в кластер",
-        "isCorrect": true
-      }
-    ]
+      "Volume mount",
+      "Secret mount only",
+      "Pod scheduling",
+      "HTTP-маршрутизация в кластер"
+    ],
+    "correct": 3
   },
   {
     "text": "Что такое liveness probe?",
     "answers": [
-      {
-        "text": "Startup only",
-        "isCorrect": false
-      },
-      {
-        "text": "Readiness same",
-        "isCorrect": false
-      },
-      {
-        "text": "Проверка, что контейнер жив",
-        "isCorrect": true
-      },
-      {
-        "text": "Metrics scrape",
-        "isCorrect": false
-      }
-    ]
+      "Startup only",
+      "Readiness same",
+      "Проверка, что контейнер жив",
+      "Metrics scrape"
+    ],
+    "correct": 2
   },
   {
     "text": "Что такое readiness probe?",
     "answers": [
-      {
-        "text": "Готовность принимать трафик",
-        "isCorrect": true
-      },
-      {
-        "text": "Restart container",
-        "isCorrect": false
-      },
-      {
-        "text": "HPA metric",
-        "isCorrect": false
-      },
-      {
-        "text": "Node health",
-        "isCorrect": false
-      }
-    ]
+      "Готовность принимать трафик",
+      "Restart container",
+      "HPA metric",
+      "Node health"
+    ],
+    "correct": 0
   },
   {
     "text": "Что такое PersistentVolume?",
     "answers": [
-      {
-        "text": "Ресурс хранения в кластере",
-        "isCorrect": true
-      },
-      {
-        "text": "Pod disk tmp",
-        "isCorrect": false
-      },
-      {
-        "text": "ConfigMap",
-        "isCorrect": false
-      },
-      {
-        "text": "Secret volume only",
-        "isCorrect": false
-      }
-    ]
+      "Ресурс хранения в кластере",
+      "Pod disk tmp",
+      "ConfigMap",
+      "Secret volume only"
+    ],
+    "correct": 0
   },
   {
     "text": "Что делает HorizontalPodAutoscaler?",
     "answers": [
-      {
-        "text": "Manual replica",
-        "isCorrect": false
-      },
-      {
-        "text": "Node autoscale only",
-        "isCorrect": false
-      },
-      {
-        "text": "Масштабирует pod по метрикам",
-        "isCorrect": true
-      },
-      {
-        "text": "Vertical CPU only",
-        "isCorrect": false
-      }
-    ]
+      "Manual replica",
+      "Node autoscale only",
+      "Масштабирует pod по метрикам",
+      "Vertical CPU only"
+    ],
+    "correct": 2
   },
   {
     "text": "Что такое label selector?",
     "answers": [
-      {
-        "text": "Node name",
-        "isCorrect": false
-      },
-      {
-        "text": "Namespace filter only",
-        "isCorrect": false
-      },
-      {
-        "text": "Сопоставление pod по меткам",
-        "isCorrect": true
-      },
-      {
-        "text": "Annotation only",
-        "isCorrect": false
-      }
-    ]
+      "Node name",
+      "Namespace filter only",
+      "Сопоставление pod по меткам",
+      "Annotation only"
+    ],
+    "correct": 2
   },
   {
     "text": "Что такое annotation?",
     "answers": [
-      {
-        "text": "Secret key",
-        "isCorrect": false
-      },
-      {
-        "text": "Label for service",
-        "isCorrect": false
-      },
-      {
-        "text": "Env var",
-        "isCorrect": false
-      },
-      {
-        "text": "Метаданные без selector",
-        "isCorrect": true
-      }
-    ]
+      "Secret key",
+      "Label for service",
+      "Env var",
+      "Метаданные без selector"
+    ],
+    "correct": 3
   },
   {
     "text": "Как посмотреть pod?",
     "answers": [
-      {
-        "text": "k8s list pod",
-        "isCorrect": false
-      },
-      {
-        "text": "docker ps pods",
-        "isCorrect": false
-      },
-      {
-        "text": "kubectl pods",
-        "isCorrect": false
-      },
-      {
-        "text": "kubectl get pods",
-        "isCorrect": true
-      }
-    ]
+      "k8s list pod",
+      "docker ps pods",
+      "kubectl pods",
+      "kubectl get pods"
+    ],
+    "correct": 3
   },
   {
     "text": "Что такое container image в pod spec?",
     "answers": [
-      {
-        "text": "Docker/OCI образ контейнера",
-        "isCorrect": true
-      },
-      {
-        "text": "VM image",
-        "isCorrect": false
-      },
-      {
-        "text": "Host path only",
-        "isCorrect": false
-      },
-      {
-        "text": "ConfigMap",
-        "isCorrect": false
-      }
-    ]
+      "Docker/OCI образ контейнера",
+      "VM image",
+      "Host path only",
+      "ConfigMap"
+    ],
+    "correct": 0
   },
   {
     "text": "Что делает kubectl describe pod?",
     "answers": [
-      {
-        "text": "Exec shell",
-        "isCorrect": false
-      },
-      {
-        "text": "Port forward",
-        "isCorrect": false
-      },
-      {
-        "text": "Delete pod",
-        "isCorrect": false
-      },
-      {
-        "text": "Подробная информация и events",
-        "isCorrect": true
-      }
-    ]
+      "Exec shell",
+      "Port forward",
+      "Delete pod",
+      "Подробная информация и events"
+    ],
+    "correct": 3
   },
   {
     "text": "Что такое kubelet?",
     "answers": [
-      {
-        "text": "Агент на node, управляет pod",
-        "isCorrect": true
-      },
-      {
-        "text": "API server",
-        "isCorrect": false
-      },
-      {
-        "text": "Ingress nginx only",
-        "isCorrect": false
-      },
-      {
-        "text": "Scheduler UI",
-        "isCorrect": false
-      }
-    ]
+      "Агент на node, управляет pod",
+      "API server",
+      "Ingress nginx only",
+      "Scheduler UI"
+    ],
+    "correct": 0
   },
   {
     "text": "Что такое control plane?",
     "answers": [
-      {
-        "text": "Pod network",
-        "isCorrect": false
-      },
-      {
-        "text": "Worker nodes only",
-        "isCorrect": false
-      },
-      {
-        "text": "CNI plugin only",
-        "isCorrect": false
-      },
-      {
-        "text": "Компоненты управления кластером",
-        "isCorrect": true
-      }
-    ]
+      "Pod network",
+      "Worker nodes only",
+      "CNI plugin only",
+      "Компоненты управления кластером"
+    ],
+    "correct": 3
   },
   {
     "text": "Для чего Service type ClusterIP?",
     "answers": [
-      {
-        "text": "External LB",
-        "isCorrect": false
-      },
-      {
-        "text": "HostNetwork",
-        "isCorrect": false
-      },
-      {
-        "text": "Внутренний IP в кластере",
-        "isCorrect": true
-      },
-      {
-        "text": "NodePort only",
-        "isCorrect": false
-      }
-    ]
+      "External LB",
+      "HostNetwork",
+      "Внутренний IP в кластере",
+      "NodePort only"
+    ],
+    "correct": 2
   },
   {
     "text": "Что такое NodePort?",
     "answers": [
-      {
-        "text": "LoadBalancer cloud only",
-        "isCorrect": false
-      },
-      {
-        "text": "ClusterIP only",
-        "isCorrect": false
-      },
-      {
-        "text": "Ingress only",
-        "isCorrect": false
-      },
-      {
-        "text": "Открывает порт на каждом node",
-        "isCorrect": true
-      }
-    ]
+      "LoadBalancer cloud only",
+      "ClusterIP only",
+      "Ingress only",
+      "Открывает порт на каждом node"
+    ],
+    "correct": 3
   },
   {
     "text": "Что делает kubectl logs?",
     "answers": [
-      {
-        "text": "Node logs",
-        "isCorrect": false
-      },
-      {
-        "text": "Ingress access log",
-        "isCorrect": false
-      },
-      {
-        "text": "Логи контейнера в pod",
-        "isCorrect": true
-      },
-      {
-        "text": "Audit logs",
-        "isCorrect": false
-      }
-    ]
+      "Node logs",
+      "Ingress access log",
+      "Логи контейнера в pod",
+      "Audit logs"
+    ],
+    "correct": 2
   },
   {
     "text": "Что такое StatefulSet?",
     "answers": [
-      {
-        "text": "Cron only",
-        "isCorrect": false
-      },
-      {
-        "text": "Job batch",
-        "isCorrect": false
-      },
-      {
-        "text": "Pod с stable identity и storage",
-        "isCorrect": true
-      },
-      {
-        "text": "Stateless deployment",
-        "isCorrect": false
-      }
-    ]
+      "Cron only",
+      "Job batch",
+      "Pod с stable identity и storage",
+      "Stateless deployment"
+    ],
+    "correct": 2
   },
   {
     "text": "Что такое Job?",
     "answers": [
-      {
-        "text": "Cron schedule",
-        "isCorrect": false
-      },
-      {
-        "text": "Daemon on all nodes",
-        "isCorrect": false
-      },
-      {
-        "text": "Задача, которая должна завершиться",
-        "isCorrect": true
-      },
-      {
-        "text": "Long running service",
-        "isCorrect": false
-      }
-    ]
+      "Cron schedule",
+      "Daemon on all nodes",
+      "Задача, которая должна завершиться",
+      "Long running service"
+    ],
+    "correct": 2
   },
   {
     "text": "Что такое DaemonSet?",
     "answers": [
-      {
-        "text": "Pod на каждом node",
-        "isCorrect": true
-      },
-      {
-        "text": "StatefulSet alias",
-        "isCorrect": false
-      },
-      {
-        "text": "Deployment canary",
-        "isCorrect": false
-      },
-      {
-        "text": "One replica global",
-        "isCorrect": false
-      }
-    ]
+      "Pod на каждом node",
+      "StatefulSet alias",
+      "Deployment canary",
+      "One replica global"
+    ],
+    "correct": 0
   },
   {
     "text": "Что делает kubectl port-forward?",
     "answers": [
-      {
-        "text": "Expose LoadBalancer",
-        "isCorrect": false
-      },
-      {
-        "text": "SSH node",
-        "isCorrect": false
-      },
-      {
-        "text": "Проброс порта pod на localhost",
-        "isCorrect": true
-      },
-      {
-        "text": "Create Ingress",
-        "isCorrect": false
-      }
-    ]
+      "Expose LoadBalancer",
+      "SSH node",
+      "Проброс порта pod на localhost",
+      "Create Ingress"
+    ],
+    "correct": 2
   },
   {
     "text": "Что такое RBAC?",
     "answers": [
-      {
-        "text": "Role-Based Access Control в API",
-        "isCorrect": true
-      },
-      {
-        "text": "Network policy",
-        "isCorrect": false
-      },
-      {
-        "text": "Pod security only",
-        "isCorrect": false
-      },
-      {
-        "text": "Secret encryption",
-        "isCorrect": false
-      }
-    ]
+      "Role-Based Access Control в API",
+      "Network policy",
+      "Pod security only",
+      "Secret encryption"
+    ],
+    "correct": 0
   },
   {
     "text": "Что такое Helm?",
     "answers": [
-      {
-        "text": "CNI plugin",
-        "isCorrect": false
-      },
-      {
-        "text": "Container runtime",
-        "isCorrect": false
-      },
-      {
-        "text": "Registry mirror",
-        "isCorrect": false
-      },
-      {
-        "text": "Пакетный менеджер chart для k8s",
-        "isCorrect": true
-      }
-    ]
+      "CNI plugin",
+      "Container runtime",
+      "Registry mirror",
+      "Пакетный менеджер chart для k8s"
+    ],
+    "correct": 3
   }
 ]

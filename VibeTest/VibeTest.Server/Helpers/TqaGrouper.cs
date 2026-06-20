@@ -21,16 +21,16 @@ public static class TqaGrouper
 
     public static List<QuestionFullDto> ToFullQuestions(IEnumerable<TestQuestionAnswer> rows) =>
         Group(rows)
-            .Select(q => new QuestionFullDto
+            .Select(q =>
             {
-                Order = q.Order,
-                Text = q.Text,
-                Answers = q.Answers.Select(a => new AnswerFullDto
+                var correctIndex = q.Answers.FindIndex(a => a.IsCorrect);
+                return new QuestionFullDto
                 {
-                    Order = a.Order,
-                    Text = a.Text,
-                    IsCorrect = a.IsCorrect
-                }).ToList()
+                    Order = q.Order,
+                    Text = q.Text,
+                    Answers = q.Answers.Select(a => a.Text).ToList(),
+                    Correct = correctIndex < 0 ? 0 : correctIndex
+                };
             })
             .ToList();
 

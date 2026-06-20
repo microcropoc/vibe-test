@@ -475,9 +475,10 @@ public interface IUserService
   "questions": [{
     "text": "What does SQL stand for?",
     "answers": [
-      { "text": "Structured Query Language", "isCorrect": true },
-      { "text": "Simple Query Logic", "isCorrect": false }
-    ]
+      "Structured Query Language",
+      "Simple Query Logic"
+    ],
+    "correct": 0
   }]
 }
 
@@ -686,9 +687,10 @@ public interface IUserService
   "questions": [{
     "text": "What does SQL stand for?",
     "answers": [
-      { "text": "Structured Query Language", "isCorrect": true },
-      { "text": "Simple Query Logic", "isCorrect": false }
-    ]
+      "Structured Query Language",
+      "Simple Query Logic"
+    ],
+    "correct": 0
   }]
 }
 ```
@@ -697,7 +699,7 @@ public interface IUserService
 - `name` непустое
 - Минимум 1 вопрос
 - Минимум 2 ответа на вопрос
-- Ровно 1 правильный ответ на вопрос
+- `correct` — валидный индекс в массиве `answers`
 
 ---
 

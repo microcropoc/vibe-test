@@ -66,7 +66,8 @@ export function TestEditor({ mode, localTestId, apiTestId, onSaved }: TestEditor
           setLockedQuestions(
             full.questions.map((q) => ({
               text: q.text,
-              answers: q.answers.map((a) => ({ text: a.text, isCorrect: a.isCorrect })),
+              answers: q.answers,
+              correct: q.correct,
             })),
           );
           setIsPublic(full.isPublic);
@@ -99,7 +100,7 @@ export function TestEditor({ mode, localTestId, apiTestId, onSaved }: TestEditor
         qi === questionIndex
           ? {
               ...q,
-              answers: q.answers.map((a, ai) => (ai === answerIndex ? { ...a, text } : a)),
+              answers: q.answers.map((a, ai) => (ai === answerIndex ? text : a)),
             }
           : q,
       ),
@@ -110,12 +111,7 @@ export function TestEditor({ mode, localTestId, apiTestId, onSaved }: TestEditor
     setDefinition((prev) => ({
       ...prev,
       questions: prev.questions.map((q, qi) =>
-        qi === questionIndex
-          ? {
-              ...q,
-              answers: q.answers.map((a, ai) => ({ ...a, isCorrect: ai === answerIndex })),
-            }
-          : q,
+        qi === questionIndex ? { ...q, correct: answerIndex } : q,
       ),
     }));
   }
@@ -124,9 +120,7 @@ export function TestEditor({ mode, localTestId, apiTestId, onSaved }: TestEditor
     setDefinition((prev) => ({
       ...prev,
       questions: prev.questions.map((q, qi) =>
-        qi === questionIndex
-          ? { ...q, answers: [...q.answers, { text: '', isCorrect: false }] }
-          : q,
+        qi === questionIndex ? { ...q, answers: [...q.answers, ''] } : q,
       ),
     }));
   }
@@ -137,9 +131,10 @@ export function TestEditor({ mode, localTestId, apiTestId, onSaved }: TestEditor
       questions: prev.questions.map((q, qi) => {
         if (qi !== questionIndex || q.answers.length <= 2) return q;
         const answers = q.answers.filter((_, ai) => ai !== answerIndex);
-        const hasCorrect = answers.some((a) => a.isCorrect);
-        if (!hasCorrect) answers[0] = { ...answers[0], isCorrect: true };
-        return { ...q, answers };
+        let correct = q.correct;
+        if (answerIndex < correct) correct -= 1;
+        else if (answerIndex === correct) correct = 0;
+        return { ...q, answers, correct };
       }),
     }));
   }
@@ -225,10 +220,10 @@ export function TestEditor({ mode, localTestId, apiTestId, onSaved }: TestEditor
             <li key={i}>
               <strong>{q.text || `Вопрос ${i + 1}`}</strong>
               <ul>
-                {q.answers.map((a, ai) => (
+                {q.answers.map((text, ai) => (
                   <li key={ai}>
-                    {a.text}
-                    {a.isCorrect && <span className="vt-badge"> верно</span>}
+                    {text}
+                    {ai === q.correct && <span className="vt-badge"> верно</span>}
                   </li>
                 ))}
               </ul>
@@ -279,10 +274,10 @@ export function TestEditor({ mode, localTestId, apiTestId, onSaved }: TestEditor
                 </strong>
               </p>
               <ul className="vt-preview-list">
-                {q.answers.map((a, ai) => (
+                {q.answers.map((text, ai) => (
                   <li key={ai}>
-                    {a.text}
-                    {a.isCorrect && <span className="vt-badge"> верно</span>}
+                    {text}
+                    {ai === q.correct && <span className="vt-badge"> верно</span>}
                   </li>
                 ))}
               </ul>
@@ -304,17 +299,17 @@ export function TestEditor({ mode, localTestId, apiTestId, onSaved }: TestEditor
             />
           </div>
           <div className="vt-answers">
-            {question.answers.map((answer, ai) => (
+            {question.answers.map((text, ai) => (
               <div key={ai} className="vt-answer-row">
                 <input
                   type="radio"
                   name={`correct-${qi}`}
-                  checked={answer.isCorrect}
+                  checked={question.correct === ai}
                   onChange={() => setCorrectAnswer(qi, ai)}
                   title="Правильный ответ"
                 />
                 <input
-                  value={answer.text}
+                  value={text}
                   onChange={(e) => updateAnswer(qi, ai, e.target.value)}
                   placeholder={`Ответ ${ai + 1}`}
                 />

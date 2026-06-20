@@ -1,11 +1,7 @@
-export interface AnswerDefinition {
-  text: string;
-  isCorrect: boolean;
-}
-
 export interface QuestionDefinition {
   text: string;
-  answers: AnswerDefinition[];
+  answers: string[];
+  correct: number;
 }
 
 export interface TestDefinition {

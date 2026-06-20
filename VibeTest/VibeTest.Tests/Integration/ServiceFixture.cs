@@ -54,21 +54,14 @@ public sealed class ServiceFixture : IDisposable
             new QuestionInput
             {
                 Text = "What is SQL?",
-                Answers =
-                [
-                    new AnswerInput { Text = "Structured Query Language", IsCorrect = true },
-                    new AnswerInput { Text = "Simple Query Logic", IsCorrect = false }
-                ]
+                Answers = ["Structured Query Language", "Simple Query Logic"],
+                Correct = 0
             },
             new QuestionInput
             {
                 Text = "SELECT is?",
-                Answers =
-                [
-                    new AnswerInput { Text = "DML", IsCorrect = true },
-                    new AnswerInput { Text = "DDL", IsCorrect = false },
-                    new AnswerInput { Text = "DCL", IsCorrect = false }
-                ]
+                Answers = ["DML", "DDL", "DCL"],
+                Correct = 0
             }
         ]
     };

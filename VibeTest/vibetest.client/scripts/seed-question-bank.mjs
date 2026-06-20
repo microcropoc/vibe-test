@@ -2,12 +2,8 @@
 export function q(text, correct, w1, w2, w3) {
   return {
     text,
-    answers: [
-      { text: correct, isCorrect: true },
-      { text: w1, isCorrect: false },
-      { text: w2, isCorrect: false },
-      { text: w3, isCorrect: false },
-    ],
+    answers: [correct, w1, w2, w3],
+    correct: 0,
   };
 }
 

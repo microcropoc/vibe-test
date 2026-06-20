@@ -27,13 +27,12 @@ public static class TestRequestValidator
             if (question.Answers.Count < 2)
                 throw new ValidationException($"Вопрос {i + 1}: минимум 2 ответа");
 
-            var correctCount = question.Answers.Count(a => a.IsCorrect);
-            if (correctCount != 1)
-                throw new ValidationException($"Вопрос {i + 1}: ровно один правильный ответ");
+            if (question.Correct < 0 || question.Correct >= question.Answers.Count)
+                throw new ValidationException($"Вопрос {i + 1}: неверный индекс correct");
 
             for (var j = 0; j < question.Answers.Count; j++)
             {
-                if (string.IsNullOrWhiteSpace(question.Answers[j].Text))
+                if (string.IsNullOrWhiteSpace(question.Answers[j]))
                     throw new ValidationException($"Вопрос {i + 1}, ответ {j + 1}: текст обязателен");
             }
         }

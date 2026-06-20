@@ -21,11 +21,8 @@ public class TestServiceTests
                 new QuestionInput
                 {
                     Text = "What is SQL?",
-                    Answers =
-                    [
-                        new AnswerInput { Text = "Structured Query Language", IsCorrect = true },
-                        new AnswerInput { Text = "Wrong", IsCorrect = false }
-                    ]
+                    Answers = ["Structured Query Language", "Wrong"],
+                    Correct = 0
                 }
             ]
         });
@@ -49,11 +46,8 @@ public class TestServiceTests
                 new QuestionInput
                 {
                     Text = "New question",
-                    Answers =
-                    [
-                        new AnswerInput { Text = "A", IsCorrect = true },
-                        new AnswerInput { Text = "B", IsCorrect = false }
-                    ]
+                    Answers = ["A", "B"],
+                    Correct = 0
                 }
             ]
         });
@@ -135,7 +129,7 @@ public class TestServiceTests
         var created = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
 
         var full = await fx.TestService.GetTestFull(created.Id, author.Id);
-        Assert.True(full.Questions[0].Answers.Single(a => a.IsCorrect).IsCorrect);
+        Assert.Equal(0, full.Questions[0].Correct);
     }
 
     [Fact]

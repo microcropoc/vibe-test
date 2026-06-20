@@ -30,7 +30,7 @@ Guest-сборку можно **установить как PWA** (Add to Home S
 - обязательное непустое поле `name`;
 - минимум один вопрос;
 - у каждого вопроса — непустой `text`, минимум 2 ответа;
-- у каждого вопроса **ровно один** ответ с `isCorrect: true`.
+- поле `correct` — индекс правильного ответа (с нуля), в пределах массива `answers`.
 
 При ошибке выбрасывается `ImportValidationError` с понятным сообщением.
 
@@ -41,7 +41,7 @@ Guest-сборку можно **установить как PWA** (Add to Home S
 - `exportTestToJson` — сериализация в строку;
 - `downloadTestJson` — скачивание файла `.json`.
 
-Экспортируются поля `name`, `description`, `questions` (с `text`, `answers`, `isCorrect`).
+Экспортируются поля `name`, `description`, `questions` (с `text`, `answers`, `correct`).
 
 ### Страница «Инфо» (`/info`)
 

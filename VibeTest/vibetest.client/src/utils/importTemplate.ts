@@ -6,11 +6,8 @@ export const DEFAULT_IMPORT_TEST_TEMPLATE: TestDefinition = {
   questions: [
     {
       text: 'Новый вопрос',
-      answers: [
-        { text: 'Неправильный ответ', isCorrect: false },
-        { text: 'Правильный ответ', isCorrect: true },
-        { text: 'Неправильный ответ', isCorrect: false },
-      ],
+      answers: ['Неправильный ответ', 'Правильный ответ', 'Неправильный ответ'],
+      correct: 1,
     },
   ],
 };

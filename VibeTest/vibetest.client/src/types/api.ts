@@ -64,14 +64,11 @@ export interface TestDetailResponse {
   questions: QuestionDetailDto[];
 }
 
-export interface AnswerFullDto extends AnswerDetailDto {
-  isCorrect: boolean;
-}
-
 export interface QuestionFullDto {
   order: number;
   text: string;
-  answers: AnswerFullDto[];
+  answers: string[];
+  correct: number;
 }
 
 export interface TestFullResponse {

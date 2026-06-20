@@ -10,11 +10,6 @@ public class CreateTestRequest
 public class QuestionInput
 {
     public string Text { get; set; } = string.Empty;
-    public List<AnswerInput> Answers { get; set; } = [];
-}
-
-public class AnswerInput
-{
-    public string Text { get; set; } = string.Empty;
-    public bool IsCorrect { get; set; }
+    public List<string> Answers { get; set; } = [];
+    public int Correct { get; set; }
 }

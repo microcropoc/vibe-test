@@ -56,11 +56,8 @@ public class ResultServiceTests
                 new QuestionInput
                 {
                     Text = "Extra",
-                    Answers =
-                    [
-                        new AnswerInput { Text = "Yes", IsCorrect = true },
-                        new AnswerInput { Text = "No", IsCorrect = false }
-                    ]
+                    Answers = ["Yes", "No"],
+                    Correct = 0
                 }
             ]
         });

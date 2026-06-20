@@ -43,23 +43,20 @@ function shuffleItems(items, seed) {
 }
 
 /**
- * Places the correct answer at a pseudo-random index and shuffles distractors.
- * @param {{ text: string, answers: { text: string, isCorrect: boolean }[] }} question
+ * Shuffles answers and returns the new correct index.
+ * @param {{ text: string, answers: string[], correct: number }} question
  * @param {number} seed
  */
 function shuffleAnswers(question, seed) {
-  const correct = question.answers.find((a) => a.isCorrect);
+  const correctText = question.answers[question.correct];
   const wrong = shuffleItems(
-    question.answers.filter((a) => !a.isCorrect),
+    question.answers.filter((_, i) => i !== question.correct),
     seed ^ 0x9e3779b9,
   );
-  if (!correct) {
-    throw new Error(`Question has no correct answer: ${question.text}`);
-  }
   const targetIndex = seed % (wrong.length + 1);
   const answers = [...wrong];
-  answers.splice(targetIndex, 0, correct);
-  return { text: question.text, answers };
+  answers.splice(targetIndex, 0, correctText);
+  return { text: question.text, answers, correct: targetIndex };
 }
 
 /** @param {ReturnType<typeof shuffleAnswers>} question @param {string} slug @param {number} index */
@@ -83,12 +80,15 @@ function validateQuestions(questions, slug) {
     if (!question.answers || question.answers.length < 2) {
       throw new Error(`${slug} Q${i + 1}: need at least 2 answers`);
     }
-    const correctCount = question.answers.filter((a) => a.isCorrect).length;
-    if (correctCount !== 1) {
-      throw new Error(`${slug} Q${i + 1}: need exactly 1 correct answer, got ${correctCount}`);
+    if (
+      typeof question.correct !== 'number' ||
+      question.correct < 0 ||
+      question.correct >= question.answers.length
+    ) {
+      throw new Error(`${slug} Q${i + 1}: invalid correct index`);
     }
-    for (const a of question.answers) {
-      if (!a.text?.trim()) {
+    for (const text of question.answers) {
+      if (!text?.trim()) {
         throw new Error(`${slug} Q${i + 1}: empty answer text`);
       }
     }
@@ -109,7 +109,7 @@ for (const [slug, { existing, extra }] of Object.entries(TOPICS)) {
   );
   validateQuestions(questions, slug);
   for (const question of questions) {
-    const correctIndex = question.answers.findIndex((a) => a.isCorrect);
+    const correctIndex = question.correct;
     if (correctIndex >= 0 && correctIndex < correctPositionCounts.length) {
       correctPositionCounts[correctIndex]++;
     }

@@ -2,631 +2,301 @@
   {
     "text": "ClickHouse оптимизирован прежде всего для:",
     "answers": [
-      {
-        "text": "Аналитических запросов по большим объёмам данных (OLAP)",
-        "isCorrect": true
-      },
-      {
-        "text": "Транзакционных операций с частыми UPDATE (OLTP)",
-        "isCorrect": false
-      },
-      {
-        "text": "Полнотекстового поиска как в Elasticsearch",
-        "isCorrect": false
-      },
-      {
-        "text": "Хранения бинарных файлов",
-        "isCorrect": false
-      }
-    ]
+      "Аналитических запросов по большим объёмам данных (OLAP)",
+      "Транзакционных операций с частыми UPDATE (OLTP)",
+      "Полнотекстового поиска как в Elasticsearch",
+      "Хранения бинарных файлов"
+    ],
+    "correct": 0
   },
   {
     "text": "Какой движок таблиц часто используют для append-only логов и событий?",
     "answers": [
-      {
-        "text": "InnoDB",
-        "isCorrect": false
-      },
-      {
-        "text": "MyISAM",
-        "isCorrect": false
-      },
-      {
-        "text": "MergeTree",
-        "isCorrect": true
-      },
-      {
-        "text": "SQLite",
-        "isCorrect": false
-      }
-    ]
+      "InnoDB",
+      "MyISAM",
+      "MergeTree",
+      "SQLite"
+    ],
+    "correct": 2
   },
   {
     "text": "Какой язык запросов в ClickHouse?",
     "answers": [
-      {
-        "text": "GraphQL",
-        "isCorrect": false
-      },
-      {
-        "text": "SQL-подобный диалект",
-        "isCorrect": true
-      },
-      {
-        "text": "Mongo query",
-        "isCorrect": false
-      },
-      {
-        "text": "CQL",
-        "isCorrect": false
-      }
-    ]
+      "GraphQL",
+      "SQL-подобный диалект",
+      "Mongo query",
+      "CQL"
+    ],
+    "correct": 1
   },
   {
     "text": "Что такое колоночное хранение?",
     "answers": [
-      {
-        "text": "Key-value only",
-        "isCorrect": false
-      },
-      {
-        "text": "Document store",
-        "isCorrect": false
-      },
-      {
-        "text": "Строки в одном файле only",
-        "isCorrect": false
-      },
-      {
-        "text": "Данные одного столбца хранятся вместе",
-        "isCorrect": true
-      }
-    ]
+      "Key-value only",
+      "Document store",
+      "Строки в одном файле only",
+      "Данные одного столбца хранятся вместе"
+    ],
+    "correct": 3
   },
   {
     "text": "Как создать таблицу MergeTree?",
     "answers": [
-      {
-        "text": "STORAGE MergeTree",
-        "isCorrect": false
-      },
-      {
-        "text": "TYPE = MergeTree",
-        "isCorrect": false
-      },
-      {
-        "text": "USING MergeTree",
-        "isCorrect": false
-      },
-      {
-        "text": "ENGINE = MergeTree() ORDER BY ...",
-        "isCorrect": true
-      }
-    ]
+      "STORAGE MergeTree",
+      "TYPE = MergeTree",
+      "USING MergeTree",
+      "ENGINE = MergeTree() ORDER BY ..."
+    ],
+    "correct": 3
   },
   {
     "text": "Что делает ORDER BY в MergeTree?",
     "answers": [
-      {
-        "text": "SQL ORDER BY only",
-        "isCorrect": false
-      },
-      {
-        "text": "Partition key only",
-        "isCorrect": false
-      },
-      {
-        "text": "Первичный ключ сортировки данных",
-        "isCorrect": true
-      },
-      {
-        "text": "Index name",
-        "isCorrect": false
-      }
-    ]
+      "SQL ORDER BY only",
+      "Partition key only",
+      "Первичный ключ сортировки данных",
+      "Index name"
+    ],
+    "correct": 2
   },
   {
     "text": "Что такое партиция PARTITION BY?",
     "answers": [
-      {
-        "text": "Column group",
-        "isCorrect": false
-      },
-      {
-        "text": "Cache layer",
-        "isCorrect": false
-      },
-      {
-        "text": "Replica shard",
-        "isCorrect": false
-      },
-      {
-        "text": "Логическое разделение данных",
-        "isCorrect": true
-      }
-    ]
+      "Column group",
+      "Cache layer",
+      "Replica shard",
+      "Логическое разделение данных"
+    ],
+    "correct": 3
   },
   {
     "text": "Как вставить данные?",
     "answers": [
-      {
-        "text": "INSERT INTO ... VALUES",
-        "isCorrect": true
-      },
-      {
-        "text": "COPY FROM",
-        "isCorrect": false
-      },
-      {
-        "text": "PUT rows",
-        "isCorrect": false
-      },
-      {
-        "text": "LOAD DATA",
-        "isCorrect": false
-      }
-    ]
+      "INSERT INTO ... VALUES",
+      "COPY FROM",
+      "PUT rows",
+      "LOAD DATA"
+    ],
+    "correct": 0
   },
   {
     "text": "Почему UPDATE редок в ClickHouse?",
     "answers": [
-      {
-        "text": "Нет WHERE",
-        "isCorrect": false
-      },
-      {
-        "text": "Только DELETE",
-        "isCorrect": false
-      },
-      {
-        "text": "OLAP оптимизирован под append и batch",
-        "isCorrect": true
-      },
-      {
-        "text": "UPDATE запрещён",
-        "isCorrect": false
-      }
-    ]
+      "Нет WHERE",
+      "Только DELETE",
+      "OLAP оптимизирован под append и batch",
+      "UPDATE запрещён"
+    ],
+    "correct": 2
   },
   {
     "text": "Что такое materialized view?",
     "answers": [
-      {
-        "text": "Temp table",
-        "isCorrect": false
-      },
-      {
-        "text": "Обычный VIEW only",
-        "isCorrect": false
-      },
-      {
-        "text": "External table",
-        "isCorrect": false
-      },
-      {
-        "text": "Тригger-like view с предрасчётом",
-        "isCorrect": true
-      }
-    ]
+      "Temp table",
+      "Обычный VIEW only",
+      "External table",
+      "Тригger-like view с предрасчётом"
+    ],
+    "correct": 3
   },
   {
     "text": "Какой тип для DateTime?",
     "answers": [
-      {
-        "text": "DateTime",
-        "isCorrect": true
-      },
-      {
-        "text": "TIMESTAMP only PG",
-        "isCorrect": false
-      },
-      {
-        "text": "datetime64 only",
-        "isCorrect": false
-      },
-      {
-        "text": "String only",
-        "isCorrect": false
-      }
-    ]
+      "DateTime",
+      "TIMESTAMP only PG",
+      "datetime64 only",
+      "String only"
+    ],
+    "correct": 0
   },
   {
     "text": "Что делает count()?",
     "answers": [
-      {
-        "text": "Считает строки",
-        "isCorrect": true
-      },
-      {
-        "text": "Sum column",
-        "isCorrect": false
-      },
-      {
-        "text": "Distinct only",
-        "isCorrect": false
-      },
-      {
-        "text": "Group count only",
-        "isCorrect": false
-      }
-    ]
+      "Считает строки",
+      "Sum column",
+      "Distinct only",
+      "Group count only"
+    ],
+    "correct": 0
   },
   {
     "text": "Что такое движок таблицы?",
     "answers": [
-      {
-        "text": "Query optimizer",
-        "isCorrect": false
-      },
-      {
-        "text": "User engine",
-        "isCorrect": false
-      },
-      {
-        "text": "Способ хранения и merge данных",
-        "isCorrect": true
-      },
-      {
-        "text": "Network protocol",
-        "isCorrect": false
-      }
-    ]
+      "Query optimizer",
+      "User engine",
+      "Способ хранения и merge данных",
+      "Network protocol"
+    ],
+    "correct": 2
   },
   {
     "text": "Как агрегировать sum по группе?",
     "answers": [
-      {
-        "text": "SELECT ... GROUP BY",
-        "isCorrect": true
-      },
-      {
-        "text": "REDUCE BY",
-        "isCorrect": false
-      },
-      {
-        "text": "AGGREGATE BY only window",
-        "isCorrect": false
-      },
-      {
-        "text": "SUM GROUP",
-        "isCorrect": false
-      }
-    ]
+      "SELECT ... GROUP BY",
+      "REDUCE BY",
+      "AGGREGATE BY only window",
+      "SUM GROUP"
+    ],
+    "correct": 0
   },
   {
     "text": "Что такое ReplicatedMergeTree?",
     "answers": [
-      {
-        "text": "Single node only",
-        "isCorrect": false
-      },
-      {
-        "text": "Kafka engine",
-        "isCorrect": false
-      },
-      {
-        "text": "MergeTree с репликацией",
-        "isCorrect": true
-      },
-      {
-        "text": "In-memory engine",
-        "isCorrect": false
-      }
-    ]
+      "Single node only",
+      "Kafka engine",
+      "MergeTree с репликацией",
+      "In-memory engine"
+    ],
+    "correct": 2
   },
   {
     "text": "Для чего Kafka engine?",
     "answers": [
-      {
-        "text": "Replace MergeTree",
-        "isCorrect": false
-      },
-      {
-        "text": "Чтение из Kafka топиков",
-        "isCorrect": true
-      },
-      {
-        "text": "Write to Kafka only",
-        "isCorrect": false
-      },
-      {
-        "text": "Log shipping only",
-        "isCorrect": false
-      }
-    ]
+      "Replace MergeTree",
+      "Чтение из Kafka топиков",
+      "Write to Kafka only",
+      "Log shipping only"
+    ],
+    "correct": 1
   },
   {
     "text": "Что такое shard?",
     "answers": [
-      {
-        "text": "Column shard",
-        "isCorrect": false
-      },
-      {
-        "text": "Горизонтальная часть кластера",
-        "isCorrect": true
-      },
-      {
-        "text": "Replica copy",
-        "isCorrect": false
-      },
-      {
-        "text": "Cache shard",
-        "isCorrect": false
-      }
-    ]
+      "Column shard",
+      "Горизонтальная часть кластера",
+      "Replica copy",
+      "Cache shard"
+    ],
+    "correct": 1
   },
   {
     "text": "Какой клиент CLI?",
     "answers": [
-      {
-        "text": "clickhouse-client",
-        "isCorrect": true
-      },
-      {
-        "text": "redis-cli",
-        "isCorrect": false
-      },
-      {
-        "text": "chcli only",
-        "isCorrect": false
-      },
-      {
-        "text": "psql",
-        "isCorrect": false
-      }
-    ]
+      "clickhouse-client",
+      "redis-cli",
+      "chcli only",
+      "psql"
+    ],
+    "correct": 0
   },
   {
     "text": "Что делает FINAL в SELECT?",
     "answers": [
-      {
-        "text": "Limit final",
-        "isCorrect": false
-      },
-      {
-        "text": "Form merge on read для ReplacingMergeTree",
-        "isCorrect": true
-      },
-      {
-        "text": "Transaction commit",
-        "isCorrect": false
-      },
-      {
-        "text": "Sort final",
-        "isCorrect": false
-      }
-    ]
+      "Limit final",
+      "Form merge on read для ReplacingMergeTree",
+      "Transaction commit",
+      "Sort final"
+    ],
+    "correct": 1
   },
   {
     "text": "Что такое Nullable(T)?",
     "answers": [
-      {
-        "text": "Optional JSON",
-        "isCorrect": false
-      },
-      {
-        "text": "Void type",
-        "isCorrect": false
-      },
-      {
-        "text": "Тип, допускающий NULL",
-        "isCorrect": true
-      },
-      {
-        "text": "Default zero",
-        "isCorrect": false
-      }
-    ]
+      "Optional JSON",
+      "Void type",
+      "Тип, допускающий NULL",
+      "Default zero"
+    ],
+    "correct": 2
   },
   {
     "text": "Как ограничить выборку?",
     "answers": [
-      {
-        "text": "LIMIT n",
-        "isCorrect": true
-      },
-      {
-        "text": "TOP n only",
-        "isCorrect": false
-      },
-      {
-        "text": "FETCH n",
-        "isCorrect": false
-      },
-      {
-        "text": "SAMPLE only",
-        "isCorrect": false
-      }
-    ]
+      "LIMIT n",
+      "TOP n only",
+      "FETCH n",
+      "SAMPLE only"
+    ],
+    "correct": 0
   },
   {
     "text": "Что делает toDate(ts)?",
     "answers": [
-      {
-        "text": "Преобразует в Date",
-        "isCorrect": true
-      },
-      {
-        "text": "Timestamp now",
-        "isCorrect": false
-      },
-      {
-        "text": "Format string",
-        "isCorrect": false
-      },
-      {
-        "text": "Parse JSON",
-        "isCorrect": false
-      }
-    ]
+      "Преобразует в Date",
+      "Timestamp now",
+      "Format string",
+      "Parse JSON"
+    ],
+    "correct": 0
   },
   {
     "text": "Что такое TTL в таблице?",
     "answers": [
-      {
-        "text": "Cache TTL only",
-        "isCorrect": false
-      },
-      {
-        "text": "Session TTL",
-        "isCorrect": false
-      },
-      {
-        "text": "Transaction timeout",
-        "isCorrect": false
-      },
-      {
-        "text": "Автоудаление/агрегация по времени",
-        "isCorrect": true
-      }
-    ]
+      "Cache TTL only",
+      "Session TTL",
+      "Transaction timeout",
+      "Автоудаление/агрегация по времени"
+    ],
+    "correct": 3
   },
   {
     "text": "Какой формат быстрого bulk insert?",
     "answers": [
-      {
-        "text": "XML only",
-        "isCorrect": false
-      },
-      {
-        "text": "Native или CSV batch",
-        "isCorrect": true
-      },
-      {
-        "text": "Single row only",
-        "isCorrect": false
-      },
-      {
-        "text": "Excel only",
-        "isCorrect": false
-      }
-    ]
+      "XML only",
+      "Native или CSV batch",
+      "Single row only",
+      "Excel only"
+    ],
+    "correct": 1
   },
   {
     "text": "Что такое Distributed table?",
     "answers": [
-      {
-        "text": "Replica only",
-        "isCorrect": false
-      },
-      {
-        "text": "Прокси над шардами кластера",
-        "isCorrect": true
-      },
-      {
-        "text": "Local MergeTree",
-        "isCorrect": false
-      },
-      {
-        "text": "View only",
-        "isCorrect": false
-      }
-    ]
+      "Replica only",
+      "Прокси над шардами кластера",
+      "Local MergeTree",
+      "View only"
+    ],
+    "correct": 1
   },
   {
     "text": "Почему ClickHouse быстр на аналитике?",
     "answers": [
-      {
-        "text": "Single thread only",
-        "isCorrect": false
-      },
-      {
-        "text": "Full index on all cols",
-        "isCorrect": false
-      },
-      {
-        "text": "Column storage + vectorized execution",
-        "isCorrect": true
-      },
-      {
-        "text": "Row locks",
-        "isCorrect": false
-      }
-    ]
+      "Single thread only",
+      "Full index on all cols",
+      "Column storage + vectorized execution",
+      "Row locks"
+    ],
+    "correct": 2
   },
   {
     "text": "Что делает GROUP BY with totals?",
     "answers": [
-      {
-        "text": "CUBE only",
-        "isCorrect": false
-      },
-      {
-        "text": "Доп. строка итогов WITH TOTALS",
-        "isCorrect": true
-      },
-      {
-        "text": "ROLLUP only PG",
-        "isCorrect": false
-      },
-      {
-        "text": "HAVING totals",
-        "isCorrect": false
-      }
-    ]
+      "CUBE only",
+      "Доп. строка итогов WITH TOTALS",
+      "ROLLUP only PG",
+      "HAVING totals"
+    ],
+    "correct": 1
   },
   {
     "text": "Какой тип для строк?",
     "answers": [
-      {
-        "text": "VARCHAR only",
-        "isCorrect": false
-      },
-      {
-        "text": "CHAR fixed only",
-        "isCorrect": false
-      },
-      {
-        "text": "String",
-        "isCorrect": true
-      },
-      {
-        "text": "TEXT only PG",
-        "isCorrect": false
-      }
-    ]
+      "VARCHAR only",
+      "CHAR fixed only",
+      "String",
+      "TEXT only PG"
+    ],
+    "correct": 2
   },
   {
     "text": "Что такое LowCardinality(String)?",
     "answers": [
-      {
-        "text": "Compressed JSON",
-        "isCorrect": false
-      },
-      {
-        "text": "Enum only",
-        "isCorrect": false
-      },
-      {
-        "text": "Оптимизация для малых уникальных строк",
-        "isCorrect": true
-      },
-      {
-        "text": "UUID type",
-        "isCorrect": false
-      }
-    ]
+      "Compressed JSON",
+      "Enum only",
+      "Оптимизация для малых уникальных строк",
+      "UUID type"
+    ],
+    "correct": 2
   },
   {
     "text": "Как мониторить запросы?",
     "answers": [
-      {
-        "text": "EXPLAIN only",
-        "isCorrect": false
-      },
-      {
-        "text": "slow.log only",
-        "isCorrect": false
-      },
-      {
-        "text": "system.query_log",
-        "isCorrect": true
-      },
-      {
-        "text": "pg_stat",
-        "isCorrect": false
-      }
-    ]
+      "EXPLAIN only",
+      "slow.log only",
+      "system.query_log",
+      "pg_stat"
+    ],
+    "correct": 2
   }
 ]
