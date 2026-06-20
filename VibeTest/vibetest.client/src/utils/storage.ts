@@ -1,7 +1,8 @@
-import type { LocalTest, TestDefinition, TestProgress } from '@/types';
+import type { GuestTestResult, LocalTest, TestDefinition, TestProgress } from '@/types';
 
 const KEYS = {
   localTests: 'vibetest_local_tests',
+  isInitLocalTests: 'vibetest_is_init_local_tests',
   guestResults: 'vibetest_guest_results',
   progress: (id: string) => `vibetest_progress_${id}`,
   apiProgress: (id: number) => `vibetest_progress_api_${id}`,
@@ -29,6 +30,14 @@ export function getLocalTestsSnapshot(): string {
   return localStorage.getItem(KEYS.localTests) ?? '[]';
 }
 
+export function setIsInitLocalTests(): void {
+  writeJson<boolean>(KEYS.isInitLocalTests, true);
+}
+
+export function getIsInitLocalTests(): boolean {
+  return readJson<boolean>(KEYS.isInitLocalTests, false);
+}
+
 export function getLocalTests(): LocalTest[] {
   return readJson<LocalTest[]>(KEYS.localTests, []);
 }
@@ -49,6 +58,7 @@ export function saveLocalTest(test: LocalTest): void {
   notifyStorageChange();
 }
 
+/** Replaces the entire local test list; does not merge with existing tests. */
 export function saveLocalTestsBulk(tests: LocalTest[]): void {
   writeJson(KEYS.localTests, tests);
   notifyStorageChange();
@@ -87,11 +97,11 @@ export function clearApiTestProgress(testId: number): void {
   localStorage.removeItem(KEYS.apiProgress(testId));
 }
 
-export function getGuestResults(): import('@/types').GuestTestResult[] {
-  return readJson<import('@/types').GuestTestResult[]>(KEYS.guestResults, []);
+export function getGuestResults(): GuestTestResult[] {
+  return readJson<GuestTestResult[]>(KEYS.guestResults, []);
 }
 
-export function saveGuestResult(result: import('@/types').GuestTestResult): void {
+export function saveGuestResult(result: GuestTestResult): void {
   const results = getGuestResults().filter((r) => r.testId !== result.testId);
   results.push(result);
   writeJson(KEYS.guestResults, results);

@@ -189,6 +189,45 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
     };
   }, [apiResult, phase, progress, questions.length, source.type, testName]);
 
+  const goToQuestion = useCallback(
+    (order: number) => {
+      if (order < 0 || order >= questions.length) return;
+      const next: PlayerProgress = {
+        ...progress,
+        currentQuestionOrder: order,
+        updatedAt: new Date().toISOString(),
+      };
+      setProgress(next);
+      persistProgress(source, next);
+      setSelectedOrder(next.answers[order]?.selectedAnswerOrder ?? null);
+      setPhase(next.answers[order] ? 'result' : 'answering');
+    },
+    [progress, questions.length, source],
+  );
+
+  const handleNext = useCallback(() => {
+    const nextOrder =
+      currentOrder < questions.length - 1
+        ? currentOrder + 1
+        : questions.findIndex((_, i) => !progress.answers[i]);
+
+    if (nextOrder >= 0 && nextOrder < questions.length) {
+      goToQuestion(nextOrder);
+      return;
+    }
+
+    if (isTestFullyAnswered(questions.length, progress)) {
+      if (source.type === 'api') {
+        void testsApi.getResult(source.testId).then((r) => {
+          setApiResult(r);
+          setPhase('completed');
+        });
+      } else {
+        setPhase('completed');
+      }
+    }
+  }, [currentOrder, goToQuestion, progress, questions, source]);
+
   async function handleAnswer(answerOrder: number) {
     if (showingResult || phase === 'checking' || !currentQuestion) return;
 
@@ -236,52 +275,11 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
         if (allDone) {
           const result = await testsApi.getResult(source.testId);
           setApiResult(result);
-          if (result.completedAt) {
-            setPhase('completed');
-          }
         }
-      } else if (isTestFullyAnswered(questions.length, nextProgress)) {
-        setPhase('completed');
       }
     } catch (err) {
       setError(getApiErrorMessage(err));
       setPhase('answering');
-    }
-  }
-
-  function goToQuestion(order: number) {
-    if (order < 0 || order >= questions.length) return;
-    const next: PlayerProgress = {
-      ...progress,
-      currentQuestionOrder: order,
-      updatedAt: new Date().toISOString(),
-    };
-    setProgress(next);
-    persistProgress(source, next);
-    setSelectedOrder(next.answers[order]?.selectedAnswerOrder ?? null);
-    setPhase(next.answers[order] ? 'result' : 'answering');
-  }
-
-  function handleNext() {
-    const nextOrder =
-      currentOrder < questions.length - 1
-        ? currentOrder + 1
-        : questions.findIndex((_, i) => !progress.answers[i]);
-
-    if (nextOrder >= 0 && nextOrder < questions.length) {
-      goToQuestion(nextOrder);
-      return;
-    }
-
-    if (isTestFullyAnswered(questions.length, progress)) {
-      if (source.type === 'api') {
-        void testsApi.getResult(source.testId).then((r) => {
-          setApiResult(r);
-          setPhase('completed');
-        });
-      } else {
-        setPhase('completed');
-      }
     }
   }
 
@@ -327,6 +325,11 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
   }
 
   const activeRecord = showingResult ? currentRecord : null;
+  const isChecking = phase === 'checking';
+  const showNavOverlay = showingResult || isChecking;
+  const canGoNext = showingResult;
+  const canGoBack = currentOrder > 0;
+  const nextLabel = isTestFullyAnswered(questions.length, progress) ? 'Итог' : 'Далее';
 
   return (
     <div
@@ -393,36 +396,58 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
           })}
         </div>
 
-        {showingResult && activeRecord && (
-          <p className={activeRecord.isCorrect ? 'vt-muted' : 'vt-error'}>
-            {activeRecord.isCorrect ? 'Верно!' : 'Неверно. Правильный ответ подсвечен.'}
-          </p>
-        )}
-
         {error && <p className="vt-error">{error}</p>}
 
-        <div className="vt-actions">
-          {currentOrder > 0 && (
-            <button
-              type="button"
-              className="vt-btn vt-btn--ghost"
-              onClick={() => goToQuestion(currentOrder - 1)}
-            >
-              Назад
-            </button>
-          )}
-          {showingResult && (
-            <button type="button" className="vt-btn" onClick={handleNext}>
-              {isTestFullyAnswered(questions.length, progress) ? 'Итог' : 'Далее'}
-            </button>
-          )}
-          {onExit && (
-            <button type="button" className="vt-btn vt-btn--ghost" onClick={onExit}>
-              Выйти
-            </button>
-          )}
-        </div>
+        {showNavOverlay && (
+          <div
+            className="vt-card__overlay"
+            role="button"
+            tabIndex={showingResult ? 0 : -1}
+            aria-label="Следующий вопрос"
+            aria-disabled={!showingResult || isChecking}
+            onClick={() => {
+              if (showingResult && !isChecking) handleNext();
+            }}
+            onKeyDown={(e) => {
+              if (showingResult && !isChecking && (e.key === 'Enter' || e.key === ' ')) {
+                e.preventDefault();
+                handleNext();
+              }
+            }}
+          />
+        )}
       </article>
+
+      <div className="vt-player__toolbar">
+        <div className="vt-player__nav">
+          <button
+            type="button"
+            className="vt-btn vt-btn--ghost"
+            onClick={() => goToQuestion(currentOrder - 1)}
+            disabled={!canGoBack || isChecking}
+          >
+            Назад
+          </button>
+          <button
+            type="button"
+            className="vt-btn"
+            onClick={handleNext}
+            disabled={!canGoNext || isChecking}
+          >
+            {nextLabel}
+          </button>
+        </div>
+        {onExit && (
+          <button
+            type="button"
+            className="vt-btn vt-btn--ghost vt-player__exit-btn"
+            onClick={onExit}
+            disabled={isChecking}
+          >
+            Выйти
+          </button>
+        )}
+      </div>
     </div>
   );
 }
