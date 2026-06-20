@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Pagination } from '@/components/common/Pagination';
+import { TestListProgressMeta } from '@/components/tests/TestListProgressMeta';
 import { testsApi } from '@/full/api';
 import { getApiErrorMessage } from '@/full/context/AuthContext';
 import type { TestListItem } from '@/types';
+import { getTestProgressStats } from '@/utils/playerHelpers';
+import { getApiTestProgress } from '@/utils/storage';
 
 const PAGE_SIZE = 10;
 
@@ -49,17 +52,27 @@ export function PublicTestsPage() {
       )}
 
       <ul className="full-list">
-        {items.map((test) => (
+        {items.map((test) => {
+          const stats = getTestProgressStats(test.questionsCount, getApiTestProgress(test.id));
+
+          return (
           <li key={test.id} className="full-list__item">
             <Link to={`/tests/${test.id}`} className="full-list__title">
               {test.name}
             </Link>
-            <div className="full-list__meta">
-              {test.authorName} · {test.questionsCount} вопр. ·{' '}
-              {new Date(test.createdAt).toLocaleDateString()}
-            </div>
+            <TestListProgressMeta
+              className="full-list__meta"
+              stats={stats}
+              suffix={
+                <>
+                  {' '}
+                  · {test.authorName} · {new Date(test.createdAt).toLocaleDateString()}
+                </>
+              }
+            />
           </li>
-        ))}
+          );
+        })}
       </ul>
 
       <Pagination

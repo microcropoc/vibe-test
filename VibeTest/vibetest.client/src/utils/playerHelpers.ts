@@ -37,3 +37,24 @@ export function scorePercent(correct: number, total: number): number {
   if (total === 0) return 0;
   return Math.round((correct / total) * 100);
 }
+
+export interface TestProgressStats {
+  total: number;
+  answered: number;
+  correct: number;
+  incorrect: number;
+}
+
+export function getTestProgressStats(
+  totalQuestions: number,
+  progress: { answers: Record<number, { isCorrect: boolean }> } | null,
+): TestProgressStats {
+  const answered = progress ? countAnswered(progress) : 0;
+  const correct = progress ? countCorrect(progress) : 0;
+  return {
+    total: totalQuestions,
+    answered,
+    correct,
+    incorrect: answered - correct,
+  };
+}

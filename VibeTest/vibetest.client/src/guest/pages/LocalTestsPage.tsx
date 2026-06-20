@@ -1,8 +1,10 @@
 import { useMemo, useSyncExternalStore } from 'react';
 import { Link } from 'react-router-dom';
+import { TestListProgressMeta } from '@/components/tests/TestListProgressMeta';
 import { isFullMode } from '@/config/env';
 import type { LocalTest } from '@/types';
-import { deleteLocalTest, getLocalTestsSnapshot } from '@/utils/storage';
+import { getTestProgressStats } from '@/utils/playerHelpers';
+import { deleteLocalTest, getLocalTestsSnapshot, getTestProgress } from '@/utils/storage';
 import '@/guest/components/layout/GuestLayout.css';
 
 function subscribe(callback: () => void) {
@@ -31,14 +33,18 @@ export function LocalTestsPage() {
         </div>
       ) : (
         <ul className="guest-list">
-          {tests.map((test) => (
+          {tests.map((test) => {
+            const stats = getTestProgressStats(test.questions.length, getTestProgress(test.id));
+
+            return (
             <li key={test.id} className="guest-list__item">
               <div>
                 <div className="guest-list__title">{test.name}</div>
-                <div className="guest-list__meta">
-                  {test.questions.length} вопр. · обновлён{' '}
-                  {new Date(test.updatedAt).toLocaleString()}
-                </div>
+                <TestListProgressMeta
+                  className="guest-list__meta"
+                  stats={stats}
+                  suffix={<> · обновлён {new Date(test.updatedAt).toLocaleString()}</>}
+                />
               </div>
               <div className="guest-list__actions">
                 <Link to={`/play/${test.id}`} className="guest-button">
@@ -56,7 +62,8 @@ export function LocalTestsPage() {
                 </button>
               </div>
             </li>
-          ))}
+            );
+          })}
         </ul>
       )}
     </section>

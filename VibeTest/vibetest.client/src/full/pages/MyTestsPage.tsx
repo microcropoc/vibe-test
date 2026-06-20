@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Pagination } from '@/components/common/Pagination';
+import { TestListProgressMeta } from '@/components/tests/TestListProgressMeta';
 import { testsApi } from '@/full/api';
 import { getApiErrorMessage } from '@/full/context/AuthContext';
 import type { TestListItem } from '@/types';
+import { getTestProgressStats } from '@/utils/playerHelpers';
+import { getApiTestProgress } from '@/utils/storage';
 
 const PAGE_SIZE = 10;
 
@@ -83,12 +86,17 @@ export function MyTestsPage() {
       {error && <p className="full-error">{error}</p>}
 
       <ul className="full-list">
-        {items.map((test) => (
+        {items.map((test) => {
+          const stats = getTestProgressStats(test.questionsCount, getApiTestProgress(test.id));
+
+          return (
           <li key={test.id} className="full-list__item">
             <div className="full-list__title">{test.name}</div>
-            <div className="full-list__meta">
-              {test.questionsCount} вопр. · {new Date(test.createdAt).toLocaleDateString()}
-            </div>
+            <TestListProgressMeta
+              className="full-list__meta"
+              stats={stats}
+              suffix={<> · {new Date(test.createdAt).toLocaleDateString()}</>}
+            />
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
               <Link to={`/editor/${test.id}`} className="full-button full-button--ghost">
                 Редактировать
@@ -131,7 +139,8 @@ export function MyTestsPage() {
               </button>
             </div>
           </li>
-        ))}
+          );
+        })}
       </ul>
 
       <Pagination
