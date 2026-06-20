@@ -245,3 +245,56 @@
   background: #243044;
   color: #9fb0c7;
 }
+
+.vt-import-panel {
+  padding: 0;
+  border-radius: 0.75rem;
+  border: 1px solid #2a3a50;
+  background: #151f2b;
+}
+
+.vt-import-panel__summary {
+  padding: 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  list-style: none;
+}
+
+.vt-import-panel__summary::-webkit-details-marker {
+  display: none;
+}
+
+.vt-import-panel__summary::before {
+  content: '▸';
+  display: inline-block;
+  margin-right: 0.5rem;
+  transition: transform 0.15s ease;
+}
+
+.vt-import-panel[open] > .vt-import-panel__summary::before {
+  transform: rotate(90deg);
+}
+
+.vt-import-panel__body {
+  padding: 0 1rem 1rem;
+}
+
+.vt-import-panel__file-label {
+  cursor: pointer;
+  display: inline-block;
+}
+
+.vt-import-panel__textarea {
+  min-height: 120px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9rem;
+}
+
+.vt-import-panel__actions {
+  margin-top: 0;
+}
+
+.vt-import-panel__success {
+  color: #7fd4a0;
+}

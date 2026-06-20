@@ -18,3 +18,9 @@ export async function saveNewTest(page: Page): Promise<void> {
 export async function saveExistingTest(page: Page): Promise<void> {
   await page.getByRole('button', { name: 'Сохранить' }).click();
 }
+
+export async function appendQuestionsFromJson(page: Page, json: string): Promise<void> {
+  await page.locator('details.vt-import-panel summary').click();
+  await page.locator('#import-json').fill(json);
+  await page.getByRole('button', { name: 'Добавить вопросы' }).click();
+}

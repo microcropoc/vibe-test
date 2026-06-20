@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { fillMinimalTest, saveNewTest } from '../helpers/editor';
+import { appendQuestionsFromJson, fillMinimalTest, saveNewTest } from '../helpers/editor';
 import { answerQuestion } from '../helpers/player';
 
 test.beforeEach(async ({ page }) => {
@@ -51,4 +51,32 @@ test('импорт JSON из буфера', async ({ page }) => {
   await expect(page.getByText('Тест «Imported Guest Test» сохранён локально.')).toBeVisible();
   await expect(page).toHaveURL(/\/tests$/, { timeout: 10_000 });
   await expect(page.locator('.guest-list__title', { hasText: 'Imported Guest Test' })).toBeVisible();
+});
+
+test('импорт вопросов в редакторе дополняет тест', async ({ page }) => {
+  const testName = `Editor Import E2E ${Date.now()}`;
+  const json = JSON.stringify({
+    questions: [
+      {
+        text: 'Первый импортированный?',
+        answers: ['Да', 'Нет'],
+        correct: 0,
+      },
+      {
+        text: 'Второй импортированный?',
+        answers: ['Один', 'Два'],
+        correct: 1,
+      },
+    ],
+  });
+
+  await page.goto('/editor');
+  await page.locator('#test-name').fill(testName);
+  await expect(page.getByText('Вопросов: 1')).toBeVisible();
+
+  await appendQuestionsFromJson(page, json);
+
+  await expect(page.getByText('Добавлено 2 вопросов')).toBeVisible();
+  await expect(page.getByText('Вопросов: 2')).toBeVisible();
+  await expect(page.locator('#test-name')).toHaveValue(testName);
 });

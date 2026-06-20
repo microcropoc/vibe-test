@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { QuestionDefinition, TestDefinition } from '@/types';
 import { Pagination } from '@/components/common/Pagination';
+import { TestImportPanel } from '@/components/tests/TestImportPanel';
 import { testsApi } from '@/full/api';
 import { getApiErrorMessage } from '@/full/context/AuthContext';
 import { downloadTestJson } from '@/utils/export';
@@ -26,6 +27,10 @@ type QuestionPageSize = (typeof QUESTION_PAGE_SIZES)[number];
 function clampPage(page: number, totalItems: number, pageSize: number): number {
   const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
   return Math.min(Math.max(1, page), totalPages);
+}
+
+function isEmptyQuestion(question: QuestionDefinition): boolean {
+  return !question.text.trim() && question.answers.every((answer) => !answer.trim());
 }
 
 function getPageSlice<T>(items: T[], page: number, pageSize: number) {
@@ -61,7 +66,6 @@ export function TestEditor({ mode, localTestId, apiTestId, onSaved }: TestEditor
   const [questionsPageSize, setQuestionsPageSize] = useState<QuestionPageSize>(10);
   const [editablePage, setEditablePage] = useState(1);
   const [lockedPage, setLockedPage] = useState(1);
-
   useEffect(() => {
     setEditablePage((page) => clampPage(page, definition.questions.length, questionsPageSize));
   }, [definition.questions.length, questionsPageSize]);
@@ -191,6 +195,18 @@ export function TestEditor({ mode, localTestId, apiTestId, onSaved }: TestEditor
     });
   }
 
+  function handleAppendImported(imported: QuestionDefinition[]) {
+    setDefinition((prev) => {
+      let existing = prev.questions;
+      if (existing.length === 1 && isEmptyQuestion(existing[0])) {
+        existing = [];
+      }
+      const questions = [...existing, ...imported];
+      setEditablePage(Math.ceil(questions.length / questionsPageSize) || 1);
+      return { ...prev, questions };
+    });
+  }
+
   function removeQuestion(index: number) {
     setDefinition((prev) => ({
       ...prev,
@@ -307,6 +323,8 @@ export function TestEditor({ mode, localTestId, apiTestId, onSaved }: TestEditor
           placeholder="Необязательно"
         />
       </div>
+
+      <TestImportPanel onAppend={handleAppendImported} />
 
       {mode === 'api' && isEdit && lockedQuestions.length > 0 && (
         <div className="vt-card">
