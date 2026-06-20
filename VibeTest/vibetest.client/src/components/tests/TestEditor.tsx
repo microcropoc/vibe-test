@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { QuestionDefinition, TestDefinition } from '@/types';
+import { Pagination } from '@/components/common/Pagination';
 import { testsApi } from '@/full/api';
 import { getApiErrorMessage } from '@/full/context/AuthContext';
 import { downloadTestJson } from '@/utils/export';
@@ -19,6 +20,28 @@ import '@/components/tests/tests.css';
 
 type EditorPhase = 'editing' | 'preview' | 'saving';
 
+const QUESTION_PAGE_SIZES = [10, 20, 50, 100] as const;
+type QuestionPageSize = (typeof QUESTION_PAGE_SIZES)[number];
+
+function clampPage(page: number, totalItems: number, pageSize: number): number {
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+  return Math.min(Math.max(1, page), totalPages);
+}
+
+function getPageSlice<T>(items: T[], page: number, pageSize: number) {
+  const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
+  const safePage = clampPage(page, items.length, pageSize);
+  const start = (safePage - 1) * pageSize;
+  return {
+    items: items.slice(start, start + pageSize),
+    start,
+    page: safePage,
+    totalPages,
+    hasPreviousPage: safePage > 1,
+    hasNextPage: safePage < totalPages,
+  };
+}
+
 export interface TestEditorProps {
   mode: 'local' | 'api';
   localTestId?: string;
@@ -35,6 +58,27 @@ export function TestEditor({ mode, localTestId, apiTestId, onSaved }: TestEditor
   const [loadError, setLoadError] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [loading, setLoading] = useState(isEdit);
+  const [questionsPageSize, setQuestionsPageSize] = useState<QuestionPageSize>(10);
+  const [editablePage, setEditablePage] = useState(1);
+  const [lockedPage, setLockedPage] = useState(1);
+
+  useEffect(() => {
+    setEditablePage((page) => clampPage(page, definition.questions.length, questionsPageSize));
+  }, [definition.questions.length, questionsPageSize]);
+
+  useEffect(() => {
+    setLockedPage((page) => clampPage(page, lockedQuestions.length, questionsPageSize));
+  }, [lockedQuestions.length, questionsPageSize]);
+
+  const lockedSlice = useMemo(
+    () => getPageSlice(lockedQuestions, lockedPage, questionsPageSize),
+    [lockedQuestions, lockedPage, questionsPageSize],
+  );
+
+  const editableSlice = useMemo(
+    () => getPageSlice(definition.questions, editablePage, questionsPageSize),
+    [definition.questions, editablePage, questionsPageSize],
+  );
 
   useEffect(() => {
     if (mode === 'local' && localTestId) {
@@ -140,10 +184,11 @@ export function TestEditor({ mode, localTestId, apiTestId, onSaved }: TestEditor
   }
 
   function addQuestion() {
-    setDefinition((prev) => ({
-      ...prev,
-      questions: [...prev.questions, createEmptyQuestion()],
-    }));
+    setDefinition((prev) => {
+      const questions = [...prev.questions, createEmptyQuestion()];
+      setEditablePage(Math.ceil(questions.length / questionsPageSize));
+      return { ...prev, questions };
+    });
   }
 
   function removeQuestion(index: number) {
@@ -266,27 +311,65 @@ export function TestEditor({ mode, localTestId, apiTestId, onSaved }: TestEditor
       {mode === 'api' && isEdit && lockedQuestions.length > 0 && (
         <div className="vt-card">
           <h3 className="vt-card__title">Существующие вопросы (неизменяемы)</h3>
-          {lockedQuestions.map((q, i) => (
-            <div key={i} style={{ marginBottom: '1rem' }}>
-              <p>
-                <strong>
-                  {i + 1}. {q.text}
-                </strong>
-              </p>
-              <ul className="vt-preview-list">
-                {q.answers.map((text, ai) => (
-                  <li key={ai}>
-                    {text}
-                    {ai === q.correct && <span className="vt-badge"> верно</span>}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          {lockedSlice.items.map((q, i) => {
+            const questionNumber = lockedSlice.start + i + 1;
+            return (
+              <div key={questionNumber} style={{ marginBottom: '1rem' }}>
+                <p>
+                  <strong>
+                    {questionNumber}. {q.text}
+                  </strong>
+                </p>
+                <ul className="vt-preview-list">
+                  {q.answers.map((text, ai) => (
+                    <li key={ai}>
+                      {text}
+                      {ai === q.correct && <span className="vt-badge"> верно</span>}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
+          <Pagination
+            page={lockedSlice.page}
+            totalPages={lockedSlice.totalPages}
+            hasPreviousPage={lockedSlice.hasPreviousPage}
+            hasNextPage={lockedSlice.hasNextPage}
+            onPageChange={setLockedPage}
+          />
         </div>
       )}
 
-      {definition.questions.map((question, qi) => (
+      <div className="vt-editor__questions-toolbar">
+        <span className="vt-muted">
+          {mode === 'api' && isEdit
+            ? `Новых вопросов: ${definition.questions.length}`
+            : `Вопросов: ${definition.questions.length}`}
+        </span>
+        <label className="vt-editor__page-size" htmlFor="questions-page-size">
+          На странице
+          <select
+            id="questions-page-size"
+            value={questionsPageSize}
+            onChange={(e) => {
+              setQuestionsPageSize(Number(e.target.value) as QuestionPageSize);
+              setEditablePage(1);
+              setLockedPage(1);
+            }}
+          >
+            {QUESTION_PAGE_SIZES.map((size) => (
+              <option key={size} value={size}>
+                {size}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
+      {editableSlice.items.map((question, i) => {
+        const qi = editableSlice.start + i;
+        return (
         <div key={qi} className="vt-card">
           <h3 className="vt-card__title">
             {mode === 'api' && isEdit ? `Новый вопрос ${qi + 1}` : `Вопрос ${qi + 1}`}
@@ -339,7 +422,16 @@ export function TestEditor({ mode, localTestId, apiTestId, onSaved }: TestEditor
             </button>
           )}
         </div>
-      ))}
+        );
+      })}
+
+      <Pagination
+        page={editableSlice.page}
+        totalPages={editableSlice.totalPages}
+        hasPreviousPage={editableSlice.hasPreviousPage}
+        hasNextPage={editableSlice.hasNextPage}
+        onPageChange={setEditablePage}
+      />
 
       <div className="vt-actions">
         <button type="button" className="vt-btn vt-btn--ghost" onClick={addQuestion}>
