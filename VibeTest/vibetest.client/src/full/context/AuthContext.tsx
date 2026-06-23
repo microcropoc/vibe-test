@@ -18,6 +18,8 @@ import { ApiError } from '@/full/api/errors';
 import type { UserDto } from '@/types';
 import { clearRefreshToken, getRefreshToken, setRefreshToken } from '@/utils/authStorage';
 
+let refreshInFlight: Promise<string | null> | null = null;
+
 interface AuthState {
   user: UserDto | null;
   isAuthenticated: boolean;
@@ -49,19 +51,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const refreshSession = useCallback(async (): Promise<string | null> => {
-    const stored = getRefreshToken();
-    if (!stored) {
-      return null;
+    if (!refreshInFlight) {
+      refreshInFlight = (async () => {
+        const stored = getRefreshToken();
+        if (!stored) {
+          return null;
+        }
+
+        try {
+          const tokens = await authApi.refresh(stored);
+          setAccessToken(tokens.accessToken);
+          setRefreshToken(tokens.refreshToken);
+          return tokens.accessToken;
+        } catch {
+          return null;
+        }
+      })().finally(() => {
+        refreshInFlight = null;
+      });
     }
 
-    try {
-      const tokens = await authApi.refresh(stored);
-      setAccessToken(tokens.accessToken);
-      setRefreshToken(tokens.refreshToken);
-      return tokens.accessToken;
-    } catch {
-      return null;
-    }
+    return refreshInFlight;
   }, []);
 
   useEffect(() => {

@@ -63,18 +63,20 @@ public class AuthService(
         if (string.IsNullOrWhiteSpace(request.RefreshToken))
             throw new ValidationException("Refresh token обязателен");
 
-        var stored = await auth.GetRefreshTokenAsync(request.RefreshToken.Trim())
+        var tokenValue = request.RefreshToken.Trim();
+
+        var stored = await auth.GetRefreshTokenAsync(tokenValue)
             ?? throw new UnauthorizedException("Недействительный refresh token");
 
         if (stored.ExpiresAt <= DateTime.UtcNow)
         {
-            await auth.RemoveRefreshTokenAsync(stored);
-            await auth.SaveChangesAsync();
+            await auth.DeleteRefreshTokenByValueAsync(tokenValue);
             throw new UnauthorizedException("Refresh token истёк");
         }
 
-        await auth.RemoveRefreshTokenAsync(stored);
-        await auth.SaveChangesAsync();
+        var deleted = await auth.DeleteRefreshTokenByValueAsync(tokenValue);
+        if (deleted == 0)
+            throw new UnauthorizedException("Refresh token уже использован");
 
         var (accessToken, expiresAt) = CreateAccessToken(stored.User);
         var refreshToken = await CreateRefreshTokenAsync(stored.User);

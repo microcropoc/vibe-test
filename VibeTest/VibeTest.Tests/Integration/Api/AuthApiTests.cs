@@ -60,6 +60,29 @@ public class AuthApiTests : IClassFixture<ApiFixture>
     }
 
     [Fact]
+    public async Task Concurrent_refresh_with_same_token_returns_one_ok_and_one_unauthorized()
+    {
+        var client = _factory.CreateClient();
+        var register = await client.PostAsJsonAsync("/api/auth/register", new RegisterRequest
+        {
+            Email = $"concurrent-{Guid.NewGuid():N}@test.com",
+            Password = "password123",
+            DisplayName = "Concurrent"
+        });
+
+        var auth = await register.Content.ReadFromJsonAsync<AuthResponse>(_factory.JsonOptions);
+        var request = new RefreshTokenRequest { RefreshToken = auth!.RefreshToken };
+
+        var first = client.PostAsJsonAsync("/api/auth/refresh", request);
+        var second = client.PostAsJsonAsync("/api/auth/refresh", request);
+        var responses = await Task.WhenAll(first, second);
+
+        var statuses = responses.Select(r => r.StatusCode).ToArray();
+        Assert.Contains(HttpStatusCode.OK, statuses);
+        Assert.Contains(HttpStatusCode.Unauthorized, statuses);
+    }
+
+    [Fact]
     public async Task Refresh_rotates_token()
     {
         var client = _factory.CreateClient();

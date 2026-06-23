@@ -10,5 +10,6 @@ public interface IAuthRepository
     Task<RefreshToken?> GetRefreshTokenAsync(string token, CancellationToken cancellationToken = default);
     Task AddRefreshTokenAsync(RefreshToken refreshToken, CancellationToken cancellationToken = default);
     Task RemoveRefreshTokenAsync(RefreshToken refreshToken, CancellationToken cancellationToken = default);
+    Task<int> DeleteRefreshTokenByValueAsync(string token, CancellationToken cancellationToken = default);
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
 }
