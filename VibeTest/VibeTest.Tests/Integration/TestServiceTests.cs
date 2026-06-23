@@ -111,6 +111,9 @@ public class TestServiceTests
 
         await Assert.ThrowsAsync<NotFoundException>(() => fx.TestService.GetTestDetail(created.Id));
 
+        var authorDetail = await fx.TestService.GetTestDetail(created.Id, author.Id);
+        Assert.Equal(2, authorDetail.Questions.Count);
+
         await fx.TestService.PublishTest(created.Id, author.Id);
         var detail = await fx.TestService.GetTestDetail(created.Id);
 

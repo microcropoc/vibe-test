@@ -21,12 +21,12 @@ public class TestService(
         return PaginationHelper.Create(items, normalizedPage, normalizedSize, totalCount);
     }
 
-    public async Task<TestDetailResponse> GetTestDetail(int testId)
+    public async Task<TestDetailResponse> GetTestDetail(int testId, int? viewerUserId = null)
     {
         var test = await tests.GetByIdWithStructureAsync(testId)
             ?? throw new NotFoundException("Тест не найден");
 
-        if (!test.IsPublic)
+        if (!test.IsPublic && test.AuthorId != viewerUserId)
             throw new NotFoundException("Тест не найден");
 
         return MapDetail(test);

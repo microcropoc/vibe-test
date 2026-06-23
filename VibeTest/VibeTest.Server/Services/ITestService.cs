@@ -6,7 +6,7 @@ namespace VibeTest.Server.Services;
 public interface ITestService
 {
     Task<PagedResponse<TestListItem>> GetPublicTests(int page, int pageSize, string sortBy, string order);
-    Task<TestDetailResponse> GetTestDetail(int testId);
+    Task<TestDetailResponse> GetTestDetail(int testId, int? viewerUserId = null);
 
     Task<TestResponse> CreateTest(int authorId, CreateTestRequest request);
     Task<TestResponse> AppendQuestions(int testId, int authorId, AddQuestionsRequest request);

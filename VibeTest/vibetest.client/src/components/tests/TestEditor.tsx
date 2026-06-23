@@ -18,6 +18,7 @@ import {
   PAGE_SIZES,
   type PageSize,
 } from '@/utils/pagination';
+import { normalizeQuestions } from '@/utils/normalizeQuestions';
 import {
   createEmptyQuestion,
   createEmptyTest,
@@ -77,7 +78,7 @@ export function TestEditor({ mode, localTestId, apiTestId, onSaved }: TestEditor
         setDefinition({
           name: test.name,
           description: test.description,
-          questions: test.questions,
+          questions: normalizeQuestions(test.questions),
         });
       }
       setLoading(false);

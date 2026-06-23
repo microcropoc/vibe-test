@@ -1,8 +1,10 @@
 import type { QuestionDefinition } from '@/types';
 import type { PlayerQuestion } from '@/types/player';
+import { normalizeQuestions } from '@/utils/normalizeQuestions';
 
 export function toPlayerQuestions(questions: QuestionDefinition[]): PlayerQuestion[] {
-  return questions.map((q, order) => ({
+  const normalized = normalizeQuestions(questions);
+  return normalized.map((q, order) => ({
     order,
     text: q.text,
     answers: q.answers.map((text, answerOrder) => ({
@@ -13,7 +15,7 @@ export function toPlayerQuestions(questions: QuestionDefinition[]): PlayerQuesti
 }
 
 export function getCorrectAnswerOrder(question: QuestionDefinition): number {
-  return question.correct;
+  return normalizeQuestions([question])[0].correct;
 }
 
 export function countAnswered(progress: { answers: Record<number, unknown> }): number {

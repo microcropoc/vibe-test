@@ -21,6 +21,9 @@ export function FullLayout() {
           <NavLink to="/tests" className={navLinkClass}>
             Публичные тесты
           </NavLink>
+          <NavLink to="/my/tests" className={navLinkClass}>
+            Мои тесты
+          </NavLink>
           <NavLink to="/editor" className={navLinkClass}>
             Редактор
           </NavLink>
@@ -30,18 +33,10 @@ export function FullLayout() {
           <NavLink to="/info" className={navLinkClass}>
             Инфо
           </NavLink>
-          <NavLink to="/local/tests" className={navLinkClass}>
-            Локальные
-          </NavLink>
           {isAuthenticated && (
-            <>
-              <NavLink to="/my/tests" className={navLinkClass}>
-                Мои тесты
-              </NavLink>
-              <NavLink to="/profile" className={navLinkClass}>
-                Профиль
-              </NavLink>
-            </>
+            <NavLink to="/profile" className={navLinkClass}>
+              Профиль
+            </NavLink>
           )}
           {isAuthenticated ? (
             <>

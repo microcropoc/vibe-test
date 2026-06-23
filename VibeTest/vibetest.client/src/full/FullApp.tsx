@@ -1,22 +1,28 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from '@/full/context/AuthContext';
 import { ProtectedRoute } from '@/full/components/auth/ProtectedRoute';
 import { FullLayout } from '@/full/components/layout/FullLayout';
+import { seedGuestTestsIfEmpty } from '@/guest/bootstrap/seedLocalTests';
 import { HomePage } from '@/full/pages/HomePage';
 import { LoginPage } from '@/full/pages/LoginPage';
 import { MyTestsPage } from '@/full/pages/MyTestsPage';
 import { ProfilePage } from '@/full/pages/ProfilePage';
 import { PublicTestsPage } from '@/full/pages/PublicTestsPage';
 import { RegisterPage } from '@/full/pages/RegisterPage';
-import { PlayPage } from '@/full/pages/PlayPage';
+import { PlayPage as ApiPlayPage } from '@/full/pages/PlayPage';
 import { TestPage } from '@/full/pages/TestPage';
 import { EditorPage } from '@/guest/pages/EditorPage';
-import { LocalTestsPage } from '@/guest/pages/LocalTestsPage';
 import { ImportPage } from '@/guest/pages/ImportPage';
 import { InfoPage } from '@/guest/pages/InfoPage';
+import { PlayPage as LocalPlayPage } from '@/guest/pages/PlayPage';
 import { routerBasename } from '@/utils/router';
 
 export function FullApp() {
+  useEffect(() => {
+    seedGuestTestsIfEmpty();
+  }, []);
+
   return (
     <AuthProvider>
       <BrowserRouter basename={routerBasename()}>
@@ -27,14 +33,15 @@ export function FullApp() {
             <Route path="register" element={<RegisterPage />} />
             <Route path="tests" element={<PublicTestsPage />} />
             <Route path="tests/:id" element={<TestPage />} />
-            <Route path="tests/:id/play" element={<PlayPage />} />
+            <Route path="tests/:id/play" element={<ApiPlayPage />} />
+            <Route path="play/:id" element={<LocalPlayPage />} />
             <Route path="editor" element={<EditorPage />} />
             <Route path="editor/:id" element={<EditorPage />} />
             <Route path="import" element={<ImportPage />} />
             <Route path="info" element={<InfoPage />} />
-            <Route path="local/tests" element={<LocalTestsPage />} />
+            <Route path="local/tests" element={<Navigate to="/my/tests" replace />} />
+            <Route path="my/tests" element={<MyTestsPage />} />
             <Route element={<ProtectedRoute />}>
-              <Route path="my/tests" element={<MyTestsPage />} />
               <Route path="profile" element={<ProfilePage />} />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />

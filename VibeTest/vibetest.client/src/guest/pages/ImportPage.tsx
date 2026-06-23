@@ -1,7 +1,16 @@
 import { useState, type ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { localTestsListPath } from '@/utils/appPaths';
 import { ImportValidationError, parseTestJson } from '@/utils/import';
+import {
+  buttonClassName,
+  errorClassName,
+  pageClassName,
+  successClassName,
+  textareaClassName,
+} from '@/utils/pageShell';
 import { createLocalTestFromDefinition, saveLocalTest } from '@/utils/storage';
+import '@/guest/components/layout/GuestLayout.css';
 
 export function ImportPage() {
   const navigate = useNavigate();
@@ -17,7 +26,7 @@ export function ImportPage() {
       const test = createLocalTestFromDefinition(definition);
       saveLocalTest(test);
       setSuccess(`Тест «${test.name}» сохранён локально.`);
-      setTimeout(() => navigate('/tests'), 800);
+      setTimeout(() => navigate(localTestsListPath()), 800);
     } catch (e) {
       if (e instanceof ImportValidationError) {
         setError(e.message);
@@ -45,31 +54,31 @@ export function ImportPage() {
   }
 
   return (
-    <section className="guest-page">
+    <section className={pageClassName()}>
       <h1>Импорт JSON</h1>
       <p>Вставьте JSON теста или выберите файл.</p>
 
       <p>
-        <label className="guest-button guest-button--ghost" style={{ cursor: 'pointer' }}>
+        <label className={buttonClassName('ghost')} style={{ cursor: 'pointer' }}>
           Выбрать файл
           <input type="file" accept=".json,application/json" hidden onChange={handleFileChange} />
         </label>
       </p>
 
       <textarea
-        className="guest-textarea"
+        className={textareaClassName()}
         value={raw}
         onChange={(e) => setRaw(e.target.value)}
         placeholder='{"name":"...","questions":[...]}'
         spellCheck={false}
       />
       <p>
-        <button type="button" className="guest-button" onClick={handleImport}>
+        <button type="button" className={buttonClassName()} onClick={handleImport}>
           Импортировать
         </button>
       </p>
-      {error && <p className="guest-error">{error}</p>}
-      {success && <p className="guest-success">{success}</p>}
+      {error && <p className={errorClassName()}>{error}</p>}
+      {success && <p className={successClassName()}>{success}</p>}
     </section>
   );
 }

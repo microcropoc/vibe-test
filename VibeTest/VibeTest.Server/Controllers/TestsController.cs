@@ -41,7 +41,7 @@ public class TestsController(
     [HttpGet("{id:int}")]
     [AllowAnonymous]
     public Task<TestDetailResponse> GetTestDetail(int id) =>
-        testService.GetTestDetail(id);
+        testService.GetTestDetail(id, User.Identity?.IsAuthenticated == true ? User.GetUserId() : null);
 
     [HttpGet("{id:int}/full")]
     [Authorize]

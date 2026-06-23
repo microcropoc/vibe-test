@@ -145,12 +145,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
+const guestAuthFallback: AuthContextValue = {
+  user: null,
+  isAuthenticated: false,
+  isLoading: false,
+  login: async () => {},
+  register: async () => {},
+  logout: () => {},
+};
+
 export function useAuth(): AuthContextValue {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
-  }
-  return context;
+  return context ?? guestAuthFallback;
 }
 
 export function getApiErrorMessage(error: unknown): string {

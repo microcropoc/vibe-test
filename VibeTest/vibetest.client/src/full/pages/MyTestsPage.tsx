@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import { LocalTestsList } from '@/components/tests/LocalTestsList';
 import { Pagination } from '@/components/common/Pagination';
 import { TestListProgressMeta } from '@/components/tests/TestListProgressMeta';
 import { TestListToolbar } from '@/components/tests/TestListToolbar';
 import { testsApi } from '@/full/api';
-import { getApiErrorMessage } from '@/full/context/AuthContext';
+import { getApiErrorMessage, useAuth } from '@/full/context/AuthContext';
 import type { TestListItem } from '@/types';
+import { editorPath, parseMyTestsTab, type MyTestsTab } from '@/utils/appPaths';
 import { type PageSize } from '@/utils/pagination';
 import { getTestProgressStats } from '@/utils/playerHelpers';
 import type { SortOrder, TestSortBy } from '@/utils/sortTests';
@@ -15,6 +17,10 @@ import '@/components/tests/tests.css';
 type Filter = 'all' | 'published' | 'private';
 
 export function MyTestsPage() {
+  const { isAuthenticated } = useAuth();
+  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tab: MyTestsTab = parseMyTestsTab(searchParams.toString());
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState<PageSize>(10);
   const [sortBy, setSortBy] = useState<TestSortBy>('updatedAt');
@@ -26,7 +32,7 @@ export function MyTestsPage() {
   const [hasPreviousPage, setHasPreviousPage] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [actionId, setActionId] = useState<number | null>(null);
 
   const loadPage = useCallback(
@@ -51,8 +57,11 @@ export function MyTestsPage() {
   );
 
   useEffect(() => {
+    if (tab !== 'cloud' || !isAuthenticated) {
+      return;
+    }
     void loadPage(page, pageSize, filter, sortBy, order);
-  }, [loadPage, page, pageSize, filter, sortBy, order]);
+  }, [loadPage, tab, isAuthenticated, page, pageSize, filter, sortBy, order]);
 
   async function runAction(id: number, action: () => Promise<unknown>) {
     setActionId(id);
@@ -78,110 +87,165 @@ export function MyTestsPage() {
     setPage(1);
   }
 
+  function switchTab(nextTab: MyTestsTab) {
+    setSearchParams({ tab: nextTab });
+    if (nextTab === 'cloud') {
+      setPage(1);
+    }
+  }
+
   return (
     <section className="full-page">
       <h1>Мои тесты</h1>
-      <p>
-        <Link to="/editor" className="full-button">
-          Создать тест
-        </Link>
-      </p>
 
       <div className="full-filters" style={{ display: 'flex', gap: '0.5rem', margin: '1rem 0' }}>
-        {(['all', 'published', 'private'] as const).map((f) => (
-          <button
-            key={f}
-            type="button"
-            className={`full-button ${filter === f ? '' : 'full-button--ghost'}`}
-            onClick={() => {
-              setFilter(f);
-              setPage(1);
-            }}
-          >
-            {f === 'all' ? 'Все' : f === 'published' ? 'Опубликованные' : 'Черновики'}
-          </button>
-        ))}
+        <button
+          type="button"
+          className={`full-button ${tab === 'local' ? '' : 'full-button--ghost'}`}
+          onClick={() => switchTab('local')}
+        >
+          Локальные
+        </button>
+        <button
+          type="button"
+          className={`full-button ${tab === 'cloud' ? '' : 'full-button--ghost'}`}
+          onClick={() => switchTab('cloud')}
+        >
+          Облачные
+        </button>
       </div>
 
-      {loading && <p className="full-muted">Загрузка…</p>}
-      {error && <p className="full-error">{error}</p>}
-
-      {!loading && !error && totalCount > 0 && (
-        <TestListToolbar
-          totalCount={totalCount}
-          pageSize={pageSize}
-          onPageSizeChange={handlePageSizeChange}
-          sortBy={sortBy}
-          order={order}
-          onSortChange={handleSortChange}
-        />
+      {tab === 'local' && (
+        <>
+          <p className="full-muted">Локальные тесты из браузера.</p>
+          <p>
+            <Link to={editorPath()} className="full-button">
+              Создать локальный тест
+            </Link>
+          </p>
+          <LocalTestsList listClassName="full-list" buttonClassPrefix="full-button" />
+        </>
       )}
 
-      <ul className="full-list">
-        {items.map((test) => {
-          const stats = getTestProgressStats(test.questionsCount, getApiTestProgress(test.id));
+      {tab === 'cloud' && (
+        <>
+          <p>
+            <Link to={editorPath({ cloud: true })} className="full-button">
+              Создать облачный тест
+            </Link>
+          </p>
 
-          return (
-            <li key={test.id} className="full-list__item">
-              <div className="full-list__title">{test.name}</div>
-              <TestListProgressMeta
-                className="full-list__meta"
-                stats={stats}
-                suffix={<> · обновлён {new Date(test.updatedAt).toLocaleDateString()}</>}
-              />
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
-                <Link to={`/editor/${test.id}`} className="full-button full-button--ghost">
-                  Редактировать
-                </Link>
-                <button
-                  type="button"
-                  className="full-button full-button--ghost"
-                  disabled={actionId === test.id}
-                  onClick={() => runAction(test.id, () => testsApi.publish(test.id))}
-                >
-                  Опубликовать
-                </button>
-                <button
-                  type="button"
-                  className="full-button full-button--ghost"
-                  disabled={actionId === test.id}
-                  onClick={() => runAction(test.id, () => testsApi.unpublish(test.id))}
-                >
-                  Скрыть
-                </button>
-                <button
-                  type="button"
-                  className="full-button full-button--ghost"
-                  disabled={actionId === test.id}
-                  onClick={() => runAction(test.id, () => testsApi.fork(test.id))}
-                >
-                  Копия
-                </button>
-                <button
-                  type="button"
-                  className="full-button full-button--danger"
-                  disabled={actionId === test.id}
-                  onClick={() => {
-                    if (window.confirm(`Удалить тест «${test.name}»?`)) {
-                      void runAction(test.id, () => testsApi.delete(test.id));
-                    }
-                  }}
-                >
-                  Удалить
-                </button>
+          {!isAuthenticated ? (
+            <p className="full-muted">
+              Войдите, чтобы управлять облачными тестами.{' '}
+              <Link to="/login" state={{ from: location.pathname + location.search }}>
+                Вход
+              </Link>
+            </p>
+          ) : (
+            <>
+              <div className="full-filters" style={{ display: 'flex', gap: '0.5rem', margin: '1rem 0' }}>
+                {(['all', 'published', 'private'] as const).map((f) => (
+                  <button
+                    key={f}
+                    type="button"
+                    className={`full-button ${filter === f ? '' : 'full-button--ghost'}`}
+                    onClick={() => {
+                      setFilter(f);
+                      setPage(1);
+                    }}
+                  >
+                    {f === 'all' ? 'Все' : f === 'published' ? 'Опубликованные' : 'Черновики'}
+                  </button>
+                ))}
               </div>
-            </li>
-          );
-        })}
-      </ul>
 
-      <Pagination
-        page={page}
-        totalPages={totalPages}
-        hasPreviousPage={hasPreviousPage}
-        hasNextPage={hasNextPage}
-        onPageChange={setPage}
-      />
+              {loading && <p className="full-muted">Загрузка…</p>}
+              {error && <p className="full-error">{error}</p>}
+
+              {!loading && !error && totalCount > 0 && (
+                <TestListToolbar
+                  totalCount={totalCount}
+                  pageSize={pageSize}
+                  onPageSizeChange={handlePageSizeChange}
+                  sortBy={sortBy}
+                  order={order}
+                  onSortChange={handleSortChange}
+                />
+              )}
+
+              <ul className="full-list">
+                {items.map((test) => {
+                  const stats = getTestProgressStats(test.questionsCount, getApiTestProgress(test.id));
+
+                  return (
+                    <li key={test.id} className="full-list__item">
+                      <div className="full-list__title">{test.name}</div>
+                      <TestListProgressMeta
+                        className="full-list__meta"
+                        stats={stats}
+                        suffix={<> · обновлён {new Date(test.updatedAt).toLocaleDateString()}</>}
+                      />
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
+                        <Link to={`/tests/${test.id}/play`} className="full-button">
+                          Пройти
+                        </Link>
+                        <Link to={`/editor/${test.id}`} className="full-button full-button--ghost">
+                          Редактировать
+                        </Link>
+                        <button
+                          type="button"
+                          className="full-button full-button--ghost"
+                          disabled={actionId === test.id}
+                          onClick={() => runAction(test.id, () => testsApi.publish(test.id))}
+                        >
+                          Опубликовать
+                        </button>
+                        <button
+                          type="button"
+                          className="full-button full-button--ghost"
+                          disabled={actionId === test.id}
+                          onClick={() => runAction(test.id, () => testsApi.unpublish(test.id))}
+                        >
+                          Скрыть
+                        </button>
+                        <button
+                          type="button"
+                          className="full-button full-button--ghost"
+                          disabled={actionId === test.id}
+                          onClick={() => runAction(test.id, () => testsApi.fork(test.id))}
+                        >
+                          Копия
+                        </button>
+                        <button
+                          type="button"
+                          className="full-button full-button--danger"
+                          disabled={actionId === test.id}
+                          onClick={() => {
+                            if (window.confirm(`Удалить тест «${test.name}»?`)) {
+                              void runAction(test.id, () => testsApi.delete(test.id));
+                            }
+                          }}
+                        >
+                          Удалить
+                        </button>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                hasPreviousPage={hasPreviousPage}
+                hasNextPage={hasNextPage}
+                onPageChange={setPage}
+              />
+            </>
+          )}
+        </>
+      )}
     </section>
   );
 }
