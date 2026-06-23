@@ -34,6 +34,7 @@ export interface TestListItem {
   authorName: string;
   questionsCount: number;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface TestResponse {

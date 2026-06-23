@@ -11,8 +11,20 @@ public interface ITestRepository
     Task DeleteAsync(Test test, CancellationToken cancellationToken = default);
     Task<int> GetMaxQuestionOrderAsync(int testId, CancellationToken cancellationToken = default);
     Task<int> CountPublicTestsAsync(CancellationToken cancellationToken = default);
-    Task<List<TestListItemRow>> GetPublicTestsPageAsync(int offset, int pageSize, CancellationToken cancellationToken = default);
+    Task<List<TestListItemRow>> GetPublicTestsPageAsync(
+        int offset,
+        int pageSize,
+        string sortBy,
+        string order,
+        CancellationToken cancellationToken = default);
     Task<int> CountMyTestsAsync(int authorId, string filter, CancellationToken cancellationToken = default);
-    Task<List<TestListItemRow>> GetMyTestsPageAsync(int authorId, string filter, int offset, int pageSize, CancellationToken cancellationToken = default);
+    Task<List<TestListItemRow>> GetMyTestsPageAsync(
+        int authorId,
+        string filter,
+        int offset,
+        int pageSize,
+        string sortBy,
+        string order,
+        CancellationToken cancellationToken = default);
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
 }

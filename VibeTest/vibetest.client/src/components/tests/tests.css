@@ -200,6 +200,41 @@
   color: #ff8f9b;
 }
 
+.test-list-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.test-list-toolbar__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.test-list-toolbar__page-size,
+.test-list-toolbar__sort {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #9fb0c7;
+  font-size: 0.9rem;
+}
+
+.test-list-toolbar__page-size select,
+.test-list-toolbar__sort select {
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #2a3a50;
+  background: #0c1117;
+  color: #e7ecf3;
+  font: inherit;
+}
+
 .vt-editor__questions-toolbar {
   display: flex;
   flex-wrap: wrap;

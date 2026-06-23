@@ -2,20 +2,26 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Pagination } from '@/components/common/Pagination';
 import { TestListProgressMeta } from '@/components/tests/TestListProgressMeta';
+import { TestListToolbar } from '@/components/tests/TestListToolbar';
 import { testsApi } from '@/full/api';
 import { getApiErrorMessage } from '@/full/context/AuthContext';
 import type { TestListItem } from '@/types';
+import { type PageSize } from '@/utils/pagination';
 import { getTestProgressStats } from '@/utils/playerHelpers';
+import type { SortOrder, TestSortBy } from '@/utils/sortTests';
 import { getApiTestProgress } from '@/utils/storage';
-
-const PAGE_SIZE = 10;
+import '@/components/tests/tests.css';
 
 type Filter = 'all' | 'published' | 'private';
 
 export function MyTestsPage() {
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState<PageSize>(10);
+  const [sortBy, setSortBy] = useState<TestSortBy>('updatedAt');
+  const [order, setOrder] = useState<SortOrder>('desc');
   const [filter, setFilter] = useState<Filter>('all');
   const [items, setItems] = useState<TestListItem[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [hasPreviousPage, setHasPreviousPage] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(false);
@@ -23,38 +29,53 @@ export function MyTestsPage() {
   const [loading, setLoading] = useState(true);
   const [actionId, setActionId] = useState<number | null>(null);
 
-  const loadPage = useCallback(async (p: number, f: Filter) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await testsApi.getMy(p, PAGE_SIZE, f);
-      setItems(response.items);
-      setPage(response.page);
-      setTotalPages(response.totalPages);
-      setHasPreviousPage(response.hasPreviousPage);
-      setHasNextPage(response.hasNextPage);
-    } catch (err) {
-      setError(getApiErrorMessage(err));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const loadPage = useCallback(
+    async (p: number, size: PageSize, f: Filter, nextSortBy: TestSortBy, nextOrder: SortOrder) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await testsApi.getMy(p, size, f, nextSortBy, nextOrder);
+        setItems(response.items);
+        setPage(response.page);
+        setTotalCount(response.totalCount);
+        setTotalPages(response.totalPages);
+        setHasPreviousPage(response.hasPreviousPage);
+        setHasNextPage(response.hasNextPage);
+      } catch (err) {
+        setError(getApiErrorMessage(err));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
-    void loadPage(page, filter);
-  }, [loadPage, page, filter]);
+    void loadPage(page, pageSize, filter, sortBy, order);
+  }, [loadPage, page, pageSize, filter, sortBy, order]);
 
   async function runAction(id: number, action: () => Promise<unknown>) {
     setActionId(id);
     setError(null);
     try {
       await action();
-      await loadPage(page, filter);
+      await loadPage(page, pageSize, filter, sortBy, order);
     } catch (err) {
       setError(getApiErrorMessage(err));
     } finally {
       setActionId(null);
     }
+  }
+
+  function handlePageSizeChange(size: PageSize) {
+    setPageSize(size);
+    setPage(1);
+  }
+
+  function handleSortChange(nextSortBy: TestSortBy, nextOrder: SortOrder) {
+    setSortBy(nextSortBy);
+    setOrder(nextOrder);
+    setPage(1);
   }
 
   return (
@@ -85,60 +106,71 @@ export function MyTestsPage() {
       {loading && <p className="full-muted">Загрузка…</p>}
       {error && <p className="full-error">{error}</p>}
 
+      {!loading && !error && totalCount > 0 && (
+        <TestListToolbar
+          totalCount={totalCount}
+          pageSize={pageSize}
+          onPageSizeChange={handlePageSizeChange}
+          sortBy={sortBy}
+          order={order}
+          onSortChange={handleSortChange}
+        />
+      )}
+
       <ul className="full-list">
         {items.map((test) => {
           const stats = getTestProgressStats(test.questionsCount, getApiTestProgress(test.id));
 
           return (
-          <li key={test.id} className="full-list__item">
-            <div className="full-list__title">{test.name}</div>
-            <TestListProgressMeta
-              className="full-list__meta"
-              stats={stats}
-              suffix={<> · {new Date(test.createdAt).toLocaleDateString()}</>}
-            />
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
-              <Link to={`/editor/${test.id}`} className="full-button full-button--ghost">
-                Редактировать
-              </Link>
-              <button
-                type="button"
-                className="full-button full-button--ghost"
-                disabled={actionId === test.id}
-                onClick={() => runAction(test.id, () => testsApi.publish(test.id))}
-              >
-                Опубликовать
-              </button>
-              <button
-                type="button"
-                className="full-button full-button--ghost"
-                disabled={actionId === test.id}
-                onClick={() => runAction(test.id, () => testsApi.unpublish(test.id))}
-              >
-                Скрыть
-              </button>
-              <button
-                type="button"
-                className="full-button full-button--ghost"
-                disabled={actionId === test.id}
-                onClick={() => runAction(test.id, () => testsApi.fork(test.id))}
-              >
-                Копия
-              </button>
-              <button
-                type="button"
-                className="full-button full-button--danger"
-                disabled={actionId === test.id}
-                onClick={() => {
-                  if (window.confirm(`Удалить тест «${test.name}»?`)) {
-                    void runAction(test.id, () => testsApi.delete(test.id));
-                  }
-                }}
-              >
-                Удалить
-              </button>
-            </div>
-          </li>
+            <li key={test.id} className="full-list__item">
+              <div className="full-list__title">{test.name}</div>
+              <TestListProgressMeta
+                className="full-list__meta"
+                stats={stats}
+                suffix={<> · обновлён {new Date(test.updatedAt).toLocaleDateString()}</>}
+              />
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
+                <Link to={`/editor/${test.id}`} className="full-button full-button--ghost">
+                  Редактировать
+                </Link>
+                <button
+                  type="button"
+                  className="full-button full-button--ghost"
+                  disabled={actionId === test.id}
+                  onClick={() => runAction(test.id, () => testsApi.publish(test.id))}
+                >
+                  Опубликовать
+                </button>
+                <button
+                  type="button"
+                  className="full-button full-button--ghost"
+                  disabled={actionId === test.id}
+                  onClick={() => runAction(test.id, () => testsApi.unpublish(test.id))}
+                >
+                  Скрыть
+                </button>
+                <button
+                  type="button"
+                  className="full-button full-button--ghost"
+                  disabled={actionId === test.id}
+                  onClick={() => runAction(test.id, () => testsApi.fork(test.id))}
+                >
+                  Копия
+                </button>
+                <button
+                  type="button"
+                  className="full-button full-button--danger"
+                  disabled={actionId === test.id}
+                  onClick={() => {
+                    if (window.confirm(`Удалить тест «${test.name}»?`)) {
+                      void runAction(test.id, () => testsApi.delete(test.id));
+                    }
+                  }}
+                >
+                  Удалить
+                </button>
+              </div>
+            </li>
           );
         })}
       </ul>

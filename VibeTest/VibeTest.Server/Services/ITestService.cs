@@ -5,7 +5,7 @@ namespace VibeTest.Server.Services;
 
 public interface ITestService
 {
-    Task<PagedResponse<TestListItem>> GetPublicTests(int page, int pageSize);
+    Task<PagedResponse<TestListItem>> GetPublicTests(int page, int pageSize, string sortBy, string order);
     Task<TestDetailResponse> GetTestDetail(int testId);
 
     Task<TestResponse> CreateTest(int authorId, CreateTestRequest request);
@@ -16,6 +16,6 @@ public interface ITestService
     Task UnpublishTest(int testId, int authorId);
     Task DeleteTest(int testId, int authorId);
 
-    Task<PagedResponse<TestListItem>> GetMyTests(int authorId, int page, int pageSize, string filter);
+    Task<PagedResponse<TestListItem>> GetMyTests(int authorId, int page, int pageSize, string filter, string sortBy, string order);
     Task<TestFullResponse> GetTestFull(int testId, int authorId);
 }

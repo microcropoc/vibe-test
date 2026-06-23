@@ -8,6 +8,7 @@ public class TestListItem
     public string AuthorName { get; set; } = string.Empty;
     public int QuestionsCount { get; set; }
     public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 }
 
 public class TestResponse

@@ -145,7 +145,7 @@ public class TestServiceTests
         });
         await fx.TestService.PublishTest(publicTest.Id, author.Id);
 
-        var page = await fx.TestService.GetPublicTests(1, 10);
+        var page = await fx.TestService.GetPublicTests(1, 10, "updatedAt", "desc");
 
         Assert.Single(page.Items);
         Assert.Equal(publicTest.Id, page.Items[0].Id);

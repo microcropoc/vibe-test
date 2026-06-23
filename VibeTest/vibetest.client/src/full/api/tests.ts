@@ -17,16 +17,18 @@ export type UpdateTestInfoPayload = { name: string; description?: string };
 export type SubmitAnswerPayload = { questionOrder: number; selectedAnswerOrder: number };
 
 export const testsApi = {
-  getPublic: (page = 1, pageSize = 10) =>
-    apiClient.get<PagedResponse<TestListItem>>(`/tests?page=${page}&pageSize=${pageSize}`),
+  getPublic: (page = 1, pageSize = 10, sortBy = 'updatedAt', order = 'desc') =>
+    apiClient.get<PagedResponse<TestListItem>>(
+      `/tests?page=${page}&pageSize=${pageSize}&sortBy=${sortBy}&order=${order}`,
+    ),
 
   getDetail: (id: number) => apiClient.get<TestDetailResponse>(`/tests/${id}`),
 
   getFull: (id: number) => apiClient.get<TestFullResponse>(`/tests/${id}/full`),
 
-  getMy: (page = 1, pageSize = 10, filter = 'all') =>
+  getMy: (page = 1, pageSize = 10, filter = 'all', sortBy = 'updatedAt', order = 'desc') =>
     apiClient.get<PagedResponse<TestListItem>>(
-      `/tests/my?page=${page}&pageSize=${pageSize}&filter=${filter}`,
+      `/tests/my?page=${page}&pageSize=${pageSize}&filter=${filter}&sortBy=${sortBy}&order=${order}`,
     ),
 
   getMyStats: () => apiClient.get<UserStatsResponse>('/tests/my/stats'),

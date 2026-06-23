@@ -18,16 +18,20 @@ public class TestsController(
     [AllowAnonymous]
     public Task<PagedResponse<TestListItem>> GetPublicTests(
         [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 10) =>
-        testService.GetPublicTests(page, pageSize);
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string sortBy = "updatedAt",
+        [FromQuery] string order = "desc") =>
+        testService.GetPublicTests(page, pageSize, sortBy, order);
 
     [HttpGet("my")]
     [Authorize]
     public Task<PagedResponse<TestListItem>> GetMyTests(
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10,
-        [FromQuery] string filter = "all") =>
-        testService.GetMyTests(User.GetUserId(), page, pageSize, filter);
+        [FromQuery] string filter = "all",
+        [FromQuery] string sortBy = "updatedAt",
+        [FromQuery] string order = "desc") =>
+        testService.GetMyTests(User.GetUserId(), page, pageSize, filter, sortBy, order);
 
     [HttpGet("my/stats")]
     [Authorize]

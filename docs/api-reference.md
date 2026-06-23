@@ -24,7 +24,7 @@ Access-токен обновляется через `POST /api/auth/refresh` с 
 
 | Метод | Путь | Auth | Описание |
 |-------|------|------|----------|
-| `GET` | `/api/tests?page=&pageSize=` | — | Список опубликованных тестов (пагинация) |
+| `GET` | `/api/tests?page=&pageSize=&sortBy=&order=` | — | Список опубликованных тестов (пагинация) |
 | `GET` | `/api/tests/{id}` | — | Детали теста для прохождения (без правильных ответов) |
 
 ---
@@ -33,7 +33,7 @@ Access-токен обновляется через `POST /api/auth/refresh` с 
 
 | Метод | Путь | Auth | Описание |
 |-------|------|------|----------|
-| `GET` | `/api/tests/my?page=&pageSize=&filter=` | JWT | Мои тесты; `filter`: `all` \| `published` \| `private` |
+| `GET` | `/api/tests/my?page=&pageSize=&filter=&sortBy=&order=` | JWT | Мои тесты; `filter`: `all` \| `published` \| `private` |
 | `GET` | `/api/tests/my/stats` | JWT | Статистика пользователя |
 | `GET` | `/api/tests/{id}/full` | JWT | Полный тест владельца (с полем `correct`) |
 | `POST` | `/api/tests` | JWT | Создать тест |
@@ -56,6 +56,8 @@ Access-токен обновляется через `POST /api/auth/refresh` с 
 | `GET` | `/api/results?page=&pageSize=&sortBy=&order=` | JWT | История прохождений |
 
 Параметры истории: `sortBy` — `date` (по умолчанию), `order` — `desc` \| `asc`.
+
+Параметры списков тестов (`GET /api/tests`, `GET /api/tests/my`): `sortBy` — `updatedAt` (по умолчанию) \| `name`, `order` — `desc` (по умолчанию) \| `asc`. В элементах списка возвращается поле `updatedAt`.
 
 ---
 

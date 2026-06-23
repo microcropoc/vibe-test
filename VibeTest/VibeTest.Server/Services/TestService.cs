@@ -11,11 +11,12 @@ public class TestService(
     ITestRepository tests,
     IQuestionAnswerRepository questionAnswers) : ITestService
 {
-    public async Task<PagedResponse<TestListItem>> GetPublicTests(int page, int pageSize)
+    public async Task<PagedResponse<TestListItem>> GetPublicTests(int page, int pageSize, string sortBy, string order)
     {
         var (normalizedPage, normalizedSize, offset) = NormalizePagination(page, pageSize);
+        var (normalizedSort, normalizedOrder) = NormalizeTestListSort(sortBy, order);
         var totalCount = await tests.CountPublicTestsAsync();
-        var rows = await tests.GetPublicTestsPageAsync(offset, normalizedSize);
+        var rows = await tests.GetPublicTestsPageAsync(offset, normalizedSize, normalizedSort, normalizedOrder);
         var items = rows.Select(MapListItem).ToList();
         return PaginationHelper.Create(items, normalizedPage, normalizedSize, totalCount);
     }
@@ -158,12 +159,25 @@ public class TestService(
         await tests.SaveChangesAsync();
     }
 
-    public async Task<PagedResponse<TestListItem>> GetMyTests(int authorId, int page, int pageSize, string filter)
+    public async Task<PagedResponse<TestListItem>> GetMyTests(
+        int authorId,
+        int page,
+        int pageSize,
+        string filter,
+        string sortBy,
+        string order)
     {
         var normalizedFilter = NormalizeFilter(filter);
         var (normalizedPage, normalizedSize, offset) = NormalizePagination(page, pageSize);
+        var (normalizedSort, normalizedOrder) = NormalizeTestListSort(sortBy, order);
         var totalCount = await tests.CountMyTestsAsync(authorId, normalizedFilter);
-        var rows = await tests.GetMyTestsPageAsync(authorId, normalizedFilter, offset, normalizedSize);
+        var rows = await tests.GetMyTestsPageAsync(
+            authorId,
+            normalizedFilter,
+            offset,
+            normalizedSize,
+            normalizedSort,
+            normalizedOrder);
         var items = rows.Select(MapListItem).ToList();
         return PaginationHelper.Create(items, normalizedPage, normalizedSize, totalCount);
     }
@@ -231,6 +245,13 @@ public class TestService(
             _ => "all"
         };
 
+    private static (string SortBy, string Order) NormalizeTestListSort(string sortBy, string order)
+    {
+        var normalizedSort = sortBy == "name" ? "name" : "updatedAt";
+        var normalizedOrder = order == "asc" ? "asc" : "desc";
+        return (normalizedSort, normalizedOrder);
+    }
+
     private static TestListItem MapListItem(Data.Queries.TestListItemRow row) => new()
     {
         Id = row.Id,
@@ -238,7 +259,8 @@ public class TestService(
         Description = row.Description,
         AuthorName = row.AuthorName,
         QuestionsCount = row.QuestionsCount,
-        CreatedAt = row.CreatedAt
+        CreatedAt = row.CreatedAt,
+        UpdatedAt = row.UpdatedAt
     };
 
     private static TestDetailResponse MapDetail(Test test) => new()

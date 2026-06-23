@@ -47,28 +47,40 @@ public class TestRepository(AppDbContext db) : ITestRepository
         return row.Value;
     }
 
-    public Task<List<TestListItemRow>> GetPublicTestsPageAsync(int offset, int pageSize, CancellationToken cancellationToken = default) =>
-        db.Database
-            .SqlQueryRaw<TestListItemRow>(
-                """
-                SELECT
-                    t.Id AS Id,
-                    t.Name AS Name,
-                    t.Description AS Description,
-                    u.DisplayName AS AuthorName,
-                    CAST(COUNT(DISTINCT tqa.QuestionOrder) AS INTEGER) AS QuestionsCount,
-                    t.CreatedAt AS CreatedAt
-                FROM Tests t
-                INNER JOIN Users u ON u.Id = t.AuthorId
-                LEFT JOIN TestQuestionAnswers tqa ON tqa.TestId = t.Id
-                WHERE t.IsPublic = 1
-                GROUP BY t.Id, t.Name, t.Description, u.DisplayName, t.CreatedAt
-                ORDER BY t.CreatedAt DESC
-                LIMIT {0} OFFSET {1}
-                """,
-                pageSize,
-                offset)
+    public Task<List<TestListItemRow>> GetPublicTestsPageAsync(
+        int offset,
+        int pageSize,
+        string sortBy,
+        string order,
+        CancellationToken cancellationToken = default)
+    {
+        var (sortColumn, sortDirection) = ResolveTestListSort(sortBy, order);
+
+        var sql =
+            """
+            SELECT
+                t.Id AS Id,
+                t.Name AS Name,
+                t.Description AS Description,
+                u.DisplayName AS AuthorName,
+                CAST(COUNT(DISTINCT tqa.QuestionOrder) AS INTEGER) AS QuestionsCount,
+                t.CreatedAt AS CreatedAt,
+                t.UpdatedAt AS UpdatedAt
+            FROM Tests t
+            INNER JOIN Users u ON u.Id = t.AuthorId
+            LEFT JOIN TestQuestionAnswers tqa ON tqa.TestId = t.Id
+            WHERE t.IsPublic = 1
+            GROUP BY t.Id, t.Name, t.Description, u.DisplayName, t.CreatedAt, t.UpdatedAt
+            ORDER BY 
+            """ + sortColumn + " " + sortDirection + """
+
+            LIMIT {0} OFFSET {1}
+            """;
+
+        return db.Database
+            .SqlQueryRaw<TestListItemRow>(sql, pageSize, offset)
             .ToListAsync(cancellationToken);
+    }
 
     public async Task<int> CountMyTestsAsync(int authorId, string filter, CancellationToken cancellationToken = default)
     {
@@ -94,34 +106,48 @@ public class TestRepository(AppDbContext db) : ITestRepository
         string filter,
         int offset,
         int pageSize,
-        CancellationToken cancellationToken = default) =>
-        db.Database
-            .SqlQueryRaw<TestListItemRow>(
-                """
-                SELECT
-                    t.Id AS Id,
-                    t.Name AS Name,
-                    t.Description AS Description,
-                    u.DisplayName AS AuthorName,
-                    CAST(COUNT(DISTINCT tqa.QuestionOrder) AS INTEGER) AS QuestionsCount,
-                    t.CreatedAt AS CreatedAt
-                FROM Tests t
-                INNER JOIN Users u ON u.Id = t.AuthorId
-                LEFT JOIN TestQuestionAnswers tqa ON tqa.TestId = t.Id
-                WHERE t.AuthorId = {2}
-                  AND ({3} = 'all'
-                       OR ({3} = 'published' AND t.IsPublic = 1)
-                       OR ({3} = 'private' AND t.IsPublic = 0))
-                GROUP BY t.Id, t.Name, t.Description, u.DisplayName, t.CreatedAt
-                ORDER BY t.CreatedAt DESC
-                LIMIT {0} OFFSET {1}
-                """,
-                pageSize,
-                offset,
-                authorId,
-                filter)
+        string sortBy,
+        string order,
+        CancellationToken cancellationToken = default)
+    {
+        var (sortColumn, sortDirection) = ResolveTestListSort(sortBy, order);
+
+        var sql =
+            """
+            SELECT
+                t.Id AS Id,
+                t.Name AS Name,
+                t.Description AS Description,
+                u.DisplayName AS AuthorName,
+                CAST(COUNT(DISTINCT tqa.QuestionOrder) AS INTEGER) AS QuestionsCount,
+                t.CreatedAt AS CreatedAt,
+                t.UpdatedAt AS UpdatedAt
+            FROM Tests t
+            INNER JOIN Users u ON u.Id = t.AuthorId
+            LEFT JOIN TestQuestionAnswers tqa ON tqa.TestId = t.Id
+            WHERE t.AuthorId = {2}
+              AND ({3} = 'all'
+                   OR ({3} = 'published' AND t.IsPublic = 1)
+                   OR ({3} = 'private' AND t.IsPublic = 0))
+            GROUP BY t.Id, t.Name, t.Description, u.DisplayName, t.CreatedAt, t.UpdatedAt
+            ORDER BY 
+            """ + sortColumn + " " + sortDirection + """
+
+            LIMIT {0} OFFSET {1}
+            """;
+
+        return db.Database
+            .SqlQueryRaw<TestListItemRow>(sql, pageSize, offset, authorId, filter)
             .ToListAsync(cancellationToken);
+    }
 
     public Task SaveChangesAsync(CancellationToken cancellationToken = default) =>
         db.SaveChangesAsync(cancellationToken);
+
+    private static (string Column, string Direction) ResolveTestListSort(string sortBy, string order)
+    {
+        var column = sortBy == "name" ? "t.Name COLLATE NOCASE" : "t.UpdatedAt";
+        var direction = order == "asc" ? "ASC" : "DESC";
+        return (column, direction);
+    }
 }
