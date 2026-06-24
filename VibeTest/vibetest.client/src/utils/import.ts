@@ -33,7 +33,11 @@ function parseQuestion(q: unknown, qi: number): QuestionDefinition {
     throw new ImportValidationError(`Вопрос ${qi + 1}: correct вне диапазона ответов`);
   }
 
-  return { text: question.text, answers, correct: question.correct };
+  const result: QuestionDefinition = { text: question.text, answers, correct: question.correct };
+  if (typeof question.explanation === 'string' && question.explanation.trim() !== '') {
+    result.explanation = question.explanation.trim();
+  }
+  return result;
 }
 
 export function parseQuestionsJson(raw: string): QuestionDefinition[] {

@@ -101,6 +101,7 @@ export function TestEditor({ mode, localTestId, apiTestId, onSaved }: TestEditor
               text: q.text,
               answers: q.answers,
               correct: q.correct,
+              ...(q.explanation ? { explanation: q.explanation } : {}),
             })),
           );
           setIsPublic(full.isPublic);
@@ -285,6 +286,11 @@ export function TestEditor({ mode, localTestId, apiTestId, onSaved }: TestEditor
                   </li>
                 ))}
               </ul>
+              {q.explanation && (
+                <p className="vt-muted" style={{ fontStyle: 'italic', marginTop: '0.5rem' }}>
+                  Пояснение: {q.explanation}
+                </p>
+              )}
             </li>
           ))}
         </ol>
@@ -343,6 +349,11 @@ export function TestEditor({ mode, localTestId, apiTestId, onSaved }: TestEditor
                     </li>
                   ))}
                 </ul>
+                {q.explanation && (
+                  <p className="vt-muted" style={{ fontStyle: 'italic', marginTop: '0.25rem' }}>
+                    Пояснение: {q.explanation}
+                  </p>
+                )}
               </div>
             );
           })}
@@ -394,6 +405,18 @@ export function TestEditor({ mode, localTestId, apiTestId, onSaved }: TestEditor
             <textarea
               value={question.text}
               onChange={(e) => updateQuestion(qi, { text: e.target.value })}
+            />
+          </div>
+          <div className="vt-field">
+            <label>Пояснение (необязательно)</label>
+            <textarea
+              value={question.explanation ?? ''}
+              onChange={(e) =>
+                updateQuestion(qi, {
+                  explanation: e.target.value.trim() === '' ? undefined : e.target.value,
+                })
+              }
+              placeholder="Показывается после ответа (настройки — в прохождении)"
             />
           </div>
           <div className="vt-answers">

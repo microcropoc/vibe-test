@@ -36,7 +36,9 @@ export function InfoPage() {
         Тест описывается объектом JSON. Поле <code>name</code> обязательно,{' '}
         <code>description</code> — опционально. Массив <code>questions</code> содержит вопросы с
         полем <code>text</code>; у каждого вопроса массив строк <code>answers</code> и число{' '}
-        <code>correct</code> — индекс правильного ответа (с нуля).
+        <code>correct</code> — индекс правильного ответа (с нуля). Необязательное поле{' '}
+        <code>explanation</code> — пояснение к правильному ответу; показывается после ответа
+        (по умолчанию и при верном, и при неверном; в прохождении можно отключить в настройках).
       </p>
 
       <pre className="guest-code">{TEMPLATE_JSON}</pre>

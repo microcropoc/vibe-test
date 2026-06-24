@@ -13,6 +13,7 @@ export interface QuestionAnswerRecord {
   selectedAnswerOrder: number;
   correctAnswerOrder: number;
   isCorrect: boolean;
+  explanation?: string;
 }
 
 export interface PlayerProgress {

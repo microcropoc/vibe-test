@@ -49,7 +49,7 @@ Access-токен обновляется через `POST /api/auth/refresh` с 
 
 | Метод | Путь | Auth | Описание |
 |-------|------|------|----------|
-| `POST` | `/api/tests/{id}/submit` | JWT | Ответ на вопрос (`questionOrder`, `answerOrder`) |
+| `POST` | `/api/tests/{id}/submit` | JWT | Ответ на вопрос (`questionOrder`, `answerOrder`); в теле может быть `explanation`, если задано у вопроса |
 | `GET` | `/api/tests/{id}/result` | JWT | Результат прохождения теста |
 | `DELETE` | `/api/tests/{id}/result` | JWT | Удалить результат (пересдача) |
 | `GET` | `/api/results?page=&pageSize=&sortBy=&order=` | JWT | История прохождений |

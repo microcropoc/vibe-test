@@ -169,6 +169,9 @@ public class TestService(
         {
             var questionInput = questions[qi];
             var question = await questionAnswers.FindOrCreateQuestionAsync(questionInput.Text.Trim());
+            var explanation = string.IsNullOrWhiteSpace(questionInput.Explanation)
+                ? null
+                : questionInput.Explanation.Trim();
 
             for (var ai = 0; ai < questionInput.Answers.Count; ai++)
             {
@@ -182,7 +185,8 @@ public class TestService(
                     Answer = answer,
                     QuestionOrder = startQuestionOrder + qi,
                     AnswerOrder = ai,
-                    IsCorrect = ai == questionInput.Correct
+                    IsCorrect = ai == questionInput.Correct,
+                    Explanation = ai == 0 ? explanation : null
                 });
             }
         }

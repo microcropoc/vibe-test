@@ -3,6 +3,7 @@ namespace VibeTest.Server.Models.Responses;
 public class SubmitResponse
 {
     public int CorrectAnswerOrder { get; set; }
+    public string? Explanation { get; set; }
 }
 
 public class TestResultResponse

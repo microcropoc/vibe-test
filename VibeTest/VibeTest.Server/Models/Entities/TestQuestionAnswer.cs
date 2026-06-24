@@ -9,6 +9,7 @@ public class TestQuestionAnswer
     public int QuestionOrder { get; set; }
     public int AnswerOrder { get; set; }
     public bool IsCorrect { get; set; }
+    public string? Explanation { get; set; }
 
     public Test Test { get; set; } = null!;
     public Question Question { get; set; } = null!;

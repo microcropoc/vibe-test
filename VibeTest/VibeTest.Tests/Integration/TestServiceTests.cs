@@ -33,6 +33,32 @@ public class TestServiceTests
     }
 
     [Fact]
+    public async Task CreateTest_stores_question_explanation()
+    {
+        using var fx = new ServiceFixture();
+        var author = await fx.SeedUserAsync();
+
+        var created = await fx.TestService.CreateTest(author.Id, new CreateTestRequest
+        {
+            Name = "With explanation",
+            Questions =
+            [
+                new QuestionInput
+                {
+                    Text = "Pick SQL",
+                    Answers = ["Structured Query Language", "Wrong"],
+                    Correct = 0,
+                    Explanation = "SQL means Structured Query Language."
+                }
+            ]
+        });
+
+        var full = await fx.TestService.GetTestFull(created.Id, author.Id);
+        Assert.Single(full.Questions);
+        Assert.Equal("SQL means Structured Query Language.", full.Questions[0].Explanation);
+    }
+
+    [Fact]
     public async Task CreateTest_deduplicates_shared_answer_text_within_single_test()
     {
         using var fx = new ServiceFixture();

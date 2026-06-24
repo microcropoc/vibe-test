@@ -477,7 +477,8 @@ public interface IUserService
       "Structured Query Language",
       "Simple Query Logic"
     ],
-    "correct": 0
+    "correct": 0,
+    "explanation": "SQL means Structured Query Language."
   }]
 }
 
@@ -530,7 +531,7 @@ public interface IUserService
 { "questionOrder": 0, "selectedAnswerOrder": 2 }
 
 // Response
-{ "correctAnswerOrder": 0 }
+{ "correctAnswerOrder": 0, "explanation": "optional text when question has explanation" }
 ```
 
 **GET /api/tests/{id}/result** — получить результат
@@ -590,7 +591,7 @@ public interface IUserService
 1. Клиент получает тест через `GET /api/tests/{id}`
 2. Пользователь выбирает ответ на вопрос
 3. `POST /api/tests/{id}/submit` — сервер находит правильный ответ через TQA, сохраняет Result
-4. Ответ: `correctAnswerOrder`
+4. Ответ: `correctAnswerOrder`; опционально `explanation` (из TQA, если задано; не отдаётся в `GET /tests/{id}`)
 5. Клиент сравнивает, показывает результат
 6. Можно отвечать в любом порядке, переотвечивать
 7. `GET /api/tests/{id}/result` — полная статистика
@@ -674,6 +675,7 @@ public interface IUserService
 |------|------------|
 | `vibetest_local_tests` | Массив локальных тестов |
 | `vibetest_progress_{id}` | Прогресс прохождения теста |
+| `vibetest_player_explanation_settings` | Настройки показа пояснений: `{ showOnCorrect, showOnIncorrect }` |
 | `vibetest_guest_results` | Результаты гостя |
 | `vibetest_refresh_token` | JWT refresh token |
 
@@ -689,7 +691,8 @@ public interface IUserService
       "Structured Query Language",
       "Simple Query Logic"
     ],
-    "correct": 0
+    "correct": 0,
+    "explanation": "SQL means Structured Query Language."
   }]
 }
 ```
@@ -699,6 +702,7 @@ public interface IUserService
 - Минимум 1 вопрос
 - Минимум 2 ответа на вопрос
 - `correct` — валидный индекс в массиве `answers`
+- `explanation` — необязательное пояснение; хранится в `TestQuestionAnswers.Explanation` (per-test); клиент показывает после ответа (настройки видимости в localStorage)
 
 ---
 

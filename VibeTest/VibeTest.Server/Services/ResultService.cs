@@ -35,7 +35,9 @@ public class ResultService(
         });
         await results.SaveChangesAsync();
 
-        return new SubmitResponse { CorrectAnswerOrder = correctOrder };
+        var explanation = await results.GetQuestionExplanationAsync(testId, request.QuestionOrder);
+
+        return new SubmitResponse { CorrectAnswerOrder = correctOrder, Explanation = explanation };
     }
 
     public async Task<TestResultResponse> GetResult(int userId, int testId)

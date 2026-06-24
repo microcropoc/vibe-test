@@ -2,6 +2,7 @@ export interface QuestionDefinition {
   text: string;
   answers: string[];
   correct: number;
+  explanation?: string;
 }
 
 export interface TestDefinition {

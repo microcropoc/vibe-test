@@ -15,4 +15,5 @@ public class QuestionFullDto
     public string Text { get; set; } = string.Empty;
     public List<string> Answers { get; set; } = [];
     public int Correct { get; set; }
+    public string? Explanation { get; set; }
 }

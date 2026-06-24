@@ -8,6 +8,7 @@ export const DEFAULT_IMPORT_TEST_TEMPLATE: TestDefinition = {
       text: 'Новый вопрос',
       answers: ['Неправильный ответ', 'Правильный ответ', 'Неправильный ответ'],
       correct: 1,
+      explanation: 'Пояснение показывается после ответа (настройки — в прохождении теста).',
     },
   ],
 };

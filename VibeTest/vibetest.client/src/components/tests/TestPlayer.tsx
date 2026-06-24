@@ -20,6 +20,12 @@ import {
   isTestFullyAnswered,
   toPlayerQuestions,
 } from '@/utils/playerHelpers';
+import {
+  getPlayerExplanationSettings,
+  savePlayerExplanationSettings,
+  shouldShowExplanation,
+  type PlayerExplanationSettings,
+} from '@/utils/playerSettings';
 import '@/components/tests/tests.css';
 
 export type TestPlayerSource =
@@ -71,6 +77,9 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
   const [apiResult, setApiResult] = useState<TestResultResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [hasNewQuestions, setHasNewQuestions] = useState(false);
+  const [explanationSettings, setExplanationSettings] = useState<PlayerExplanationSettings>(
+    getPlayerExplanationSettings,
+  );
 
   const currentOrder = progress.currentQuestionOrder;
   const currentQuestion = questions[currentOrder];
@@ -238,11 +247,13 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
     try {
       let correctOrder: number;
       let isCorrect: boolean;
+      let explanation: string | undefined;
 
       if (source.type === 'local') {
         const def = localDefinitions[currentOrder];
         correctOrder = getCorrectAnswerOrder(def);
         isCorrect = answerOrder === correctOrder;
+        explanation = def.explanation;
       } else {
         const response = await testsApi.submitAnswer(source.testId, {
           questionOrder: currentOrder,
@@ -250,6 +261,7 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
         });
         correctOrder = response.correctAnswerOrder;
         isCorrect = answerOrder === correctOrder;
+        explanation = response.explanation;
       }
 
       const nextProgress: PlayerProgress = {
@@ -260,6 +272,7 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
             selectedAnswerOrder: answerOrder,
             correctAnswerOrder: correctOrder,
             isCorrect,
+            ...(explanation ? { explanation } : {}),
           },
         },
         currentQuestionOrder: currentOrder,
@@ -324,12 +337,34 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
     return <p className="vt-error">В тесте нет вопросов</p>;
   }
 
+  function updateExplanationSettings(patch: Partial<PlayerExplanationSettings>) {
+    setExplanationSettings((current) => {
+      const next = { ...current, ...patch };
+      savePlayerExplanationSettings(next);
+      return next;
+    });
+  }
+
   const activeRecord = showingResult ? currentRecord : null;
   const isChecking = phase === 'checking';
   const showNavOverlay = showingResult || isChecking;
   const canGoNext = showingResult;
   const canGoBack = currentOrder > 0;
   const nextLabel = isTestFullyAnswered(questions.length, progress) ? 'Итог' : 'Далее';
+
+  const rawExplanation =
+    showingResult && activeRecord
+      ? source.type === 'local'
+        ? localDefinitions[currentOrder]?.explanation
+        : activeRecord.explanation
+      : undefined;
+
+  const explanationText =
+    showingResult && activeRecord
+      ? shouldShowExplanation(explanationSettings, activeRecord.isCorrect, rawExplanation)
+        ? rawExplanation?.trim()
+        : undefined
+      : undefined;
 
   return (
     <div
@@ -342,6 +377,27 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
         {hasNewQuestions && (
           <p className="vt-muted">В тест добавлены новые вопросы — дорешайте их.</p>
         )}
+        <details className="vt-player-settings">
+          <summary className="vt-player-settings__summary">Настройки пояснений</summary>
+          <div className="vt-player-settings__body">
+            <label className="vt-player-settings__label">
+              <input
+                type="checkbox"
+                checked={explanationSettings.showOnCorrect}
+                onChange={(e) => updateExplanationSettings({ showOnCorrect: e.target.checked })}
+              />
+              Показывать при правильном ответе
+            </label>
+            <label className="vt-player-settings__label">
+              <input
+                type="checkbox"
+                checked={explanationSettings.showOnIncorrect}
+                onChange={(e) => updateExplanationSettings({ showOnIncorrect: e.target.checked })}
+              />
+              Показывать при неправильном ответе
+            </label>
+          </div>
+        </details>
       </header>
 
       <nav className="vt-question-nav" aria-label="Вопросы">
@@ -395,6 +451,10 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
             );
           })}
         </div>
+
+        {explanationText && (
+          <p className="vt-explanation">{explanationText}</p>
+        )}
 
         {error && <p className="vt-error">{error}</p>}
 

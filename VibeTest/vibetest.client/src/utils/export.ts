@@ -8,6 +8,7 @@ export function exportTestToJson(test: TestDefinition): string {
       text: q.text,
       answers: [...q.answers],
       correct: q.correct,
+      ...(q.explanation?.trim() ? { explanation: q.explanation.trim() } : {}),
     })),
   };
   return JSON.stringify(payload, null, 2);

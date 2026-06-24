@@ -70,6 +70,7 @@ export interface QuestionFullDto {
   text: string;
   answers: string[];
   correct: number;
+  explanation?: string;
 }
 
 export interface TestFullResponse {
@@ -82,6 +83,7 @@ export interface TestFullResponse {
 
 export interface SubmitResponse {
   correctAnswerOrder: number;
+  explanation?: string;
 }
 
 export interface TestResultResponse {

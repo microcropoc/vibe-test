@@ -70,6 +70,21 @@ public class ResultRepository(AppDbContext db) : IResultRepository
         return row?.Value;
     }
 
+    public async Task<string?> GetQuestionExplanationAsync(
+        int testId,
+        int questionOrder,
+        CancellationToken cancellationToken = default)
+    {
+        var row = await db.TestQuestionAnswers
+            .Where(tqa => tqa.TestId == testId
+                && tqa.QuestionOrder == questionOrder
+                && tqa.AnswerOrder == 0)
+            .Select(tqa => tqa.Explanation)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return string.IsNullOrWhiteSpace(row) ? null : row;
+    }
+
     public Task<TestResultSummaryRow?> GetTestResultSummaryAsync(
         int userId,
         int testId,

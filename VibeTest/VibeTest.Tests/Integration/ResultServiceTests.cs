@@ -5,6 +5,44 @@ namespace VibeTest.Tests.Integration;
 public class ResultServiceTests
 {
     [Fact]
+    public async Task SubmitAnswer_returns_explanation_when_present()
+    {
+        using var fx = new ServiceFixture();
+        var author = await fx.SeedUserAsync();
+        var test = await fx.TestService.CreateTest(author.Id, new CreateTestRequest
+        {
+            Name = "Explained",
+            Questions =
+            [
+                new QuestionInput
+                {
+                    Text = "Pick SQL",
+                    Answers = ["Structured Query Language", "Wrong"],
+                    Correct = 0,
+                    Explanation = "SQL expands to Structured Query Language."
+                }
+            ]
+        });
+        await fx.TestService.PublishTest(test.Id, author.Id);
+
+        var wrong = await fx.ResultService.SubmitAnswer(author.Id, test.Id, new SubmitAnswerRequest
+        {
+            QuestionOrder = 0,
+            SelectedAnswerOrder = 1
+        });
+        Assert.Equal(0, wrong.CorrectAnswerOrder);
+        Assert.Equal("SQL expands to Structured Query Language.", wrong.Explanation);
+
+        var correct = await fx.ResultService.SubmitAnswer(author.Id, test.Id, new SubmitAnswerRequest
+        {
+            QuestionOrder = 0,
+            SelectedAnswerOrder = 0
+        });
+        Assert.Equal(0, correct.CorrectAnswerOrder);
+        Assert.Equal("SQL expands to Structured Query Language.", correct.Explanation);
+    }
+
+    [Fact]
     public async Task SubmitAnswer_returns_correct_order_and_allows_reanswer()
     {
         using var fx = new ServiceFixture();

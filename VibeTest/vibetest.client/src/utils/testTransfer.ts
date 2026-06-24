@@ -13,6 +13,7 @@ export function apiFullToDefinition(full: TestFullResponse): TestDefinition {
       text: q.text,
       answers: [...q.answers],
       correct: q.correct,
+      ...(q.explanation ? { explanation: q.explanation } : {}),
     })),
   };
 }

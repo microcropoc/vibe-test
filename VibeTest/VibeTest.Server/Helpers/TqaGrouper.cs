@@ -29,7 +29,8 @@ public static class TqaGrouper
                     Order = q.Order,
                     Text = q.Text,
                     Answers = q.Answers.Select(a => a.Text).ToList(),
-                    Correct = correctIndex < 0 ? 0 : correctIndex
+                    Correct = correctIndex < 0 ? 0 : correctIndex,
+                    Explanation = q.Explanation
                 };
             })
             .ToList();
@@ -44,11 +45,12 @@ public static class TqaGrouper
             .Select(g => new GroupedQuestion(
                 g.Key,
                 g.First().Question.Text,
+                g.OrderBy(r => r.AnswerOrder).First().Explanation,
                 g.OrderBy(r => r.AnswerOrder)
                     .Select(r => new GroupedAnswer(r.AnswerOrder, r.Answer.Text, r.IsCorrect))
                     .ToList()));
 
-    private sealed record GroupedQuestion(int Order, string Text, List<GroupedAnswer> Answers);
+    private sealed record GroupedQuestion(int Order, string Text, string? Explanation, List<GroupedAnswer> Answers);
 
     private sealed record GroupedAnswer(int Order, string Text, bool IsCorrect);
 }
