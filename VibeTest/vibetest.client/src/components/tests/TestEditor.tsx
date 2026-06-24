@@ -202,6 +202,18 @@ export function TestEditor({ mode, localTestId, apiTestId, onSaved }: TestEditor
     }));
   }
 
+  function handleExportJson() {
+    const exportDefinition: TestDefinition = {
+      name: definition.name,
+      description: definition.description,
+      questions:
+        mode === 'api' && isEdit
+          ? [...lockedQuestions, ...definition.questions]
+          : definition.questions,
+    };
+    downloadTestJson(exportDefinition);
+  }
+
   async function handleSave() {
     setSaveError(null);
     setPhase('saving');
@@ -447,7 +459,16 @@ export function TestEditor({ mode, localTestId, apiTestId, onSaved }: TestEditor
           <button
             type="button"
             className="vt-btn vt-btn--ghost"
-            onClick={() => downloadTestJson(definition)}
+            onClick={handleExportJson}
+          >
+            Экспорт JSON
+          </button>
+        )}
+        {mode === 'api' && isEdit && (
+          <button
+            type="button"
+            className="vt-btn vt-btn--ghost"
+            onClick={handleExportJson}
           >
             Экспорт JSON
           </button>

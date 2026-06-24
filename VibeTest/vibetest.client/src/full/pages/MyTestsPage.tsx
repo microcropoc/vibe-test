@@ -11,6 +11,12 @@ import { editorPath, parseMyTestsTab, type MyTestsTab } from '@/utils/appPaths';
 import { type PageSize } from '@/utils/pagination';
 import { getTestProgressStats } from '@/utils/playerHelpers';
 import type { SortOrder, TestSortBy } from '@/utils/sortTests';
+import {
+  downloadCloudTestJson,
+  saveCloudTestLocally,
+  uploadLocalTestToCloud,
+} from '@/utils/testTransfer';
+import { downloadTestJson } from '@/utils/export';
 import { getApiTestProgress } from '@/utils/storage';
 import '@/components/tests/tests.css';
 
@@ -34,6 +40,8 @@ export function MyTestsPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [actionId, setActionId] = useState<number | null>(null);
+  const [uploadingLocalId, setUploadingLocalId] = useState<string | null>(null);
+  const [localMessage, setLocalMessage] = useState<string | null>(null);
 
   const loadPage = useCallback(
     async (p: number, size: PageSize, f: Filter, nextSortBy: TestSortBy, nextOrder: SortOrder) => {
@@ -94,6 +102,48 @@ export function MyTestsPage() {
     }
   }
 
+  async function handleDownloadCloudJson(id: number) {
+    setActionId(id);
+    setError(null);
+    try {
+      const full = await testsApi.getFull(id);
+      downloadCloudTestJson(full);
+    } catch (err) {
+      setError(getApiErrorMessage(err));
+    } finally {
+      setActionId(null);
+    }
+  }
+
+  async function handleSaveCloudLocally(id: number) {
+    setActionId(id);
+    setError(null);
+    try {
+      const full = await testsApi.getFull(id);
+      saveCloudTestLocally(full);
+      setLocalMessage(`Тест «${full.name}» сохранён локально.`);
+      switchTab('local');
+    } catch (err) {
+      setError(getApiErrorMessage(err));
+    } finally {
+      setActionId(null);
+    }
+  }
+
+  async function handleUploadLocalToCloud(testId: string) {
+    setUploadingLocalId(testId);
+    setLocalMessage(null);
+    setError(null);
+    try {
+      await uploadLocalTestToCloud(testId);
+      switchTab('cloud');
+    } catch (err) {
+      setError(getApiErrorMessage(err));
+    } finally {
+      setUploadingLocalId(null);
+    }
+  }
+
   return (
     <section className="full-page">
       <h1>Мои тесты</h1>
@@ -123,7 +173,19 @@ export function MyTestsPage() {
               Создать локальный тест
             </Link>
           </p>
-          <LocalTestsList listClassName="full-list" buttonClassPrefix="full-button" />
+          {localMessage && <p className="full-muted">{localMessage}</p>}
+          {error && <p className="full-error">{error}</p>}
+          <LocalTestsList
+            listClassName="full-list"
+            buttonClassPrefix="full-button"
+            showCloudActions
+            isAuthenticated={isAuthenticated}
+            loginPath="/login"
+            loginState={{ from: location.pathname + location.search }}
+            uploadingId={uploadingLocalId}
+            onDownloadJson={(test) => downloadTestJson(test)}
+            onUploadToCloud={handleUploadLocalToCloud}
+          />
         </>
       )}
 
@@ -213,9 +275,17 @@ export function MyTestsPage() {
                           type="button"
                           className="full-button full-button--ghost"
                           disabled={actionId === test.id}
-                          onClick={() => runAction(test.id, () => testsApi.fork(test.id))}
+                          onClick={() => void handleDownloadCloudJson(test.id)}
                         >
-                          Копия
+                          Скачать JSON
+                        </button>
+                        <button
+                          type="button"
+                          className="full-button full-button--ghost"
+                          disabled={actionId === test.id}
+                          onClick={() => void handleSaveCloudLocally(test.id)}
+                        >
+                          Сохранить локально
                         </button>
                         <button
                           type="button"

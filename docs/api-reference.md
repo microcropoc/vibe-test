@@ -39,7 +39,6 @@ Access-токен обновляется через `POST /api/auth/refresh` с 
 | `POST` | `/api/tests` | JWT | Создать тест |
 | `PATCH` | `/api/tests/{id}` | JWT | Дополнить тест новыми вопросами |
 | `PATCH` | `/api/tests/{id}/info` | JWT | Изменить `name` / `description` |
-| `POST` | `/api/tests/{id}/fork` | JWT | Копия своего теста |
 | `PUT` | `/api/tests/{id}/publish` | JWT | Опубликовать |
 | `PUT` | `/api/tests/{id}/unpublish` | JWT | Снять с публикации |
 | `DELETE` | `/api/tests/{id}` | JWT | Удалить тест |
@@ -83,6 +82,6 @@ Access-токен обновляется через `POST /api/auth/refresh` с 
 
 ## Связанные разделы spec.md
 
-- [§5 — бизнес-логика](spec.md#5-бизнес-логика) (иммутабельность, fork, дорешивание)
+- [§5 — бизнес-логика](spec.md#5-бизнес-логика) (иммутабельность, обмен cloud ↔ local, дорешивание)
 - [§6 — API с примерами тел](spec.md#6-api-эндпоинты)
 - [§2 — схема БД](spec.md#2-структура-проекта)

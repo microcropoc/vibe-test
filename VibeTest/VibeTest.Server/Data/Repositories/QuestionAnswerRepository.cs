@@ -11,6 +11,10 @@ public class QuestionAnswerRepository(AppDbContext db) : IQuestionAnswerReposito
         if (existing is not null)
             return existing;
 
+        var local = db.Questions.Local.FirstOrDefault(q => q.Text == text);
+        if (local is not null)
+            return local;
+
         var question = new Question { Text = text };
         db.Questions.Add(question);
         return question;
@@ -21,6 +25,10 @@ public class QuestionAnswerRepository(AppDbContext db) : IQuestionAnswerReposito
         var existing = await db.Answers.FirstOrDefaultAsync(a => a.Text == text, cancellationToken);
         if (existing is not null)
             return existing;
+
+        var local = db.Answers.Local.FirstOrDefault(a => a.Text == text);
+        if (local is not null)
+            return local;
 
         var answer = new Answer { Text = text };
         db.Answers.Add(answer);

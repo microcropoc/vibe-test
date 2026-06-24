@@ -42,8 +42,6 @@ export const testsApi = {
   updateInfo: (id: number, payload: UpdateTestInfoPayload) =>
     apiClient.patch<TestResponse>(`/tests/${id}/info`, payload),
 
-  fork: (id: number) => apiClient.post<TestResponse>(`/tests/${id}/fork`),
-
   publish: (id: number) => apiClient.put<void>(`/tests/${id}/publish`),
 
   unpublish: (id: number) => apiClient.put<void>(`/tests/${id}/unpublish`),

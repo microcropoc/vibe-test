@@ -88,42 +88,6 @@ public class TestService(
         return MapResponse(test);
     }
 
-    public async Task<TestResponse> ForkTest(int testId, int authorId)
-    {
-        var source = await tests.GetByIdWithStructureAsync(testId)
-            ?? throw new NotFoundException("Тест не найден");
-
-        EnsureAuthor(source, authorId);
-
-        var now = DateTime.UtcNow;
-        var fork = new Test
-        {
-            AuthorId = authorId,
-            Name = $"{source.Name} (copy)",
-            Description = source.Description,
-            IsPublic = false,
-            CreatedAt = now,
-            UpdatedAt = now
-        };
-
-        foreach (var row in source.QuestionAnswers)
-        {
-            fork.QuestionAnswers.Add(new TestQuestionAnswer
-            {
-                QuestionId = row.QuestionId,
-                AnswerId = row.AnswerId,
-                QuestionOrder = row.QuestionOrder,
-                AnswerOrder = row.AnswerOrder,
-                IsCorrect = row.IsCorrect
-            });
-        }
-
-        await tests.AddAsync(fork);
-        await tests.SaveChangesAsync();
-
-        return MapResponse(fork);
-    }
-
     public async Task PublishTest(int testId, int authorId)
     {
         var test = await tests.GetByIdAsync(testId)

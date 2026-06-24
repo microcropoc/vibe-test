@@ -33,6 +33,42 @@ public class TestServiceTests
     }
 
     [Fact]
+    public async Task CreateTest_deduplicates_shared_answer_text_within_single_test()
+    {
+        using var fx = new ServiceFixture();
+        var author = await fx.SeedUserAsync();
+
+        var created = await fx.TestService.CreateTest(author.Id, new CreateTestRequest
+        {
+            Name = "Types quiz",
+            Questions =
+            [
+                new QuestionInput
+                {
+                    Text = "First int question",
+                    Answers = ["int", "double", "bool"],
+                    Correct = 0
+                },
+                new QuestionInput
+                {
+                    Text = "Second int question",
+                    Answers = ["byte", "int", "long"],
+                    Correct = 1
+                },
+                new QuestionInput
+                {
+                    Text = "Third int question",
+                    Answers = ["int?", "int", "Optional<int>"],
+                    Correct = 1
+                }
+            ]
+        });
+
+        Assert.Equal(3, created.QuestionsCount);
+        Assert.Equal(1, fx.Db.Answers.Count(a => a.Text == "int"));
+    }
+
+    [Fact]
     public async Task AppendQuestions_assigns_next_question_orders()
     {
         using var fx = new ServiceFixture();
@@ -71,35 +107,6 @@ public class TestServiceTests
             {
                 Questions = ServiceFixture.SampleTestRequest().Questions
             }));
-    }
-
-    [Fact]
-    public async Task Fork_creates_independent_copy_without_results()
-    {
-        using var fx = new ServiceFixture();
-        var author = await fx.SeedUserAsync();
-        var created = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
-        await fx.TestService.PublishTest(created.Id, author.Id);
-
-        await fx.ResultService.SubmitAnswer(author.Id, created.Id, new SubmitAnswerRequest
-        {
-            QuestionOrder = 0,
-            SelectedAnswerOrder = 0
-        });
-
-        var fork = await fx.TestService.ForkTest(created.Id, author.Id);
-
-        Assert.NotEqual(created.Id, fork.Id);
-        Assert.False(fork.IsPublic);
-        Assert.Equal(2, fork.QuestionsCount);
-
-        var forkFull = await fx.TestService.GetTestFull(fork.Id, author.Id);
-        Assert.Equal(2, forkFull.Questions.Count);
-
-        var originalResult = await fx.ResultService.GetResult(author.Id, created.Id);
-        var forkResult = await fx.ResultService.GetResult(author.Id, fork.Id);
-        Assert.Equal(1, originalResult.CorrectAnswers);
-        Assert.Equal(0, forkResult.CorrectAnswers);
     }
 
     [Fact]

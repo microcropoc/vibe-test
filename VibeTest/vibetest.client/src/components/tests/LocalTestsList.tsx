@@ -25,6 +25,13 @@ type LocalTestsListProps = {
   buttonClassPrefix: 'guest-button' | 'full-button';
   emptyClassName?: string;
   playTo?: (testId: string) => string;
+  showCloudActions?: boolean;
+  isAuthenticated?: boolean;
+  loginPath?: string;
+  loginState?: { from: string };
+  uploadingId?: string | null;
+  onUploadToCloud?: (testId: string) => Promise<void>;
+  onDownloadJson?: (test: LocalTest) => void;
 };
 
 export function LocalTestsList({
@@ -32,6 +39,13 @@ export function LocalTestsList({
   buttonClassPrefix,
   emptyClassName = listClassName === 'guest-list' ? 'guest-empty' : 'full-muted',
   playTo = (testId) => `/play/${testId}`,
+  showCloudActions = false,
+  isAuthenticated = false,
+  loginPath = '/login',
+  loginState,
+  uploadingId = null,
+  onUploadToCloud,
+  onDownloadJson,
 }: LocalTestsListProps) {
   const listPrefix = listClassName;
   const raw = useSyncExternalStore(subscribe, getLocalTestsSnapshot, getLocalTestsSnapshot);
@@ -110,6 +124,30 @@ export function LocalTestsList({
                 <Link to={`/editor/${test.id}`} className={ghostButton}>
                   Редактировать
                 </Link>
+                {onDownloadJson && (
+                  <button
+                    type="button"
+                    className={ghostButton}
+                    onClick={() => onDownloadJson(test)}
+                  >
+                    Скачать JSON
+                  </button>
+                )}
+                {showCloudActions &&
+                  (isAuthenticated ? (
+                    <button
+                      type="button"
+                      className={ghostButton}
+                      disabled={uploadingId === test.id}
+                      onClick={() => void onUploadToCloud?.(test.id)}
+                    >
+                      {uploadingId === test.id ? 'Загрузка…' : 'В облако'}
+                    </button>
+                  ) : (
+                    <Link to={loginPath} state={loginState} className={ghostButton}>
+                      В облако
+                    </Link>
+                  ))}
                 <button
                   type="button"
                   className={dangerButton}

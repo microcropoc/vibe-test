@@ -26,7 +26,7 @@
 · Сохранение тестов на сервер (изначально приватные)
 · Публикация и скрытие тестов
 · Дополнение тестов новыми вопросами (без удаления старых)
-· Создание копии своего теста (fork)
+· Копия своего теста через выгрузку в localStorage/JSON и загрузку обратно как нового теста
 · Изменение названия и описания теста
 · Просмотр истории прохождений с баллами и датами
 · Статистика: создано/опубликовано/пройдено/средний балл
@@ -323,7 +323,6 @@ public interface ITestService
     Task<TestResponse> CreateTest(int authorId, CreateTestRequest request);
     Task<TestResponse> AppendQuestions(int testId, int authorId, AddQuestionsRequest request);
     Task<TestResponse> UpdateTestInfo(int testId, int authorId, UpdateTestInfoRequest request);
-    Task<TestResponse> ForkTest(int testId, int authorId);
     Task PublishTest(int testId, int authorId);
     Task UnpublishTest(int testId, int authorId);
     Task DeleteTest(int testId, int authorId);
@@ -501,8 +500,6 @@ public interface IUserService
 { "name": "New name", "description": "New description" }
 ```
 
-**POST /api/tests/{id}/fork** — создать копию своего теста
-
 **PUT /api/tests/{id}/publish** — опубликовать
 
 **PUT /api/tests/{id}/unpublish** — скрыть
@@ -579,12 +576,14 @@ public interface IUserService
 - Существующие вопросы не затрагиваются
 - Результаты пользователей сохраняются — пользователь может дорешать новые вопросы
 
-### Fork
+### Обмен cloud ↔ local
 
-- Только автор оригинала может создать копию
-- Новый тест полностью независим
-- Копируются все вопросы и ответы через `TestQuestionAnswers`
-- Результаты не копируются
+Копирование облачного теста выполняется на клиенте без отдельного API:
+
+1. **Облако → локально** — `GET /api/tests/{id}/full` (только автор) → сохранение в localStorage или скачивание JSON (`testTransfer.ts`).
+2. **Локально → облако** — чтение из localStorage → `POST /api/tests` (создаётся новый тест, не связанный с исходным id).
+
+При коллизии имён в localStorage оба теста остаются в списке (новый UUID).
 
 ### Прохождение теста
 
@@ -718,7 +717,7 @@ public interface IUserService
 
 | Сервис | Сценарии |
 |--------|----------|
-| TestService | CreateTest + дедупликация; AppendQuestions (`MAX+1`); Fork; GetTestDetail vs GetTestFull |
+| TestService | CreateTest + дедупликация; AppendQuestions (`MAX+1`); GetTestDetail vs GetTestFull |
 | ResultService | Submit + переответ; дорешивание после AppendQuestions; DeleteResult |
 | UserService | GetStats, формула averageScore |
 

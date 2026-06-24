@@ -63,11 +63,6 @@ public class TestsController(
     public Task<TestResponse> UpdateTestInfo(int id, [FromBody] UpdateTestInfoRequest request) =>
         testService.UpdateTestInfo(id, User.GetUserId(), request);
 
-    [HttpPost("{id:int}/fork")]
-    [Authorize]
-    public Task<TestResponse> ForkTest(int id) =>
-        testService.ForkTest(id, User.GetUserId());
-
     [HttpPut("{id:int}/publish")]
     [Authorize]
     public Task PublishTest(int id)
