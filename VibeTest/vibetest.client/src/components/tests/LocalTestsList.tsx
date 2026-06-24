@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { Link } from 'react-router-dom';
 import { Pagination } from '@/components/common/Pagination';
+import { TestDifficultyBadge } from '@/components/tests/TestDifficultyBadge';
 import { TestListProgressMeta } from '@/components/tests/TestListProgressMeta';
 import { TestListToolbar } from '@/components/tests/TestListToolbar';
 import type { LocalTest } from '@/types';
@@ -103,7 +104,17 @@ export function LocalTestsList({
           return (
             <li key={test.id} className={`${listPrefix}__item`}>
               <div>
-                <div className={`${listPrefix}__title`}>{test.name}</div>
+                <div
+                  className={`${listPrefix}__title`}
+                  style={
+                    listClassName === 'full-list'
+                      ? { display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }
+                      : undefined
+                  }
+                >
+                  {test.name}
+                  <TestDifficultyBadge difficulty={test.difficulty} />
+                </div>
                 <TestListProgressMeta
                   className={`${listPrefix}__meta`}
                   stats={stats}

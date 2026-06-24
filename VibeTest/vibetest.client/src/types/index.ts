@@ -1,3 +1,7 @@
+import type { TestDifficulty } from './api';
+
+export type { TestDifficulty } from './api';
+
 export interface QuestionDefinition {
   text: string;
   answers: string[];
@@ -8,6 +12,7 @@ export interface QuestionDefinition {
 export interface TestDefinition {
   name: string;
   description?: string;
+  difficulty?: TestDifficulty;
   questions: QuestionDefinition[];
 }
 

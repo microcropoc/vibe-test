@@ -33,9 +33,40 @@ public class UserServiceTests
 
         Assert.Equal(2, stats.TotalCreated);
         Assert.Equal(1, stats.TotalPublished);
-        Assert.Equal(1, stats.TotalPassed);
-        Assert.Equal(50, stats.AverageScore);
+        Assert.Equal(1, stats.TotalPassedOwn);
+        Assert.Equal(50, stats.AverageScoreOwn);
+        Assert.Equal(0, stats.TotalPassedOthers);
+        Assert.Equal(0, stats.AverageScoreOthers);
         Assert.NotEqual(privateTest.Id, publicTest.Id);
+    }
+
+    [Fact]
+    public async Task GetStats_counts_passing_others_tests_separately()
+    {
+        using var fx = new ServiceFixture();
+        var author = await fx.SeedUserAsync();
+        var other = await fx.SeedUserAsync("bob@test.com", "Bob");
+
+        var othersTest = await fx.TestService.CreateTest(other.Id, ServiceFixture.SampleTestRequest());
+        await fx.TestService.PublishTest(othersTest.Id, other.Id);
+
+        await fx.ResultService.SubmitAnswer(author.Id, othersTest.Id, new SubmitAnswerRequest
+        {
+            QuestionOrder = 0,
+            SelectedAnswerOrder = 0
+        });
+        await fx.ResultService.SubmitAnswer(author.Id, othersTest.Id, new SubmitAnswerRequest
+        {
+            QuestionOrder = 1,
+            SelectedAnswerOrder = 1
+        });
+
+        var stats = await fx.UserService.GetStats(author.Id);
+
+        Assert.Equal(0, stats.TotalPassedOwn);
+        Assert.Equal(0, stats.AverageScoreOwn);
+        Assert.Equal(1, stats.TotalPassedOthers);
+        Assert.Equal(50, stats.AverageScoreOthers);
     }
 
     [Fact]
@@ -48,7 +79,9 @@ public class UserServiceTests
 
         Assert.Equal(0, stats.TotalCreated);
         Assert.Equal(0, stats.TotalPublished);
-        Assert.Equal(0, stats.TotalPassed);
-        Assert.Equal(0, stats.AverageScore);
+        Assert.Equal(0, stats.TotalPassedOwn);
+        Assert.Equal(0, stats.TotalPassedOthers);
+        Assert.Equal(0, stats.AverageScoreOwn);
+        Assert.Equal(0, stats.AverageScoreOthers);
     }
 }

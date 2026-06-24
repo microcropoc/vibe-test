@@ -27,12 +27,16 @@ export interface TokenRefreshResponse {
   expiresAt: string;
 }
 
+export type TestDifficulty = 'easy' | 'medium' | 'hard';
+
 export interface TestListItem {
   id: number;
   name: string;
   description?: string;
   authorName: string;
   questionsCount: number;
+  isPublic: boolean;
+  difficulty: TestDifficulty;
   createdAt: string;
   updatedAt: string;
 }
@@ -42,6 +46,7 @@ export interface TestResponse {
   name: string;
   description?: string;
   isPublic: boolean;
+  difficulty: TestDifficulty;
   questionsCount: number;
   createdAt: string;
 }
@@ -78,6 +83,7 @@ export interface TestFullResponse {
   name: string;
   description?: string;
   isPublic: boolean;
+  difficulty: TestDifficulty;
   questions: QuestionFullDto[];
 }
 
@@ -108,8 +114,10 @@ export interface TestHistoryItem {
 export interface UserStatsResponse {
   totalCreated: number;
   totalPublished: number;
-  totalPassed: number;
-  averageScore: number;
+  totalPassedOwn: number;
+  totalPassedOthers: number;
+  averageScoreOwn: number;
+  averageScoreOthers: number;
 }
 
 export interface ApiErrorBody {

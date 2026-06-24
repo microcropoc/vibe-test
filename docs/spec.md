@@ -515,8 +515,10 @@ public interface IUserService
 {
   "totalCreated": 5,
   "totalPublished": 3,
-  "totalPassed": 12,
-  "averageScore": 78.5
+  "totalPassedOwn": 2,
+  "totalPassedOthers": 10,
+  "averageScoreOwn": 85.0,
+  "averageScoreOthers": 76.2
 }
 ```
 
@@ -596,12 +598,12 @@ public interface IUserService
 6. Можно отвечать в любом порядке, переотвечивать
 7. `GET /api/tests/{id}/result` — полная статистика
 
-### Статистика пользователя (`averageScore`)
+### Статистика пользователя
 
 - **Пройденный тест** — пользователь ответил на все текущие вопросы теста (`Results.Count == DISTINCT QuestionOrder` в TQA).
 - **Балл прохождения**: `correctAnswers / totalQuestions × 100`.
-- **averageScore** — среднее арифметическое баллов по всем пройденным тестам.
-- **totalPassed** — число уникальных тестов, пройденных полностью.
+- **totalPassedOwn** / **averageScoreOwn** — полностью пройденные тесты, где пользователь является автором (`Tests.AuthorId = userId`).
+- **totalPassedOthers** / **averageScoreOthers** — полностью пройденные тесты других авторов.
 - История (`GetUserResults`) — одна запись на `(UserId, TestId)`; после `DeleteResult` старая попытка не хранится.
 
 ### Ошибки дедупликации
@@ -723,7 +725,7 @@ public interface IUserService
 |--------|----------|
 | TestService | CreateTest + дедупликация; AppendQuestions (`MAX+1`); GetTestDetail vs GetTestFull |
 | ResultService | Submit + переответ; дорешивание после AppendQuestions; DeleteResult |
-| UserService | GetStats, формула averageScore |
+| UserService | GetStats, own/others passing stats |
 
 **Этап 2 — API**
 

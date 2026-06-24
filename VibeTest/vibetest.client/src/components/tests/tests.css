@@ -321,6 +321,21 @@
   color: #9fb0c7;
 }
 
+.vt-badge--difficulty-easy {
+  background: #1f3d2e;
+  color: #8fd4a8;
+}
+
+.vt-badge--difficulty-medium {
+  background: #3d351f;
+  color: #e0c76a;
+}
+
+.vt-badge--difficulty-hard {
+  background: #3d1f1f;
+  color: #e08a8a;
+}
+
 .vt-import-panel {
   padding: 0;
   border-radius: 0.75rem;

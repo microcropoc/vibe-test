@@ -19,6 +19,8 @@ import {
   type PageSize,
 } from '@/utils/pagination';
 import { normalizeQuestions } from '@/utils/normalizeQuestions';
+import { normalizeDifficulty, TEST_DIFFICULTIES, TEST_DIFFICULTY_LABELS } from '@/utils/testDifficulty';
+import type { TestDifficulty } from '@/types';
 import {
   createEmptyQuestion,
   createEmptyTest,
@@ -78,6 +80,7 @@ export function TestEditor({ mode, localTestId, apiTestId, onSaved }: TestEditor
         setDefinition({
           name: test.name,
           description: test.description,
+          difficulty: normalizeDifficulty(test.difficulty),
           questions: normalizeQuestions(test.questions),
         });
       }
@@ -94,6 +97,7 @@ export function TestEditor({ mode, localTestId, apiTestId, onSaved }: TestEditor
           setDefinition({
             name: full.name,
             description: full.description,
+            difficulty: normalizeDifficulty(full.difficulty),
             questions: [],
           });
           setLockedQuestions(
@@ -228,6 +232,7 @@ export function TestEditor({ mode, localTestId, apiTestId, onSaved }: TestEditor
         await testsApi.updateInfo(apiTestId, {
           name: definition.name.trim(),
           description: definition.description?.trim() || undefined,
+          difficulty: normalizeDifficulty(definition.difficulty),
         });
         if (toAppend.length > 0) {
           await testsApi.appendQuestions(apiTestId, { questions: toAppend });
@@ -325,6 +330,22 @@ export function TestEditor({ mode, localTestId, apiTestId, onSaved }: TestEditor
           onChange={(e) => setDefinition((p) => ({ ...p, description: e.target.value }))}
           placeholder="Необязательно"
         />
+      </div>
+      <div className="vt-field">
+        <label htmlFor="test-difficulty">Сложность</label>
+        <select
+          id="test-difficulty"
+          value={normalizeDifficulty(definition.difficulty)}
+          onChange={(e) =>
+            setDefinition((p) => ({ ...p, difficulty: e.target.value as TestDifficulty }))
+          }
+        >
+          {TEST_DIFFICULTIES.map((level) => (
+            <option key={level} value={level}>
+              {TEST_DIFFICULTY_LABELS[level]}
+            </option>
+          ))}
+        </select>
       </div>
 
       <TestImportPanel onAppend={handleAppendImported} />

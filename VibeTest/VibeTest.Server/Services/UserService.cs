@@ -17,8 +17,10 @@ public class UserService(IUserRepository users) : IUserService
         {
             TotalCreated = stats.TotalCreated,
             TotalPublished = stats.TotalPublished,
-            TotalPassed = stats.TotalPassed,
-            AverageScore = stats.AverageScore
+            TotalPassedOwn = stats.TotalPassedOwn,
+            TotalPassedOthers = stats.TotalPassedOthers,
+            AverageScoreOwn = stats.AverageScoreOwn,
+            AverageScoreOthers = stats.AverageScoreOthers
         };
     }
 }

@@ -34,7 +34,7 @@ Access-токен обновляется через `POST /api/auth/refresh` с 
 | Метод | Путь | Auth | Описание |
 |-------|------|------|----------|
 | `GET` | `/api/tests/my?page=&pageSize=&filter=&sortBy=&order=` | JWT | Мои тесты; `filter`: `all` \| `published` \| `private` |
-| `GET` | `/api/tests/my/stats` | JWT | Статистика пользователя |
+| `GET` | `/api/tests/my/stats` | JWT | Статистика пользователя: создано/опубликовано; прохождение своих (`totalPassedOwn`, `averageScoreOwn`) и чужих (`totalPassedOthers`, `averageScoreOthers`) тестов |
 | `GET` | `/api/tests/{id}/full` | JWT | Полный тест владельца (с полем `correct`) |
 | `POST` | `/api/tests` | JWT | Создать тест |
 | `PATCH` | `/api/tests/{id}` | JWT | Дополнить тест новыми вопросами |

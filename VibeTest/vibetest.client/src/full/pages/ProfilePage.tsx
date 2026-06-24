@@ -54,24 +54,49 @@ export function ProfilePage() {
       {error && <p className="full-error">{error}</p>}
 
       {stats && (
-        <div className="full-stats">
-          <div className="full-stat">
-            <div className="full-stat__value">{stats.totalCreated}</div>
-            <div className="full-stat__label">Создано</div>
+        <>
+          <h2 className="full-muted" style={{ marginTop: '1.5rem', marginBottom: '0.75rem' }}>
+            Мои тесты
+          </h2>
+          <div className="full-stats">
+            <div className="full-stat">
+              <div className="full-stat__value">{stats.totalCreated}</div>
+              <div className="full-stat__label">Создано</div>
+            </div>
+            <div className="full-stat">
+              <div className="full-stat__value">{stats.totalPublished}</div>
+              <div className="full-stat__label">Опубликовано</div>
+            </div>
           </div>
-          <div className="full-stat">
-            <div className="full-stat__value">{stats.totalPublished}</div>
-            <div className="full-stat__label">Опубликовано</div>
+
+          <h2 className="full-muted" style={{ marginTop: '1.5rem', marginBottom: '0.75rem' }}>
+            Прохождение своих тестов
+          </h2>
+          <div className="full-stats">
+            <div className="full-stat">
+              <div className="full-stat__value">{stats.totalPassedOwn}</div>
+              <div className="full-stat__label">Пройдено</div>
+            </div>
+            <div className="full-stat">
+              <div className="full-stat__value">{stats.averageScoreOwn.toFixed(1)}%</div>
+              <div className="full-stat__label">Средний балл</div>
+            </div>
           </div>
-          <div className="full-stat">
-            <div className="full-stat__value">{stats.totalPassed}</div>
-            <div className="full-stat__label">Пройдено</div>
+
+          <h2 className="full-muted" style={{ marginTop: '1.5rem', marginBottom: '0.75rem' }}>
+            Прохождение чужих тестов
+          </h2>
+          <div className="full-stats">
+            <div className="full-stat">
+              <div className="full-stat__value">{stats.totalPassedOthers}</div>
+              <div className="full-stat__label">Пройдено</div>
+            </div>
+            <div className="full-stat">
+              <div className="full-stat__value">{stats.averageScoreOthers.toFixed(1)}%</div>
+              <div className="full-stat__label">Средний балл</div>
+            </div>
           </div>
-          <div className="full-stat">
-            <div className="full-stat__value">{stats.averageScore.toFixed(1)}%</div>
-            <div className="full-stat__label">Средний балл</div>
-          </div>
-        </div>
+        </>
       )}
 
       <h2 style={{ marginTop: '2rem' }}>История</h2>

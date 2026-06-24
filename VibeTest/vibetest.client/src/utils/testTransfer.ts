@@ -5,10 +5,13 @@ import { downloadTestJson } from '@/utils/export';
 import { normalizeQuestions } from '@/utils/normalizeQuestions';
 import { createLocalTestFromDefinition, getLocalTestById, saveLocalTest } from '@/utils/storage';
 
+import { normalizeDifficulty } from '@/utils/testDifficulty';
+
 export function apiFullToDefinition(full: TestFullResponse): TestDefinition {
   return {
     name: full.name,
     description: full.description,
+    difficulty: normalizeDifficulty(full.difficulty),
     questions: full.questions.map((q) => ({
       text: q.text,
       answers: [...q.answers],
@@ -37,6 +40,7 @@ export async function uploadLocalTestToCloud(testId: string): Promise<number> {
   const payload: TestDefinition = {
     name: test.name,
     description: test.description,
+    difficulty: normalizeDifficulty(test.difficulty),
     questions: normalizeQuestions(test.questions),
   };
 

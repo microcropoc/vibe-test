@@ -22,6 +22,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
         modelBuilder.Entity<Test>(entity =>
         {
+            entity.Property(t => t.Difficulty)
+                .HasDefaultValue(TestDifficulty.Easy);
+
             entity.HasOne(t => t.Author)
                 .WithMany(u => u.AuthoredTests)
                 .HasForeignKey(t => t.AuthorId)

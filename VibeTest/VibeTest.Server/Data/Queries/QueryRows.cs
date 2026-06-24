@@ -1,5 +1,7 @@
 namespace VibeTest.Server.Data.Queries;
 
+using VibeTest.Server.Models.Entities;
+
 public class TestListItemRow
 {
     public int Id { get; set; }
@@ -7,6 +9,8 @@ public class TestListItemRow
     public string? Description { get; set; }
     public string AuthorName { get; set; } = string.Empty;
     public int QuestionsCount { get; set; }
+    public bool IsPublic { get; set; }
+    public TestDifficulty Difficulty { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }
@@ -36,8 +40,10 @@ public class UserStatsRow
 {
     public int TotalCreated { get; set; }
     public int TotalPublished { get; set; }
-    public int TotalPassed { get; set; }
-    public double AverageScore { get; set; }
+    public int TotalPassedOwn { get; set; }
+    public int TotalPassedOthers { get; set; }
+    public double AverageScoreOwn { get; set; }
+    public double AverageScoreOthers { get; set; }
 }
 
 public class ScalarIntRow

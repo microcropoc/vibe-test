@@ -1,4 +1,5 @@
 import type { QuestionDefinition, TestDefinition } from '@/types';
+import { parseDifficulty } from '@/utils/testDifficulty';
 
 export class ImportValidationError extends Error {
   constructor(message: string) {
@@ -84,10 +85,12 @@ export function parseTestJson(raw: string): TestDefinition {
   }
 
   const questions = test.questions.map((q, qi) => parseQuestion(q, qi));
+  const difficulty = parseDifficulty(test.difficulty);
 
   return {
     name: test.name.trim(),
     description: typeof test.description === 'string' ? test.description : undefined,
+    ...(difficulty ? { difficulty } : {}),
     questions,
   };
 }

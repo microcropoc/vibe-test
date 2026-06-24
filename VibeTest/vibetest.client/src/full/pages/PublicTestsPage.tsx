@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Pagination } from '@/components/common/Pagination';
 import { TestListProgressMeta } from '@/components/tests/TestListProgressMeta';
+import { TestDifficultyBadge } from '@/components/tests/TestDifficultyBadge';
 import { TestListToolbar } from '@/components/tests/TestListToolbar';
 import { testsApi } from '@/full/api';
 import { getApiErrorMessage } from '@/full/context/AuthContext';
@@ -89,9 +90,10 @@ export function PublicTestsPage() {
 
           return (
             <li key={test.id} className="full-list__item">
-              <Link to={`/tests/${test.id}`} className="full-list__title">
-                {test.name}
-              </Link>
+              <div className="full-list__title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <Link to={`/tests/${test.id}`}>{test.name}</Link>
+                <TestDifficultyBadge difficulty={test.difficulty} />
+              </div>
               <TestListProgressMeta
                 className="full-list__meta"
                 stats={stats}

@@ -1,4 +1,5 @@
 using VibeTest.Server.Exceptions;
+using VibeTest.Server.Models.Entities;
 using VibeTest.Server.Models.Requests;
 
 namespace VibeTest.Server.Helpers;
@@ -10,6 +11,7 @@ public static class TestRequestValidator
         if (string.IsNullOrWhiteSpace(request.Name))
             throw new ValidationException("Название теста обязательно");
 
+        ValidateDifficulty(request.Difficulty);
         ValidateQuestions(request.Questions);
     }
 
@@ -42,5 +44,16 @@ public static class TestRequestValidator
     {
         if (string.IsNullOrWhiteSpace(request.Name))
             throw new ValidationException("Название теста обязательно");
+
+        ValidateDifficulty(request.Difficulty);
+    }
+
+    private static void ValidateDifficulty(TestDifficulty? difficulty)
+    {
+        if (difficulty is null)
+            return;
+
+        if (!Enum.IsDefined(difficulty.Value))
+            throw new ValidationException("Неверная сложность теста");
     }
 }

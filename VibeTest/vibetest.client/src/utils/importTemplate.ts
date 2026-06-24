@@ -3,6 +3,7 @@ import type { TestDefinition } from '@/types';
 export const DEFAULT_IMPORT_TEST_TEMPLATE: TestDefinition = {
   name: 'Новый тест',
   description: 'Описание теста',
+  difficulty: 'easy',
   questions: [
     {
       text: 'Новый вопрос',

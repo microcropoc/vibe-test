@@ -1,9 +1,11 @@
 import type { TestDefinition } from '@/types';
+import { normalizeDifficulty } from '@/utils/testDifficulty';
 
 export function exportTestToJson(test: TestDefinition): string {
   const payload: TestDefinition = {
     name: test.name,
     description: test.description,
+    difficulty: normalizeDifficulty(test.difficulty),
     questions: test.questions.map((q) => ({
       text: q.text,
       answers: [...q.answers],

@@ -1,3 +1,5 @@
+using VibeTest.Server.Models.Entities;
+
 namespace VibeTest.Server.Models.Responses;
 
 public class TestFullResponse
@@ -6,6 +8,7 @@ public class TestFullResponse
     public string Name { get; set; } = string.Empty;
     public string? Description { get; set; }
     public bool IsPublic { get; set; }
+    public TestDifficulty Difficulty { get; set; }
     public List<QuestionFullDto> Questions { get; set; } = [];
 }
 

@@ -45,6 +45,7 @@ export function createEmptyTest(): TestDefinition {
   return {
     name: '',
     description: '',
+    difficulty: 'easy',
     questions: [createEmptyQuestion()],
   };
 }

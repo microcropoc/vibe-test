@@ -43,6 +43,7 @@ public class TestService(
             Name = request.Name.Trim(),
             Description = request.Description?.Trim(),
             IsPublic = false,
+            Difficulty = request.Difficulty ?? TestDifficulty.Easy,
             CreatedAt = now,
             UpdatedAt = now
         };
@@ -82,6 +83,8 @@ public class TestService(
 
         test.Name = request.Name.Trim();
         test.Description = request.Description?.Trim();
+        if (request.Difficulty.HasValue)
+            test.Difficulty = request.Difficulty.Value;
         test.UpdatedAt = DateTime.UtcNow;
         await tests.SaveChangesAsync();
 
@@ -159,6 +162,7 @@ public class TestService(
             Name = test.Name,
             Description = test.Description,
             IsPublic = test.IsPublic,
+            Difficulty = test.Difficulty,
             Questions = TqaGrouper.ToFullQuestions(test.QuestionAnswers)
         };
     }
@@ -227,6 +231,8 @@ public class TestService(
         Description = row.Description,
         AuthorName = row.AuthorName,
         QuestionsCount = row.QuestionsCount,
+        IsPublic = row.IsPublic,
+        Difficulty = row.Difficulty,
         CreatedAt = row.CreatedAt,
         UpdatedAt = row.UpdatedAt
     };
@@ -246,6 +252,7 @@ public class TestService(
         Name = test.Name,
         Description = test.Description,
         IsPublic = test.IsPublic,
+        Difficulty = test.Difficulty,
         QuestionsCount = TqaGrouper.CountQuestions(test.QuestionAnswers),
         CreatedAt = test.CreatedAt
     };

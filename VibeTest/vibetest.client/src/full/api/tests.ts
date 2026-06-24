@@ -13,7 +13,7 @@ import type { TestDefinition } from '@/types';
 
 export type CreateTestPayload = TestDefinition;
 export type AddQuestionsPayload = { questions: TestDefinition['questions'] };
-export type UpdateTestInfoPayload = { name: string; description?: string };
+export type UpdateTestInfoPayload = { name: string; description?: string; difficulty?: import('@/types').TestDifficulty };
 export type SubmitAnswerPayload = { questionOrder: number; selectedAnswerOrder: number };
 
 export const testsApi = {

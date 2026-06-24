@@ -3,6 +3,7 @@ import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { LocalTestsList } from '@/components/tests/LocalTestsList';
 import { Pagination } from '@/components/common/Pagination';
 import { TestListProgressMeta } from '@/components/tests/TestListProgressMeta';
+import { TestDifficultyBadge } from '@/components/tests/TestDifficultyBadge';
 import { TestListToolbar } from '@/components/tests/TestListToolbar';
 import { testsApi } from '@/full/api';
 import { getApiErrorMessage, useAuth } from '@/full/context/AuthContext';
@@ -242,7 +243,11 @@ export function MyTestsPage() {
 
                   return (
                     <li key={test.id} className="full-list__item">
-                      <div className="full-list__title">{test.name}</div>
+                      <div className="full-list__title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                        {test.name}
+                        <TestDifficultyBadge difficulty={test.difficulty} />
+                        <span className="vt-badge">{test.isPublic ? 'Опубликован' : 'Черновик'}</span>
+                      </div>
                       <TestListProgressMeta
                         className="full-list__meta"
                         stats={stats}
@@ -258,7 +263,7 @@ export function MyTestsPage() {
                         <button
                           type="button"
                           className="full-button full-button--ghost"
-                          disabled={actionId === test.id}
+                          disabled={actionId === test.id || test.isPublic}
                           onClick={() => runAction(test.id, () => testsApi.publish(test.id))}
                         >
                           Опубликовать
@@ -266,7 +271,7 @@ export function MyTestsPage() {
                         <button
                           type="button"
                           className="full-button full-button--ghost"
-                          disabled={actionId === test.id}
+                          disabled={actionId === test.id || !test.isPublic}
                           onClick={() => runAction(test.id, () => testsApi.unpublish(test.id))}
                         >
                           Скрыть

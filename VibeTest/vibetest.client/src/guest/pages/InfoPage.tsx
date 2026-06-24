@@ -34,7 +34,9 @@ export function InfoPage() {
       <h1>Формат JSON</h1>
       <p>
         Тест описывается объектом JSON. Поле <code>name</code> обязательно,{' '}
-        <code>description</code> — опционально. Массив <code>questions</code> содержит вопросы с
+        <code>description</code> — опционально. Необязательное поле <code>difficulty</code> — сложность
+        теста: <code>easy</code> (лёгкий), <code>medium</code> (средний) или <code>hard</code>{' '}
+        (сложный); если не указано, считается лёгким. Массив <code>questions</code> содержит вопросы с
         полем <code>text</code>; у каждого вопроса массив строк <code>answers</code> и число{' '}
         <code>correct</code> — индекс правильного ответа (с нуля). Необязательное поле{' '}
         <code>explanation</code> — пояснение к правильному ответу; показывается после ответа
