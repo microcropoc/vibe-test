@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { Link, NavLink, Outlet } from 'react-router-dom';
 import { basePath } from '@/config/env';
 import './GuestLayout.css';
 
@@ -10,13 +10,12 @@ export function GuestLayout() {
     <div className="guest-shell">
       <header className="guest-header">
         <div className="guest-header__brand">
-          <span className="guest-header__logo">VibeTest</span>
+          <Link to="/" className="guest-header__logo">
+            VibeTest
+          </Link>
           <span className="guest-header__badge">Guest</span>
         </div>
         <nav className="guest-nav" aria-label="Гостевой режим">
-          <NavLink to="/" className={navLinkClass} end>
-            Главная
-          </NavLink>
           <NavLink to="/tests" className={navLinkClass}>
             Мои тесты
           </NavLink>
