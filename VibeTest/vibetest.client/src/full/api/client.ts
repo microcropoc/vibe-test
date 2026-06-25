@@ -70,11 +70,13 @@ async function request<T>(
     throw new ApiError(response.status, await readErrorMessage(response));
   }
 
-  if (response.status === 204) {
+  const responseText = await response.text();
+
+  if (response.status === 204 || responseText.length === 0) {
     return undefined as T;
   }
 
-  return (await response.json()) as T;
+  return JSON.parse(responseText) as T;
 }
 
 export const apiClient = {
