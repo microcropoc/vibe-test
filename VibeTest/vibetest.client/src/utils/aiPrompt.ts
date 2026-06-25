@@ -7,13 +7,14 @@ export type AiPromptOptions = {
   answerCount: number;
   difficulty: TestDifficulty;
   includeExplanations: boolean;
+  explanations: string;
 };
 
 export function buildAiTestPrompt(options: AiPromptOptions): string {
   const topic = options.topic.trim();
   const difficultyLabel = TEST_DIFFICULTY_LABELS[options.difficulty];
   const explanationRule = options.includeExplanations
-    ? 'У каждого вопроса добавь поле explanation с кратким пояснением к правильному ответу.'
+    ? `У каждого вопроса добавь поле explanation ${options.explanations === '' ? 'c кратким пояснением к правильному ответу' : options.explanations}. `
     : 'Поле explanation не добавляй.';
 
   return `Создай тест в формате JSON для приложения VibeTest.

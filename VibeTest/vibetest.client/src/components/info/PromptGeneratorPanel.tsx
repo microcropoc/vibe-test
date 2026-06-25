@@ -12,10 +12,11 @@ import '@/components/tests/tests.css';
 
 export function PromptGeneratorPanel() {
   const [topic, setTopic] = useState('');
-  const [questionCount, setQuestionCount] = useState(10);
-  const [answerCount, setAnswerCount] = useState(3);
+  const [questionCount, setQuestionCount] = useState(20);
+  const [answerCount, setAnswerCount] = useState(5);
   const [difficulty, setDifficulty] = useState<TestDifficulty>('easy');
   const [includeExplanations, setIncludeExplanations] = useState(false);
+  const [explanations, setExplanations] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
@@ -45,6 +46,7 @@ export function PromptGeneratorPanel() {
       answerCount,
       difficulty,
       includeExplanations,
+      explanations
     });
 
     await copyToClipboard(prompt);
@@ -76,7 +78,7 @@ export function PromptGeneratorPanel() {
           id="prompt-question-count"
           type="number"
           min={1}
-          value={questionCount}
+          value={questionCount == 0 ? '' : questionCount}
           onChange={(e) => setQuestionCount(Number(e.target.value))}
         />
       </div>
@@ -87,7 +89,7 @@ export function PromptGeneratorPanel() {
           id="prompt-answer-count"
           type="number"
           min={2}
-          value={answerCount}
+          value={answerCount == 0 ? '' : answerCount}
           onChange={(e) => setAnswerCount(Number(e.target.value))}
         />
       </div>
@@ -116,6 +118,17 @@ export function PromptGeneratorPanel() {
           />
           Пояснения к ответам
         </label>
+       </div>
+
+      <div className="vt-field">
+        <input
+            id="prompt-explanation"
+            type="text"
+            value={explanations}
+            onChange={(e) => setExplanations(e.target.value)}
+            placeholder="Например: с примерами SQL запросов"
+            disabled={!includeExplanations}
+        />
       </div>
 
       <p>
