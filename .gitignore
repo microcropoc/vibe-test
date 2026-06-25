@@ -442,3 +442,6 @@ playwright/.cache/
 # E2E SQLite database
 VibeTest/VibeTest.Server/vibetest.e2e.db
 VibeTest/VibeTest.Server/vibetest.e2e.db-*
+
+# Serilog file logs
+VibeTest/VibeTest.Server/logs/

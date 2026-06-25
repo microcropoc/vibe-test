@@ -17,12 +17,15 @@ namespace VibeTest.Server.Services;
 public class AuthService(
     IAuthRepository auth,
     IPasswordHasher<User> passwordHasher,
-    IOptions<JwtOptions> jwtOptions) : IAuthService
+    IOptions<JwtOptions> jwtOptions,
+    ILogger<AuthService> logger) : IAuthService
 {
     private readonly JwtOptions _jwt = jwtOptions.Value;
 
     public async Task<AuthResponse> RegisterAsync(RegisterRequest request)
     {
+        logger.LogDebug("Register attempt for email {Email}", request.Email);
+
         ValidateCredentials(request.Email, request.Password, request.DisplayName);
 
         var normalizedEmail = request.Email.Trim().ToLowerInvariant();
@@ -40,11 +43,15 @@ public class AuthService(
         await auth.AddUserAsync(user);
         await auth.SaveChangesAsync();
 
+        logger.LogInformation("User registered: {UserId} ({Email})", user.Id, normalizedEmail);
+
         return await IssueAuthResponseAsync(user);
     }
 
     public async Task<AuthResponse> LoginAsync(LoginRequest request)
     {
+        logger.LogDebug("Login attempt for email {Email}", request.Email);
+
         if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
             throw new ValidationException("Email и пароль обязательны");
 
@@ -52,14 +59,19 @@ public class AuthService(
         if (user is null || passwordHasher.VerifyHashedPassword(user, user.PasswordHash, request.Password)
             == PasswordVerificationResult.Failed)
         {
+            logger.LogWarning("Failed login for email {Email}", request.Email);
             throw new UnauthorizedException("Неверный email или пароль");
         }
+
+        logger.LogInformation("User logged in: {UserId}", user.Id);
 
         return await IssueAuthResponseAsync(user);
     }
 
     public async Task<TokenRefreshResponse> RefreshAsync(RefreshTokenRequest request)
     {
+        logger.LogDebug("Refresh token request");
+
         if (string.IsNullOrWhiteSpace(request.RefreshToken))
             throw new ValidationException("Refresh token обязателен");
 
@@ -71,15 +83,21 @@ public class AuthService(
         if (stored.ExpiresAt <= DateTime.UtcNow)
         {
             await auth.DeleteRefreshTokenByValueAsync(tokenValue);
+            logger.LogWarning("Expired refresh token for user {UserId}", stored.UserId);
             throw new UnauthorizedException("Refresh token истёк");
         }
 
         var deleted = await auth.DeleteRefreshTokenByValueAsync(tokenValue);
         if (deleted == 0)
+        {
+            logger.LogWarning("Refresh token already used for user {UserId}", stored.UserId);
             throw new UnauthorizedException("Refresh token уже использован");
+        }
 
         var (accessToken, expiresAt) = CreateAccessToken(stored.User);
         var refreshToken = await CreateRefreshTokenAsync(stored.User);
+
+        logger.LogInformation("Tokens refreshed for user {UserId}", stored.UserId);
 
         return new TokenRefreshResponse
         {
@@ -91,6 +109,8 @@ public class AuthService(
 
     public async Task<UserDto> GetMeAsync(int userId)
     {
+        logger.LogDebug("GetMe for user {UserId}", userId);
+
         var user = await auth.GetByIdAsync(userId)
             ?? throw new NotFoundException("Пользователь не найден");
 

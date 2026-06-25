@@ -9,20 +9,33 @@ namespace VibeTest.Server.Services;
 
 public class TestService(
     ITestRepository tests,
-    IQuestionAnswerRepository questionAnswers) : ITestService
+    IQuestionAnswerRepository questionAnswers,
+    ILogger<TestService> logger) : ITestService
 {
     public async Task<PagedResponse<TestListItem>> GetPublicTests(int page, int pageSize, string sortBy, string order)
     {
+        logger.LogDebug(
+            "GetPublicTests page={Page} pageSize={PageSize} sortBy={SortBy} order={Order}",
+            page,
+            pageSize,
+            sortBy,
+            order);
+
         var (normalizedPage, normalizedSize, offset) = NormalizePagination(page, pageSize);
         var (normalizedSort, normalizedOrder) = NormalizeTestListSort(sortBy, order);
         var totalCount = await tests.CountPublicTestsAsync();
         var rows = await tests.GetPublicTestsPageAsync(offset, normalizedSize, normalizedSort, normalizedOrder);
         var items = rows.Select(MapListItem).ToList();
+
+        logger.LogInformation("Public tests listed: page={Page} total={TotalCount}", normalizedPage, totalCount);
+
         return PaginationHelper.Create(items, normalizedPage, normalizedSize, totalCount);
     }
 
     public async Task<TestDetailResponse> GetTestDetail(int testId, int? viewerUserId = null)
     {
+        logger.LogDebug("GetTestDetail test={TestId} viewer={ViewerUserId}", testId, viewerUserId);
+
         var test = await tests.GetByIdWithStructureAsync(testId)
             ?? throw new NotFoundException("Тест не найден");
 
@@ -34,6 +47,8 @@ public class TestService(
 
     public async Task<TestResponse> CreateTest(int authorId, CreateTestRequest request)
     {
+        logger.LogDebug("CreateTest author={AuthorId} name={Name}", authorId, request.Name);
+
         TestRequestValidator.ValidateCreateTest(request);
 
         var now = DateTime.UtcNow;
@@ -52,11 +67,23 @@ public class TestService(
         await tests.AddAsync(test);
         await tests.SaveChangesAsync();
 
+        logger.LogInformation(
+            "Test created: {TestId} by author {AuthorId} with {QuestionCount} questions",
+            test.Id,
+            authorId,
+            request.Questions.Count);
+
         return MapResponse(test);
     }
 
     public async Task<TestResponse> AppendQuestions(int testId, int authorId, AddQuestionsRequest request)
     {
+        logger.LogDebug(
+            "AppendQuestions test={TestId} author={AuthorId} count={Count}",
+            testId,
+            authorId,
+            request.Questions.Count);
+
         TestRequestValidator.ValidateQuestions(request.Questions);
 
         var test = await tests.GetByIdWithStructureAsync(testId)
@@ -69,11 +96,18 @@ public class TestService(
         test.UpdatedAt = DateTime.UtcNow;
         await tests.SaveChangesAsync();
 
+        logger.LogInformation(
+            "Questions appended to test {TestId}: {Count} questions",
+            testId,
+            request.Questions.Count);
+
         return MapResponse(test);
     }
 
     public async Task<TestResponse> UpdateTestInfo(int testId, int authorId, UpdateTestInfoRequest request)
     {
+        logger.LogDebug("UpdateTestInfo test={TestId} author={AuthorId}", testId, authorId);
+
         TestRequestValidator.ValidateUpdateInfo(request);
 
         var test = await tests.GetByIdAsync(testId)
@@ -88,11 +122,15 @@ public class TestService(
         test.UpdatedAt = DateTime.UtcNow;
         await tests.SaveChangesAsync();
 
+        logger.LogInformation("Test info updated: {TestId}", testId);
+
         return MapResponse(test);
     }
 
     public async Task PublishTest(int testId, int authorId)
     {
+        logger.LogDebug("PublishTest test={TestId} author={AuthorId}", testId, authorId);
+
         var test = await tests.GetByIdAsync(testId)
             ?? throw new NotFoundException("Тест не найден");
 
@@ -101,10 +139,14 @@ public class TestService(
         test.IsPublic = true;
         test.UpdatedAt = DateTime.UtcNow;
         await tests.SaveChangesAsync();
+
+        logger.LogInformation("Test published: {TestId}", testId);
     }
 
     public async Task UnpublishTest(int testId, int authorId)
     {
+        logger.LogDebug("UnpublishTest test={TestId} author={AuthorId}", testId, authorId);
+
         var test = await tests.GetByIdAsync(testId)
             ?? throw new NotFoundException("Тест не найден");
 
@@ -113,10 +155,14 @@ public class TestService(
         test.IsPublic = false;
         test.UpdatedAt = DateTime.UtcNow;
         await tests.SaveChangesAsync();
+
+        logger.LogInformation("Test unpublished: {TestId}", testId);
     }
 
     public async Task DeleteTest(int testId, int authorId)
     {
+        logger.LogDebug("DeleteTest test={TestId} author={AuthorId}", testId, authorId);
+
         var test = await tests.GetByIdAsync(testId)
             ?? throw new NotFoundException("Тест не найден");
 
@@ -124,6 +170,8 @@ public class TestService(
 
         await tests.DeleteAsync(test);
         await tests.SaveChangesAsync();
+
+        logger.LogInformation("Test deleted: {TestId}", testId);
     }
 
     public async Task<PagedResponse<TestListItem>> GetMyTests(
@@ -134,6 +182,12 @@ public class TestService(
         string sortBy,
         string order)
     {
+        logger.LogDebug(
+            "GetMyTests author={AuthorId} page={Page} filter={Filter}",
+            authorId,
+            page,
+            filter);
+
         var normalizedFilter = NormalizeFilter(filter);
         var (normalizedPage, normalizedSize, offset) = NormalizePagination(page, pageSize);
         var (normalizedSort, normalizedOrder) = NormalizeTestListSort(sortBy, order);
@@ -146,11 +200,20 @@ public class TestService(
             normalizedSort,
             normalizedOrder);
         var items = rows.Select(MapListItem).ToList();
+
+        logger.LogInformation(
+            "My tests listed for author {AuthorId}: page={Page} total={TotalCount}",
+            authorId,
+            normalizedPage,
+            totalCount);
+
         return PaginationHelper.Create(items, normalizedPage, normalizedSize, totalCount);
     }
 
     public async Task<TestFullResponse> GetTestFull(int testId, int authorId)
     {
+        logger.LogDebug("GetTestFull test={TestId} author={AuthorId}", testId, authorId);
+
         var test = await tests.GetByIdWithStructureAsync(testId)
             ?? throw new NotFoundException("Тест не найден");
 

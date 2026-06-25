@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using VibeTest.Server.Data;
 using VibeTest.Server.Middleware;
 
@@ -17,6 +18,7 @@ public static class WebApplicationExtensions
                 db.Database.Migrate();
         }
 
+        app.UseSerilogRequestLogging();
         app.UseMiddleware<DomainExceptionMiddleware>();
 
         if (app.Environment.IsDevelopment())

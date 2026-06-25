@@ -9,10 +9,18 @@ namespace VibeTest.Server.Services;
 public class ResultService(
     ITestRepository tests,
     IResultRepository results,
-    IUserRepository users) : IResultService
+    IUserRepository users,
+    ILogger<ResultService> logger) : IResultService
 {
     public async Task<SubmitResponse> SubmitAnswer(int userId, int testId, SubmitAnswerRequest request)
     {
+        logger.LogDebug(
+            "SubmitAnswer user={UserId} test={TestId} question={QuestionOrder} answer={AnswerOrder}",
+            userId,
+            testId,
+            request.QuestionOrder,
+            request.SelectedAnswerOrder);
+
         if (!await users.ExistsAsync(userId))
             throw new NotFoundException("Пользователь не найден");
 
@@ -35,6 +43,14 @@ public class ResultService(
         });
         await results.SaveChangesAsync();
 
+        var isCorrect = request.SelectedAnswerOrder == correctOrder;
+        logger.LogInformation(
+            "Answer submitted user={UserId} test={TestId} question={QuestionOrder} correct={IsCorrect}",
+            userId,
+            testId,
+            request.QuestionOrder,
+            isCorrect);
+
         var explanation = await results.GetQuestionExplanationAsync(testId, request.QuestionOrder);
 
         return new SubmitResponse { CorrectAnswerOrder = correctOrder, Explanation = explanation };
@@ -42,8 +58,17 @@ public class ResultService(
 
     public async Task<TestResultResponse> GetResult(int userId, int testId)
     {
+        logger.LogDebug("GetResult user={UserId} test={TestId}", userId, testId);
+
         var summary = await results.GetTestResultSummaryAsync(userId, testId)
             ?? throw new NotFoundException("Тест не найден");
+
+        logger.LogInformation(
+            "Result retrieved user={UserId} test={TestId} score={Correct}/{Total}",
+            userId,
+            testId,
+            summary.CorrectAnswers,
+            summary.TotalQuestions);
 
         return new TestResultResponse
         {
@@ -59,11 +84,15 @@ public class ResultService(
 
     public async Task DeleteResult(int userId, int testId)
     {
+        logger.LogDebug("DeleteResult user={UserId} test={TestId}", userId, testId);
+
         _ = await tests.GetByIdAsync(testId)
             ?? throw new NotFoundException("Тест не найден");
 
         await results.DeleteByUserAndTestAsync(userId, testId);
         await results.SaveChangesAsync();
+
+        logger.LogInformation("Result deleted user={UserId} test={TestId}", userId, testId);
     }
 
     public async Task<PagedResponse<TestHistoryItem>> GetUserResults(
@@ -73,6 +102,14 @@ public class ResultService(
         string sortBy,
         string order)
     {
+        logger.LogDebug(
+            "GetUserResults user={UserId} page={Page} pageSize={PageSize} sortBy={SortBy} order={Order}",
+            userId,
+            page,
+            pageSize,
+            sortBy,
+            order);
+
         var normalizedPage = Math.Max(1, page);
         var normalizedSize = Math.Clamp(pageSize, 1, 100);
         var offset = (normalizedPage - 1) * normalizedSize;
@@ -91,6 +128,12 @@ public class ResultService(
             ScorePercent = row.ScorePercent,
             CompletedAt = row.CompletedAt
         }).ToList();
+
+        logger.LogInformation(
+            "User history retrieved user={UserId} page={Page} total={TotalCount}",
+            userId,
+            normalizedPage,
+            totalCount);
 
         return Helpers.PaginationHelper.Create(items, normalizedPage, normalizedSize, totalCount);
     }

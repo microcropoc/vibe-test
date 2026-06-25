@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using VibeTest.Server.Data;
 using VibeTest.Server.Data.Repositories;
 using VibeTest.Server.Models.Entities;
@@ -17,9 +18,9 @@ public sealed class ServiceFixture : IDisposable
         ResultRepository = new ResultRepository(_db.Db);
         UserRepository = new UserRepository(_db.Db);
 
-        TestService = new TestService(TestRepository, QuestionAnswerRepository);
-        ResultService = new ResultService(TestRepository, ResultRepository, UserRepository);
-        UserService = new UserService(UserRepository);
+        TestService = new TestService(TestRepository, QuestionAnswerRepository, NullLogger<TestService>.Instance);
+        ResultService = new ResultService(TestRepository, ResultRepository, UserRepository, NullLogger<ResultService>.Instance);
+        UserService = new UserService(UserRepository, NullLogger<UserService>.Instance);
     }
 
     public AppDbContext Db => _db.Db;
