@@ -47,6 +47,9 @@ export type {
 
 export type {
   ApiErrorBody,
+  ApplicationListItem,
+  ApplicationPlayResponse,
+  ApplicationResponse,
   AuthResponse,
   PagedResponse,
   QuestionDetailDto,

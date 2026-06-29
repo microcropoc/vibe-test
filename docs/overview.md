@@ -29,6 +29,7 @@ flowchart LR
 | Бэкенд | не используется | `VibeTest.Server` |
 | Тесты | только в localStorage | localStorage + сервер |
 | Публичный каталог | нет | `/tests` с пагинацией |
+| Заявки (ссылка на приватный тест) | нет | `/applications`, анонимное прохождение по токену |
 | Аутентификация | нет | JWT (access + refresh) |
 | Деплой | GitHub Pages | API + статика (см. [deployment.md](deployment.md)) |
 
@@ -60,8 +61,8 @@ vibe-test/
 
 ### VibeTest.Server
 
-- **Controllers** — REST API (`AuthController`, `TestsController`, `ResultsController`)
-- **Services** — бизнес-логика (`TestService`, `ResultService`, `AuthService`, `UserService`)
+- **Controllers** — REST API (`AuthController`, `TestsController`, `ResultsController`, `ApplicationsController`)
+- **Services** — бизнес-логика (`TestService`, `ResultService`, `ApplicationService`, `AuthService`, `UserService`)
 - **Data** — `AppDbContext`, репозитории, миграции EF
 - При старте (кроме `Testing`) выполняется `Database.Migrate()`
 

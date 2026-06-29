@@ -60,6 +60,38 @@ Access-токен обновляется через `POST /api/auth/refresh` с 
 
 ---
 
+## Заявки
+
+Персональные ссылки на прохождение **непубличных** тестов без JWT у участника.
+
+| Метод | Путь | Auth | Описание |
+|-------|------|------|----------|
+| `POST` | `/api/applications` | JWT | Создать заявку: `participantName`, `testId`, `hideResultsFromParticipant` (опционально, по умолчанию `false`) |
+| `GET` | `/api/applications?page=&pageSize=` | JWT | Список заявок автора с баллами и статусом |
+| `GET` | `/api/applications/{token}` | — | Данные для прохождения: тест + `participantName`, `hideResultsFromParticipant`, `isCompleted` |
+| `POST` | `/api/applications/{token}/submit` | — | Ответ на вопрос (`questionOrder`, `selectedAnswerOrder`) |
+| `GET` | `/api/applications/{token}/result` | — | Результат участника; **403**, если `hideResultsFromParticipant` |
+
+### Тела ответов (ключевые поля)
+
+**`ApplicationResponse`** (создание): `id`, `token`, `participantName`, `testId`, `testName`, `hideResultsFromParticipant`, `playUrl`, `createdAt`.
+
+**`ApplicationPlayResponse`** (прохождение): поля теста как в `TestDetailResponse` (`id`, `name`, `description`, `authorName`, `questions`) плюс `participantName`, `hideResultsFromParticipant`, `isCompleted`.
+
+**`SubmitResponse`** при скрытом результате: `correctAnswerOrder: -1`, `explanation: null`.
+
+### Ошибки
+
+| Ситуация | HTTP | Сообщение |
+|----------|------|-----------|
+| Заявка на публичный или чужой тест | 400 / 403 | Валидация / доступ |
+| Submit после завершения заявки | 400 | «Тест по этой заявке уже пройден» |
+| Результат при `hideResultsFromParticipant` | 403 | «Результат недоступен» |
+
+Сценарии использования: [features.md § Заявки](features.md#заявки).
+
+---
+
 ## Формат ошибок
 
 Доменные исключения обрабатываются `DomainExceptionMiddleware` и возвращают JSON:

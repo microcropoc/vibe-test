@@ -34,9 +34,14 @@ export function FullLayout() {
             Инфо
           </NavLink>
           {isAuthenticated && (
-            <NavLink to="/profile" className={navLinkClass}>
-              Профиль
-            </NavLink>
+            <>
+              <NavLink to="/applications" className={navLinkClass}>
+                Заявки
+              </NavLink>
+              <NavLink to="/profile" className={navLinkClass}>
+                Профиль
+              </NavLink>
+            </>
           )}
           {isAuthenticated ? (
             <>

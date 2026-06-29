@@ -7,7 +7,7 @@ VibeTest — конструктор и прохождение тестов в б
 | Документ | Для кого | Содержание |
 |----------|----------|------------|
 | [overview.md](overview.md) | Новые участники | Назначение, режимы, стек, структура решения |
-| [features.md](features.md) | Пользователи, QA | Маршруты, сценарии, импорт/экспорт, редактор и прохождение |
+| [features.md](features.md) | Пользователи, QA | Маршруты, сценарии, заявки, импорт/экспорт, редактор и прохождение |
 | [getting-started.md](getting-started.md) | Разработчики | Требования, запуск guest и full локально |
 | [deployment.md](deployment.md) | DevOps | GitHub Pages, production full-mode, CI |
 | [development.md](development.md) | Разработчики | Тесты, миграции, seed-данные, npm-скрипты |

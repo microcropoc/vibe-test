@@ -6,6 +6,7 @@ const KEYS = {
   guestResults: 'vibetest_guest_results',
   progress: (id: string) => `vibetest_progress_${id}`,
   apiProgress: (id: number) => `vibetest_progress_api_${id}`,
+  applicationProgress: (token: string) => `vibetest_application_progress_${token}`,
 } as const;
 
 function readJson<T>(key: string, fallback: T): T {
@@ -95,6 +96,18 @@ export function saveApiTestProgress(testId: number, progress: TestProgress): voi
 
 export function clearApiTestProgress(testId: number): void {
   localStorage.removeItem(KEYS.apiProgress(testId));
+}
+
+export function getApplicationProgress(token: string): TestProgress | null {
+  return readJson<TestProgress | null>(KEYS.applicationProgress(token), null);
+}
+
+export function saveApplicationProgress(token: string, progress: TestProgress): void {
+  writeJson(KEYS.applicationProgress(token), progress);
+}
+
+export function clearApplicationProgress(token: string): void {
+  localStorage.removeItem(KEYS.applicationProgress(token));
 }
 
 export function getGuestResults(): GuestTestResult[] {

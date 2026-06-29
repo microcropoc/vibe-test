@@ -157,6 +157,11 @@
   opacity: 0.85;
 }
 
+.vt-question-dot--answered {
+  background: #1a2433;
+  border-color: #4a6080;
+}
+
 .vt-options {
   display: grid;
   gap: 0.5rem;
@@ -181,6 +186,11 @@
 .vt-option--incorrect {
   border-color: #8f3f4a;
   background: #241418;
+}
+
+.vt-option--selected {
+  border-color: #4a6080;
+  background: #1a2433;
 }
 
 .vt-option input {

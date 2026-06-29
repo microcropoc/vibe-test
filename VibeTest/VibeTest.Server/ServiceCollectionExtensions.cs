@@ -26,11 +26,13 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ITestRepository, TestRepository>();
         services.AddScoped<IQuestionAnswerRepository, QuestionAnswerRepository>();
         services.AddScoped<IResultRepository, ResultRepository>();
+        services.AddScoped<IApplicationRepository, ApplicationRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ITestService, TestService>();
         services.AddScoped<IResultService, ResultService>();
+        services.AddScoped<IApplicationService, ApplicationService>();
         services.AddScoped<IUserService, UserService>();
 
         var jwt = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()

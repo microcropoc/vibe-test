@@ -16,10 +16,16 @@ public sealed class ServiceFixture : IDisposable
         TestRepository = new TestRepository(_db.Db);
         QuestionAnswerRepository = new QuestionAnswerRepository(_db.Db);
         ResultRepository = new ResultRepository(_db.Db);
+        ApplicationRepository = new ApplicationRepository(_db.Db);
         UserRepository = new UserRepository(_db.Db);
 
         TestService = new TestService(TestRepository, QuestionAnswerRepository, NullLogger<TestService>.Instance);
         ResultService = new ResultService(TestRepository, ResultRepository, UserRepository, NullLogger<ResultService>.Instance);
+        ApplicationService = new ApplicationService(
+            ApplicationRepository,
+            TestRepository,
+            ResultRepository,
+            NullLogger<ApplicationService>.Instance);
         UserService = new UserService(UserRepository, NullLogger<UserService>.Instance);
     }
 
@@ -27,9 +33,11 @@ public sealed class ServiceFixture : IDisposable
     public ITestRepository TestRepository { get; }
     public IQuestionAnswerRepository QuestionAnswerRepository { get; }
     public IResultRepository ResultRepository { get; }
+    public IApplicationRepository ApplicationRepository { get; }
     public IUserRepository UserRepository { get; }
     public ITestService TestService { get; }
     public IResultService ResultService { get; }
+    public IApplicationService ApplicationService { get; }
     public IUserService UserService { get; }
 
     public async Task<User> SeedUserAsync(string email = "alice@test.com", string name = "Alice")

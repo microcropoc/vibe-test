@@ -6,6 +6,7 @@ interface TestResultSummaryProps {
   totalQuestions: number;
   correctAnswers: number;
   completedAt?: string;
+  variant?: 'full' | 'submitted';
   onRetry?: () => void;
   onExit?: () => void;
   exitLabel?: string;
@@ -16,10 +17,28 @@ export function TestResultSummary({
   totalQuestions,
   correctAnswers,
   completedAt,
+  variant = 'full',
   onRetry,
   onExit,
   exitLabel = 'К списку',
 }: TestResultSummaryProps) {
+  if (variant === 'submitted') {
+    return (
+      <section className="vt-result vt-card">
+        <h2>Тест завершён</h2>
+        <p className="vt-muted">{testName}</p>
+        <p>Спасибо!</p>
+        {onExit && (
+          <div className="vt-actions">
+            <button type="button" className="vt-btn" onClick={onExit}>
+              {exitLabel}
+            </button>
+          </div>
+        )}
+      </section>
+    );
+  }
+
   const incorrect = totalQuestions - correctAnswers;
   const percent = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
 

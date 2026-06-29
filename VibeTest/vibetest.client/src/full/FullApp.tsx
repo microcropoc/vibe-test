@@ -11,6 +11,8 @@ import { ProfilePage } from '@/full/pages/ProfilePage';
 import { PublicTestsPage } from '@/full/pages/PublicTestsPage';
 import { RegisterPage } from '@/full/pages/RegisterPage';
 import { PlayPage as ApiPlayPage } from '@/full/pages/PlayPage';
+import { ApplicationPlayPage } from '@/full/pages/ApplicationPlayPage';
+import { ApplicationsPage } from '@/full/pages/ApplicationsPage';
 import { TestPage } from '@/full/pages/TestPage';
 import { EditorPage } from '@/guest/pages/EditorPage';
 import { ImportPage } from '@/guest/pages/ImportPage';
@@ -34,6 +36,7 @@ export function FullApp() {
             <Route path="tests" element={<PublicTestsPage />} />
             <Route path="tests/:id" element={<TestPage />} />
             <Route path="tests/:id/play" element={<ApiPlayPage />} />
+            <Route path="application/:token" element={<ApplicationPlayPage />} />
             <Route path="play/:id" element={<LocalPlayPage />} />
             <Route path="editor" element={<EditorPage />} />
             <Route path="editor/:id" element={<EditorPage />} />
@@ -43,6 +46,7 @@ export function FullApp() {
             <Route path="my/tests" element={<MyTestsPage />} />
             <Route element={<ProtectedRoute />}>
               <Route path="profile" element={<ProfilePage />} />
+              <Route path="applications" element={<ApplicationsPage />} />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>

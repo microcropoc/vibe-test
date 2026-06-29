@@ -123,3 +123,41 @@ export interface UserStatsResponse {
 export interface ApiErrorBody {
   error?: string;
 }
+
+export interface ApplicationResponse {
+  id: number;
+  token: string;
+  participantName: string;
+  testId: number;
+  testName: string;
+  createdAt: string;
+  hideResultsFromParticipant: boolean;
+  playUrl: string;
+}
+
+export interface ApplicationListItem {
+  id: number;
+  token: string;
+  participantName: string;
+  testId: number;
+  testName: string;
+  createdAt: string;
+  isCompleted: boolean;
+  correctAnswers: number;
+  totalQuestions: number;
+  scorePercent: number;
+  completedAt?: string;
+  hideResultsFromParticipant: boolean;
+  playUrl: string;
+}
+
+export interface ApplicationPlayResponse {
+  participantName: string;
+  hideResultsFromParticipant: boolean;
+  isCompleted: boolean;
+  id: number;
+  name: string;
+  description?: string;
+  authorName: string;
+  questions: QuestionDetailDto[];
+}

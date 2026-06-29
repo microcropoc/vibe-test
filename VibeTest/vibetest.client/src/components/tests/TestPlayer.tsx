@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { testsApi } from '@/full/api';
+import { applicationsApi, testsApi } from '@/full/api';
 import { getApiErrorMessage } from '@/full/context/AuthContext';
 import { TestResultSummary } from '@/components/tests/TestResultSummary';
 import type { PlayerPhase, PlayerProgress, PlayerQuestion } from '@/types/player';
@@ -8,9 +8,11 @@ import {
   clearApiTestProgress,
   clearTestProgress,
   getApiTestProgress,
+  getApplicationProgress,
   getLocalTestById,
   getTestProgress,
   saveApiTestProgress,
+  saveApplicationProgress,
   saveGuestResult,
   saveTestProgress,
 } from '@/utils/storage';
@@ -30,7 +32,8 @@ import '@/components/tests/tests.css';
 
 export type TestPlayerSource =
   | { type: 'local'; testId: string }
-  | { type: 'api'; testId: number };
+  | { type: 'api'; testId: number }
+  | { type: 'application'; token: string; hideResults?: boolean; isCompleted?: boolean };
 
 interface TestPlayerProps {
   source: TestPlayerSource;
@@ -45,6 +48,9 @@ function loadProgress(source: TestPlayerSource): PlayerProgress {
   if (source.type === 'local') {
     return getTestProgress(source.testId) ?? emptyProgress();
   }
+  if (source.type === 'application') {
+    return getApplicationProgress(source.token) ?? emptyProgress();
+  }
   return getApiTestProgress(source.testId) ?? emptyProgress();
 }
 
@@ -52,16 +58,24 @@ function persistProgress(source: TestPlayerSource, progress: PlayerProgress): vo
   const payload = { ...progress, updatedAt: new Date().toISOString() };
   if (source.type === 'local') {
     saveTestProgress(source.testId, payload);
+  } else if (source.type === 'application') {
+    saveApplicationProgress(source.token, payload);
   } else {
     saveApiTestProgress(source.testId, payload);
   }
 }
 
-function dotClass(order: number, progress: PlayerProgress, current: number): string {
+function dotClass(
+  order: number,
+  progress: PlayerProgress,
+  current: number,
+  hideResults = false,
+): string {
   const record = progress.answers[order];
   const classes = ['vt-question-dot'];
   if (order === current) classes.push('vt-question-dot--current');
   if (!record) classes.push('vt-question-dot--unanswered');
+  else if (hideResults) classes.push('vt-question-dot--answered');
   else if (record.isCorrect) classes.push('vt-question-dot--correct');
   else classes.push('vt-question-dot--incorrect');
   return classes.join(' ');
@@ -80,6 +94,12 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
   const [explanationSettings, setExplanationSettings] = useState<PlayerExplanationSettings>(
     getPlayerExplanationSettings,
   );
+  const [applicationHideResults, setApplicationHideResults] = useState(
+    () => source.type === 'application' && Boolean(source.hideResults),
+  );
+  const [applicationIsCompleted, setApplicationIsCompleted] = useState(
+    () => source.type === 'application' && Boolean(source.isCompleted),
+  );
 
   const currentOrder = progress.currentQuestionOrder;
   const currentQuestion = questions[currentOrder];
@@ -87,9 +107,21 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
   const showingResult = phase === 'result' && Boolean(currentRecord);
 
   const refreshPhase = useCallback(
-    (qs: PlayerQuestion[], prog: PlayerProgress, result: TestResultResponse | null) => {
+    (
+      qs: PlayerQuestion[],
+      prog: PlayerProgress,
+      result: TestResultResponse | null,
+      options?: { hideResults?: boolean; serverCompleted?: boolean },
+    ) => {
       const answered = Object.keys(prog.answers).length;
       const total = qs.length;
+      const hideResults = options?.hideResults ?? false;
+      const serverCompleted = options?.serverCompleted ?? false;
+
+      if (serverCompleted || (hideResults && answered >= total && total > 0)) {
+        setPhase('completed');
+        return;
+      }
 
       if (result && result.totalQuestions < total && answered >= result.totalQuestions) {
         setHasNewQuestions(true);
@@ -132,6 +164,37 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
             setProgress(prog);
             refreshPhase(qs, prog, null);
           }
+          return;
+        }
+
+        if (source.type === 'application') {
+          const detail = await applicationsApi.getDetail(source.token);
+          const hideResults = detail.hideResultsFromParticipant;
+          const serverCompleted = detail.isCompleted;
+          const result =
+            hideResults || serverCompleted
+              ? null
+              : await applicationsApi.getResult(source.token).catch(() => null);
+
+          if (cancelled) return;
+
+          const sortedQuestions = [...detail.questions].sort((a, b) => a.order - b.order);
+          const qs: PlayerQuestion[] = sortedQuestions.map((q, index) => ({
+            order: index,
+            text: q.text,
+            answers: [...q.answers]
+              .sort((a, b) => a.order - b.order)
+              .map((a, answerIndex) => ({ order: answerIndex, text: a.text })),
+          }));
+
+          const prog = loadProgress(source);
+          setTestName(detail.name);
+          setQuestions(qs);
+          setApiResult(result);
+          setApplicationHideResults(hideResults);
+          setApplicationIsCompleted(serverCompleted);
+          setProgress(prog);
+          refreshPhase(qs, prog, result, { hideResults, serverCompleted });
           return;
         }
 
@@ -182,12 +245,29 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
   }, [phase, source, progress, questions.length, testName]);
 
   const completedSummary = useMemo(() => {
-    if (source.type === 'api' && apiResult && phase === 'completed') {
+    if (source.type === 'application' && applicationHideResults && phase === 'completed') {
+      return {
+        testName,
+        totalQuestions: questions.length,
+        correctAnswers: 0,
+        variant: 'submitted' as const,
+      };
+    }
+    if ((source.type === 'api' || source.type === 'application') && apiResult && phase === 'completed') {
       return {
         testName: apiResult.testName,
         totalQuestions: apiResult.totalQuestions,
         correctAnswers: apiResult.correctAnswers,
         completedAt: apiResult.completedAt,
+        variant: 'full' as const,
+      };
+    }
+    if (source.type === 'application' && applicationIsCompleted && phase === 'completed') {
+      return {
+        testName,
+        totalQuestions: questions.length,
+        correctAnswers: 0,
+        variant: 'submitted' as const,
       };
     }
     return {
@@ -195,8 +275,18 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
       totalQuestions: questions.length,
       correctAnswers: countCorrect(progress),
       completedAt: new Date().toISOString(),
+      variant: 'full' as const,
     };
-  }, [apiResult, phase, progress, questions.length, source.type, testName]);
+  }, [
+    apiResult,
+    applicationHideResults,
+    applicationIsCompleted,
+    phase,
+    progress,
+    questions.length,
+    source.type,
+    testName,
+  ]);
 
   const goToQuestion = useCallback(
     (order: number) => {
@@ -231,11 +321,21 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
           setApiResult(r);
           setPhase('completed');
         });
+      } else if (source.type === 'application') {
+        if (applicationHideResults) {
+          setApplicationIsCompleted(true);
+          setPhase('completed');
+        } else {
+          void applicationsApi.getResult(source.token).then((r) => {
+            setApiResult(r);
+            setPhase('completed');
+          });
+        }
       } else {
         setPhase('completed');
       }
     }
-  }, [currentOrder, goToQuestion, progress, questions, source]);
+  }, [applicationHideResults, currentOrder, goToQuestion, progress, questions, source]);
 
   async function handleAnswer(answerOrder: number) {
     if (showingResult || phase === 'checking' || !currentQuestion) return;
@@ -254,6 +354,20 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
         correctOrder = getCorrectAnswerOrder(def);
         isCorrect = answerOrder === correctOrder;
         explanation = def.explanation;
+      } else if (source.type === 'application') {
+        const response = await applicationsApi.submitAnswer(source.token, {
+          questionOrder: currentOrder,
+          selectedAnswerOrder: answerOrder,
+        });
+        if (applicationHideResults) {
+          correctOrder = answerOrder;
+          isCorrect = true;
+          explanation = undefined;
+        } else {
+          correctOrder = response.correctAnswerOrder;
+          isCorrect = answerOrder === correctOrder;
+          explanation = response.explanation;
+        }
       } else {
         const response = await testsApi.submitAnswer(source.testId, {
           questionOrder: currentOrder,
@@ -289,6 +403,16 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
           const result = await testsApi.getResult(source.testId);
           setApiResult(result);
         }
+      } else if (source.type === 'application') {
+        const allDone = isTestFullyAnswered(questions.length, nextProgress);
+        if (allDone) {
+          if (applicationHideResults) {
+            setApplicationIsCompleted(true);
+          } else {
+            const result = await applicationsApi.getResult(source.token);
+            setApiResult(result);
+          }
+        }
       }
     } catch (err) {
       setError(getApiErrorMessage(err));
@@ -297,6 +421,8 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
   }
 
   async function handleRetry() {
+    if (source.type === 'application') return;
+
     if (source.type === 'local') {
       clearTestProgress(source.testId);
     } else {
@@ -327,7 +453,7 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
     return (
       <TestResultSummary
         {...completedSummary}
-        onRetry={handleRetry}
+        onRetry={source.type === 'application' ? undefined : handleRetry}
         onExit={onExit}
       />
     );
@@ -360,7 +486,7 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
       : undefined;
 
   const explanationText =
-    showingResult && activeRecord
+    showingResult && activeRecord && !applicationHideResults
       ? shouldShowExplanation(explanationSettings, activeRecord.isCorrect, rawExplanation)
         ? rawExplanation?.trim()
         : undefined
@@ -377,27 +503,29 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
         {hasNewQuestions && (
           <p className="vt-muted">В тест добавлены новые вопросы — дорешайте их.</p>
         )}
-        <details className="vt-player-settings">
-          <summary className="vt-player-settings__summary">Настройки пояснений</summary>
-          <div className="vt-player-settings__body">
-            <label className="vt-player-settings__label">
-              <input
-                type="checkbox"
-                checked={explanationSettings.showOnCorrect}
-                onChange={(e) => updateExplanationSettings({ showOnCorrect: e.target.checked })}
-              />
-              Показывать при правильном ответе
-            </label>
-            <label className="vt-player-settings__label">
-              <input
-                type="checkbox"
-                checked={explanationSettings.showOnIncorrect}
-                onChange={(e) => updateExplanationSettings({ showOnIncorrect: e.target.checked })}
-              />
-              Показывать при неправильном ответе
-            </label>
-          </div>
-        </details>
+        {!applicationHideResults && (
+          <details className="vt-player-settings">
+            <summary className="vt-player-settings__summary">Настройки пояснений</summary>
+            <div className="vt-player-settings__body">
+              <label className="vt-player-settings__label">
+                <input
+                  type="checkbox"
+                  checked={explanationSettings.showOnCorrect}
+                  onChange={(e) => updateExplanationSettings({ showOnCorrect: e.target.checked })}
+                />
+                Показывать при правильном ответе
+              </label>
+              <label className="vt-player-settings__label">
+                <input
+                  type="checkbox"
+                  checked={explanationSettings.showOnIncorrect}
+                  onChange={(e) => updateExplanationSettings({ showOnIncorrect: e.target.checked })}
+                />
+                Показывать при неправильном ответе
+              </label>
+            </div>
+          </details>
+        )}
       </header>
 
       <nav className="vt-question-nav" aria-label="Вопросы">
@@ -405,7 +533,7 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
           <button
             key={q.order}
             type="button"
-            className={dotClass(q.order, progress, currentOrder)}
+            className={dotClass(q.order, progress, currentOrder, applicationHideResults)}
             onClick={() => goToQuestion(q.order)}
             title={`Вопрос ${q.order + 1}`}
           >
@@ -426,16 +554,23 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
               (showingResult && activeRecord?.selectedAnswerOrder === answer.order) ||
               (!showingResult && selectedOrder === answer.order);
             const isCorrectOption =
-              showingResult && activeRecord?.correctAnswerOrder === answer.order;
+              !applicationHideResults &&
+              showingResult &&
+              activeRecord?.correctAnswerOrder === answer.order;
             const isWrongSelected =
+              !applicationHideResults &&
               showingResult &&
               isSelected &&
               activeRecord?.selectedAnswerOrder === answer.order &&
               !activeRecord.isCorrect;
 
             let optionClass = 'vt-option';
-            if (isCorrectOption) optionClass += ' vt-option--correct';
-            if (isWrongSelected) optionClass += ' vt-option--incorrect';
+            if (applicationHideResults && isSelected && showingResult) {
+              optionClass += ' vt-option--selected';
+            } else {
+              if (isCorrectOption) optionClass += ' vt-option--correct';
+              if (isWrongSelected) optionClass += ' vt-option--incorrect';
+            }
 
             return (
               <label key={answer.order} className={optionClass}>

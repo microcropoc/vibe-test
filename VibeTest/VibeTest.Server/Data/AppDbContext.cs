@@ -11,6 +11,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Answer> Answers => Set<Answer>();
     public DbSet<TestQuestionAnswer> TestQuestionAnswers => Set<TestQuestionAnswer>();
     public DbSet<Result> Results => Set<Result>();
+    public DbSet<TestApplication> TestApplications => Set<TestApplication>();
+    public DbSet<ApplicationResult> ApplicationResults => Set<ApplicationResult>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -82,6 +84,42 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
             entity.HasOne(r => r.Answer)
                 .WithMany(a => a.Results)
+                .HasForeignKey(r => r.AnswerId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<TestApplication>(entity =>
+        {
+            entity.HasIndex(a => a.Token).IsUnique();
+            entity.Property(a => a.HideResultsFromParticipant).HasDefaultValue(false);
+
+            entity.HasOne(a => a.Author)
+                .WithMany()
+                .HasForeignKey(a => a.AuthorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(a => a.Test)
+                .WithMany()
+                .HasForeignKey(a => a.TestId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<ApplicationResult>(entity =>
+        {
+            entity.HasIndex(r => new { r.ApplicationId, r.QuestionId }).IsUnique();
+
+            entity.HasOne(r => r.Application)
+                .WithMany(a => a.Results)
+                .HasForeignKey(r => r.ApplicationId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(r => r.Question)
+                .WithMany()
+                .HasForeignKey(r => r.QuestionId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(r => r.Answer)
+                .WithMany()
                 .HasForeignKey(r => r.AnswerId)
                 .OnDelete(DeleteBehavior.Restrict);
         });

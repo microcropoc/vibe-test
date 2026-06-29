@@ -1,4 +1,5 @@
 import { isFullMode } from '@/config/env';
+import { routerBasename } from '@/utils/router';
 
 export type MyTestsTab = 'local' | 'cloud';
 
@@ -20,6 +21,12 @@ export function editorPath(options?: { id?: string; cloud?: boolean }): string {
 
 export function parseMyTestsTab(search: string): MyTestsTab {
   return new URLSearchParams(search).get('tab') === 'cloud' ? 'cloud' : 'local';
+}
+
+export function applicationPlayUrl(token: string): string {
+  const base = routerBasename();
+  const path = base ? `${base}/application/${token}` : `/application/${token}`;
+  return `${window.location.origin}${path}`;
 }
 
 export function isApiTestId(id: string | undefined): boolean {
