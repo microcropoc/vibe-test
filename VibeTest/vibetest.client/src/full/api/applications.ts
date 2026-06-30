@@ -3,6 +3,8 @@ import type {
   ApplicationListItem,
   ApplicationPlayResponse,
   ApplicationResponse,
+  ApplicationType,
+  IncomingApplicationListItem,
   PagedResponse,
   SubmitResponse,
   TestResultResponse,
@@ -10,9 +12,11 @@ import type {
 import type { SubmitAnswerPayload } from '@/full/api/tests';
 
 export type CreateApplicationPayload = {
-  participantName: string;
+  title: string;
+  type: ApplicationType;
   testId: number;
   hideResultsFromParticipant?: boolean;
+  recipientUserId?: number;
 };
 
 export const applicationsApi = {
@@ -22,6 +26,11 @@ export const applicationsApi = {
   getMy: (page = 1, pageSize = 10) =>
     apiClient.get<PagedResponse<ApplicationListItem>>(
       `/applications?page=${page}&pageSize=${pageSize}`,
+    ),
+
+  getIncoming: (page = 1, pageSize = 10) =>
+    apiClient.get<PagedResponse<IncomingApplicationListItem>>(
+      `/applications/incoming?page=${page}&pageSize=${pageSize}`,
     ),
 
   getDetail: (token: string) =>

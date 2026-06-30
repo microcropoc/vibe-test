@@ -207,3 +207,53 @@
   font-size: 0.85rem;
   color: #8fa0b8;
 }
+
+.full-dialog {
+  border: none;
+  padding: 0;
+  background: transparent;
+  max-width: min(28rem, calc(100vw - 2rem));
+  width: 100%;
+}
+
+.full-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.full-dialog__panel {
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  background: #151f2b;
+  border: 1px solid #2a3a50;
+}
+
+.full-dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.full-dialog__title {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.full-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  background: #243044;
+  border: 1px solid #3a4f68;
+  font-size: 0.9rem;
+}
+
+.full-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}

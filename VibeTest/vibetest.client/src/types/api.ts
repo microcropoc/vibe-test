@@ -124,10 +124,13 @@ export interface ApiErrorBody {
   error?: string;
 }
 
+export type ApplicationType = 'link' | 'internalUser';
+
 export interface ApplicationResponse {
   id: number;
   token: string;
-  participantName: string;
+  title: string;
+  type: ApplicationType;
   testId: number;
   testName: string;
   createdAt: string;
@@ -138,7 +141,8 @@ export interface ApplicationResponse {
 export interface ApplicationListItem {
   id: number;
   token: string;
-  participantName: string;
+  title: string;
+  type: ApplicationType;
   testId: number;
   testName: string;
   createdAt: string;
@@ -148,11 +152,30 @@ export interface ApplicationListItem {
   scorePercent: number;
   completedAt?: string;
   hideResultsFromParticipant: boolean;
+  recipientUserId?: number;
   playUrl: string;
 }
 
+export interface IncomingApplicationListItem {
+  id: number;
+  token: string;
+  title: string;
+  authorName: string;
+  testId: number;
+  testName: string;
+  createdAt: string;
+  isCompleted: boolean;
+  hideResultsFromParticipant: boolean;
+  playUrl: string;
+}
+
+export interface UserSearchResult {
+  id: number;
+  displayName: string;
+}
+
 export interface ApplicationPlayResponse {
-  participantName: string;
+  title: string;
   hideResultsFromParticipant: boolean;
   isCompleted: boolean;
   id: number;

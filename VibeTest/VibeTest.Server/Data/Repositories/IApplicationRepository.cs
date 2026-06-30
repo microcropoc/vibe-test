@@ -14,6 +14,12 @@ public interface IApplicationRepository
         int offset,
         int pageSize,
         CancellationToken cancellationToken = default);
+    Task<int> CountIncomingAsync(int recipientUserId, CancellationToken cancellationToken = default);
+    Task<List<IncomingApplicationListItemRow>> GetIncomingPageAsync(
+        int recipientUserId,
+        int offset,
+        int pageSize,
+        CancellationToken cancellationToken = default);
     Task UpsertAnswerAsync(ApplicationResult result, CancellationToken cancellationToken = default);
     Task<ApplicationResultSummaryRow?> GetResultSummaryAsync(int applicationId, CancellationToken cancellationToken = default);
     Task<int> GetQuestionCountAsync(int testId, CancellationToken cancellationToken = default);

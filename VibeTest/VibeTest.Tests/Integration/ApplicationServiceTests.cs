@@ -1,10 +1,33 @@
 using VibeTest.Server.Exceptions;
+using VibeTest.Server.Models.Entities;
 using VibeTest.Server.Models.Requests;
 
 namespace VibeTest.Tests.Integration;
 
 public class ApplicationServiceTests
 {
+    [Fact]
+    public async Task CreateApplication_link_type_sets_title_no_recipient()
+    {
+        using var fx = new ServiceFixture();
+        var author = await fx.SeedUserAsync();
+        var test = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
+
+        var app = await fx.ApplicationService.CreateApplication(author.Id, new CreateApplicationRequest
+        {
+            Title = "Bob",
+            Type = ApplicationType.Link,
+            TestId = test.Id
+        });
+
+        Assert.NotEqual(Guid.Empty, app.Token);
+        Assert.Equal("Bob", app.Title);
+        Assert.Equal(ApplicationType.Link, app.Type);
+        Assert.Equal(test.Id, app.TestId);
+        Assert.Equal("SQL Basics", app.TestName);
+        Assert.Contains(app.Token.ToString(), app.PlayUrl);
+    }
+
     [Fact]
     public async Task CreateApplication_succeeds_for_private_own_test()
     {
@@ -14,15 +37,13 @@ public class ApplicationServiceTests
 
         var app = await fx.ApplicationService.CreateApplication(author.Id, new CreateApplicationRequest
         {
-            ParticipantName = "Bob",
+            Title = "Bob",
             TestId = test.Id
         });
 
         Assert.NotEqual(Guid.Empty, app.Token);
-        Assert.Equal("Bob", app.ParticipantName);
-        Assert.Equal(test.Id, app.TestId);
-        Assert.Equal("SQL Basics", app.TestName);
-        Assert.Contains(app.Token.ToString(), app.PlayUrl);
+        Assert.Equal("Bob", app.Title);
+        Assert.Equal(ApplicationType.Link, app.Type);
     }
 
     [Fact]
@@ -36,7 +57,7 @@ public class ApplicationServiceTests
         await Assert.ThrowsAsync<ValidationException>(() =>
             fx.ApplicationService.CreateApplication(author.Id, new CreateApplicationRequest
             {
-                ParticipantName = "Bob",
+                Title = "Bob",
                 TestId = test.Id
             }));
     }
@@ -52,8 +73,42 @@ public class ApplicationServiceTests
         await Assert.ThrowsAsync<ForbiddenException>(() =>
             fx.ApplicationService.CreateApplication(author.Id, new CreateApplicationRequest
             {
-                ParticipantName = "Bob",
+                Title = "Bob",
                 TestId = test.Id
+            }));
+    }
+
+    [Fact]
+    public async Task CreateApplication_internal_requires_recipient()
+    {
+        using var fx = new ServiceFixture();
+        var author = await fx.SeedUserAsync();
+        var test = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
+
+        await Assert.ThrowsAsync<ValidationException>(() =>
+            fx.ApplicationService.CreateApplication(author.Id, new CreateApplicationRequest
+            {
+                Title = "Internal",
+                Type = ApplicationType.InternalUser,
+                TestId = test.Id
+            }));
+    }
+
+    [Fact]
+    public async Task CreateApplication_link_rejects_recipientUserId()
+    {
+        using var fx = new ServiceFixture();
+        var author = await fx.SeedUserAsync();
+        var recipient = await fx.SeedUserAsync("bob@test.com", "Bob");
+        var test = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
+
+        await Assert.ThrowsAsync<ValidationException>(() =>
+            fx.ApplicationService.CreateApplication(author.Id, new CreateApplicationRequest
+            {
+                Title = "Link",
+                Type = ApplicationType.Link,
+                TestId = test.Id,
+                RecipientUserId = recipient.Id
             }));
     }
 
@@ -65,7 +120,7 @@ public class ApplicationServiceTests
         var test = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
         var app = await fx.ApplicationService.CreateApplication(author.Id, new CreateApplicationRequest
         {
-            ParticipantName = "Carol",
+            Title = "Carol",
             TestId = test.Id
         });
 
@@ -73,21 +128,21 @@ public class ApplicationServiceTests
         {
             QuestionOrder = 0,
             SelectedAnswerOrder = 1
-        });
+        }, null);
         Assert.Equal(0, wrong.CorrectAnswerOrder);
 
         await fx.ApplicationService.SubmitAnswer(app.Token, new SubmitAnswerRequest
         {
             QuestionOrder = 0,
             SelectedAnswerOrder = 0
-        });
+        }, null);
         await fx.ApplicationService.SubmitAnswer(app.Token, new SubmitAnswerRequest
         {
             QuestionOrder = 1,
             SelectedAnswerOrder = 0
-        });
+        }, null);
 
-        var result = await fx.ApplicationService.GetApplicationResult(app.Token);
+        var result = await fx.ApplicationService.GetApplicationResult(app.Token, null);
         Assert.Equal(2, result.CorrectAnswers);
         Assert.Equal(2, result.TotalQuestions);
         Assert.NotNull(result.CompletedAt);
@@ -106,14 +161,14 @@ public class ApplicationServiceTests
         var test = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
         var app = await fx.ApplicationService.CreateApplication(author.Id, new CreateApplicationRequest
         {
-            ParticipantName = "Dave",
+            Title = "Dave",
             TestId = test.Id
         });
 
-        var detail = await fx.ApplicationService.GetApplicationPlayDetail(app.Token);
+        var detail = await fx.ApplicationService.GetApplicationPlayDetail(app.Token, null);
         Assert.Equal(test.Id, detail.Id);
         Assert.Equal(2, detail.Questions.Count);
-        Assert.Equal("Dave", detail.ParticipantName);
+        Assert.Equal("Dave", detail.Title);
         Assert.False(detail.HideResultsFromParticipant);
         Assert.False(detail.IsCompleted);
     }
@@ -127,7 +182,7 @@ public class ApplicationServiceTests
 
         var app = await fx.ApplicationService.CreateApplication(author.Id, new CreateApplicationRequest
         {
-            ParticipantName = "Frank",
+            Title = "Frank",
             TestId = test.Id,
             HideResultsFromParticipant = true
         });
@@ -146,7 +201,7 @@ public class ApplicationServiceTests
         var test = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
         var app = await fx.ApplicationService.CreateApplication(author.Id, new CreateApplicationRequest
         {
-            ParticipantName = "Grace",
+            Title = "Grace",
             TestId = test.Id
         });
 
@@ -154,19 +209,19 @@ public class ApplicationServiceTests
         {
             QuestionOrder = 0,
             SelectedAnswerOrder = 0
-        });
+        }, null);
         await fx.ApplicationService.SubmitAnswer(app.Token, new SubmitAnswerRequest
         {
             QuestionOrder = 1,
             SelectedAnswerOrder = 0
-        });
+        }, null);
 
         await Assert.ThrowsAsync<ValidationException>(() =>
             fx.ApplicationService.SubmitAnswer(app.Token, new SubmitAnswerRequest
             {
                 QuestionOrder = 0,
                 SelectedAnswerOrder = 0
-            }));
+            }, null));
     }
 
     [Fact]
@@ -177,7 +232,7 @@ public class ApplicationServiceTests
         var test = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
         var app = await fx.ApplicationService.CreateApplication(author.Id, new CreateApplicationRequest
         {
-            ParticipantName = "Helen",
+            Title = "Helen",
             TestId = test.Id,
             HideResultsFromParticipant = true
         });
@@ -186,7 +241,7 @@ public class ApplicationServiceTests
         {
             QuestionOrder = 0,
             SelectedAnswerOrder = 0
-        });
+        }, null);
 
         Assert.Equal(-1, response.CorrectAnswerOrder);
         Assert.Null(response.Explanation);
@@ -200,7 +255,7 @@ public class ApplicationServiceTests
         var test = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
         var app = await fx.ApplicationService.CreateApplication(author.Id, new CreateApplicationRequest
         {
-            ParticipantName = "Ivan",
+            Title = "Ivan",
             TestId = test.Id,
             HideResultsFromParticipant = true
         });
@@ -209,9 +264,179 @@ public class ApplicationServiceTests
         {
             QuestionOrder = 0,
             SelectedAnswerOrder = 0
+        }, null);
+
+        await Assert.ThrowsAsync<ForbiddenException>(() =>
+            fx.ApplicationService.GetApplicationResult(app.Token, null));
+    }
+
+    [Fact]
+    public async Task CreateApplication_internal_sets_type_and_recipient()
+    {
+        using var fx = new ServiceFixture();
+        var author = await fx.SeedUserAsync();
+        var recipient = await fx.SeedUserAsync("bob@test.com", "Bob");
+        var test = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
+
+        var app = await fx.ApplicationService.CreateApplication(author.Id, new CreateApplicationRequest
+        {
+            Title = "Quarterly check",
+            Type = ApplicationType.InternalUser,
+            TestId = test.Id,
+            RecipientUserId = recipient.Id
+        });
+
+        Assert.Equal("Quarterly check", app.Title);
+        Assert.Equal(ApplicationType.InternalUser, app.Type);
+        Assert.Equal(string.Empty, app.PlayUrl);
+
+        var list = await fx.ApplicationService.GetMyApplications(author.Id, 1, 10);
+        Assert.Equal(recipient.Id, list.Items[0].RecipientUserId);
+        Assert.Equal(ApplicationType.InternalUser, list.Items[0].Type);
+        Assert.Equal(string.Empty, list.Items[0].PlayUrl);
+    }
+
+    [Fact]
+    public async Task Author_list_internal_has_empty_playUrl()
+    {
+        using var fx = new ServiceFixture();
+        var author = await fx.SeedUserAsync();
+        var recipient = await fx.SeedUserAsync("bob@test.com", "Bob");
+        var test = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
+
+        await fx.ApplicationService.CreateApplication(author.Id, new CreateApplicationRequest
+        {
+            Title = "Internal app",
+            Type = ApplicationType.InternalUser,
+            TestId = test.Id,
+            RecipientUserId = recipient.Id
+        });
+
+        var list = await fx.ApplicationService.GetMyApplications(author.Id, 1, 10);
+        Assert.Single(list.Items);
+        Assert.Equal(string.Empty, list.Items[0].PlayUrl);
+    }
+
+    [Fact]
+    public async Task Internal_play_forbidden_anonymous_and_wrong_user()
+    {
+        using var fx = new ServiceFixture();
+        var author = await fx.SeedUserAsync();
+        var recipient = await fx.SeedUserAsync("bob@test.com", "Bob");
+        var other = await fx.SeedUserAsync("carol@test.com", "Carol");
+        var test = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
+
+        var app = await fx.ApplicationService.CreateApplication(author.Id, new CreateApplicationRequest
+        {
+            Title = "Internal",
+            Type = ApplicationType.InternalUser,
+            TestId = test.Id,
+            RecipientUserId = recipient.Id
         });
 
         await Assert.ThrowsAsync<ForbiddenException>(() =>
-            fx.ApplicationService.GetApplicationResult(app.Token));
+            fx.ApplicationService.GetApplicationPlayDetail(app.Token, null));
+
+        await Assert.ThrowsAsync<ForbiddenException>(() =>
+            fx.ApplicationService.GetApplicationPlayDetail(app.Token, other.Id));
+
+        await Assert.ThrowsAsync<ForbiddenException>(() =>
+            fx.ApplicationService.SubmitAnswer(app.Token, new SubmitAnswerRequest
+            {
+                QuestionOrder = 0,
+                SelectedAnswerOrder = 0
+            }, null));
+
+        await Assert.ThrowsAsync<ForbiddenException>(() =>
+            fx.ApplicationService.GetApplicationResult(app.Token, null));
+    }
+
+    [Fact]
+    public async Task Internal_play_allowed_for_recipient_with_jwt()
+    {
+        using var fx = new ServiceFixture();
+        var author = await fx.SeedUserAsync();
+        var recipient = await fx.SeedUserAsync("bob@test.com", "Bob");
+        var test = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
+
+        var app = await fx.ApplicationService.CreateApplication(author.Id, new CreateApplicationRequest
+        {
+            Title = "Internal",
+            Type = ApplicationType.InternalUser,
+            TestId = test.Id,
+            RecipientUserId = recipient.Id
+        });
+
+        var detail = await fx.ApplicationService.GetApplicationPlayDetail(app.Token, recipient.Id);
+        Assert.Equal("Internal", detail.Title);
+        Assert.Equal(test.Id, detail.Id);
+
+        var submit = await fx.ApplicationService.SubmitAnswer(app.Token, new SubmitAnswerRequest
+        {
+            QuestionOrder = 0,
+            SelectedAnswerOrder = 0
+        }, recipient.Id);
+        Assert.Equal(0, submit.CorrectAnswerOrder);
+    }
+
+    [Fact]
+    public async Task CreateApplication_rejects_self_as_recipient()
+    {
+        using var fx = new ServiceFixture();
+        var author = await fx.SeedUserAsync();
+        var test = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
+
+        await Assert.ThrowsAsync<ValidationException>(() =>
+            fx.ApplicationService.CreateApplication(author.Id, new CreateApplicationRequest
+            {
+                Title = "Self",
+                Type = ApplicationType.InternalUser,
+                TestId = test.Id,
+                RecipientUserId = author.Id
+            }));
+    }
+
+    [Fact]
+    public async Task GetIncoming_returns_only_for_recipient()
+    {
+        using var fx = new ServiceFixture();
+        var author = await fx.SeedUserAsync();
+        var recipient = await fx.SeedUserAsync("bob@test.com", "Bob");
+        var other = await fx.SeedUserAsync("carol@test.com", "Carol");
+        var test = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
+
+        await fx.ApplicationService.CreateApplication(author.Id, new CreateApplicationRequest
+        {
+            Title = "For Bob",
+            Type = ApplicationType.InternalUser,
+            TestId = test.Id,
+            RecipientUserId = recipient.Id
+        });
+        await fx.ApplicationService.CreateApplication(author.Id, new CreateApplicationRequest
+        {
+            Title = "External",
+            TestId = test.Id
+        });
+
+        var incoming = await fx.ApplicationService.GetIncomingApplications(recipient.Id, 1, 10);
+        Assert.Single(incoming.Items);
+        Assert.Equal("Alice", incoming.Items[0].AuthorName);
+        Assert.Equal("For Bob", incoming.Items[0].Title);
+
+        var otherIncoming = await fx.ApplicationService.GetIncomingApplications(other.Id, 1, 10);
+        Assert.Empty(otherIncoming.Items);
+    }
+
+    [Fact]
+    public async Task UserSearch_excludes_self()
+    {
+        using var fx = new ServiceFixture();
+        var author = await fx.SeedUserAsync();
+        await fx.SeedUserAsync("bob@test.com", "Bob");
+
+        var results = await fx.UserRepository.SearchAsync("bob", author.Id, 10);
+        Assert.Single(results);
+        Assert.Equal("Bob", results[0].DisplayName);
+        Assert.DoesNotContain(results, r => r.Id == author.Id);
     }
 }

@@ -3,6 +3,16 @@ import { routerBasename } from '@/utils/router';
 
 export type MyTestsTab = 'local' | 'cloud';
 
+export type ApplicationsTab = 'my' | 'incoming';
+
+export function applicationsPath(tab?: ApplicationsTab): string {
+  return tab === 'incoming' ? '/applications?tab=incoming' : '/applications';
+}
+
+export function parseApplicationsTab(search: string): ApplicationsTab {
+  return new URLSearchParams(search).get('tab') === 'incoming' ? 'incoming' : 'my';
+}
+
 /** Guest: `/tests`. Full: `/my/tests` with optional tab. */
 export function localTestsListPath(tab: MyTestsTab = 'local'): string {
   return isFullMode ? `/my/tests?tab=${tab}` : '/tests';

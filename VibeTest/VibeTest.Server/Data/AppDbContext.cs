@@ -92,6 +92,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         {
             entity.HasIndex(a => a.Token).IsUnique();
             entity.Property(a => a.HideResultsFromParticipant).HasDefaultValue(false);
+            entity.Property(a => a.Type)
+                .HasDefaultValue(ApplicationType.Link);
 
             entity.HasOne(a => a.Author)
                 .WithMany()
@@ -101,6 +103,13 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.HasOne(a => a.Test)
                 .WithMany()
                 .HasForeignKey(a => a.TestId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasIndex(a => a.RecipientUserId);
+
+            entity.HasOne(a => a.Recipient)
+                .WithMany()
+                .HasForeignKey(a => a.RecipientUserId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
 

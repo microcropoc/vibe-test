@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using VibeTest.Server.Data.Queries;
+using VibeTest.Server.Models.Responses;
 
 namespace VibeTest.Server.Data.Repositories;
 
@@ -7,6 +8,28 @@ public class UserRepository(AppDbContext db) : IUserRepository
 {
     public Task<bool> ExistsAsync(int userId, CancellationToken cancellationToken = default) =>
         db.Users.AnyAsync(u => u.Id == userId, cancellationToken);
+
+    public Task<string?> GetDisplayNameAsync(int userId, CancellationToken cancellationToken = default) =>
+        db.Users
+            .Where(u => u.Id == userId)
+            .Select(u => u.DisplayName)
+            .FirstOrDefaultAsync(cancellationToken);
+
+    public Task<List<UserSearchResult>> SearchAsync(
+        string query,
+        int excludeUserId,
+        int limit,
+        CancellationToken cancellationToken = default)
+    {
+        var lower = query.ToLower();
+        return db.Users
+            .Where(u => u.Id != excludeUserId
+                && (u.DisplayName.ToLower().Contains(lower) || u.Email.ToLower().Contains(lower)))
+            .OrderBy(u => u.DisplayName)
+            .Take(limit)
+            .Select(u => new UserSearchResult { Id = u.Id, DisplayName = u.DisplayName })
+            .ToListAsync(cancellationToken);
+    }
 
     public Task<UserStatsRow> GetStatsAsync(int userId, CancellationToken cancellationToken = default) =>
         db.Database

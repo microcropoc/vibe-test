@@ -50,7 +50,9 @@ export type {
   ApplicationListItem,
   ApplicationPlayResponse,
   ApplicationResponse,
+  ApplicationType,
   AuthResponse,
+  IncomingApplicationListItem,
   PagedResponse,
   QuestionDetailDto,
   QuestionFullDto,
@@ -63,5 +65,6 @@ export type {
   TestResultResponse,
   TokenRefreshResponse,
   UserDto,
+  UserSearchResult,
   UserStatsResponse,
 } from './api';

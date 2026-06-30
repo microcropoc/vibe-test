@@ -62,21 +62,34 @@ Access-токен обновляется через `POST /api/auth/refresh` с 
 
 ## Заявки
 
-Персональные ссылки на прохождение **непубличных** тестов без JWT у участника.
+Персональные ссылки на прохождение **непубличных** тестов без JWT у участника. Автор может предложить заявку зарегистрированному пользователю — она появится у него во входящих.
+
+### Пользователи
 
 | Метод | Путь | Auth | Описание |
 |-------|------|------|----------|
-| `POST` | `/api/applications` | JWT | Создать заявку: `participantName`, `testId`, `hideResultsFromParticipant` (опционально, по умолчанию `false`) |
+| `GET` | `/api/users/search?q=&limit=` | JWT | Поиск по `displayName` и `email` (contains, без учёта регистра). Минимум 2 символа в `q`, иначе 400. `limit` по умолчанию 10, макс. 20. Текущий пользователь исключается. В ответе: `id`, `displayName` (без email). |
+
+### Заявки
+
+| Метод | Путь | Auth | Описание |
+|-------|------|------|----------|
+| `POST` | `/api/applications` | JWT | Создать заявку: `title`, `type` (`link` \| `internalUser`, по умолчанию `link`), `testId`, `hideResultsFromParticipant` (опционально), `recipientUserId` (обязателен при `type: internalUser`) |
 | `GET` | `/api/applications?page=&pageSize=` | JWT | Список заявок автора с баллами и статусом |
-| `GET` | `/api/applications/{token}` | — | Данные для прохождения: тест + `participantName`, `hideResultsFromParticipant`, `isCompleted` |
-| `POST` | `/api/applications/{token}/submit` | — | Ответ на вопрос (`questionOrder`, `selectedAnswerOrder`) |
-| `GET` | `/api/applications/{token}/result` | — | Результат участника; **403**, если `hideResultsFromParticipant` |
+| `GET` | `/api/applications/incoming?page=&pageSize=` | JWT | Входящие заявки для текущего пользователя (`recipientUserId`) |
+| `GET` | `/api/applications/{token}` | — | Данные для прохождения: тест + `title`, `hideResultsFromParticipant`, `isCompleted`. Для `internalUser` — **403** без JWT назначенного пользователя |
+| `POST` | `/api/applications/{token}/submit` | — | Ответ на вопрос (`questionOrder`, `selectedAnswerOrder`). Для `internalUser` — **403** без JWT назначенного пользователя |
+| `GET` | `/api/applications/{token}/result` | — | Результат участника; **403**, если `hideResultsFromParticipant` или internal без JWT назначенного пользователя |
 
 ### Тела ответов (ключевые поля)
 
-**`ApplicationResponse`** (создание): `id`, `token`, `participantName`, `testId`, `testName`, `hideResultsFromParticipant`, `playUrl`, `createdAt`.
+**`ApplicationResponse`** (создание): `id`, `token`, `title`, `type`, `testId`, `testName`, `hideResultsFromParticipant`, `playUrl` (пустая строка для `internalUser`), `createdAt`.
 
-**`ApplicationPlayResponse`** (прохождение): поля теста как в `TestDetailResponse` (`id`, `name`, `description`, `authorName`, `questions`) плюс `participantName`, `hideResultsFromParticipant`, `isCompleted`.
+**`ApplicationListItem`** (список автора): поля `ApplicationResponse` плюс `isCompleted`, `correctAnswers`, `totalQuestions`, `scorePercent`, `recipientUserId` (для internal). `playUrl` — только для `link`.
+
+**`IncomingApplicationListItem`** (входящие): `id`, `token`, `title`, `authorName`, `testId`, `testName`, `createdAt`, `isCompleted`, `hideResultsFromParticipant`, `playUrl`.
+
+**`ApplicationPlayResponse`** (прохождение): поля теста как в `TestDetailResponse` (`id`, `name`, `description`, `authorName`, `questions`) плюс `title`, `hideResultsFromParticipant`, `isCompleted`.
 
 **`SubmitResponse`** при скрытом результате: `correctAnswerOrder: -1`, `explanation: null`.
 
@@ -85,6 +98,12 @@ Access-токен обновляется через `POST /api/auth/refresh` с 
 | Ситуация | HTTP | Сообщение |
 |----------|------|-----------|
 | Заявка на публичный или чужой тест | 400 / 403 | Валидация / доступ |
+| Пустое `title` | 400 | «Укажите название заявки» |
+| `type: link` с `recipientUserId` | 400 | «Для заявки по ссылке нельзя указывать получателя» |
+| `type: internalUser` без `recipientUserId` | 400 | «Укажите пользователя для внутренней заявки» |
+| Предложение заявки самому себе | 400 | «Нельзя предложить заявку самому себе» |
+| Прохождение internal без JWT / чужим пользователем | 403 | «Доступ к этой заявке только для назначенного пользователя» |
+| Поиск пользователей с `q` короче 2 символов | 400 | «Укажите не менее 2 символов для поиска» |
 | Submit после завершения заявки | 400 | «Тест по этой заявке уже пройден» |
 | Результат при `hideResultsFromParticipant` | 403 | «Результат недоступен» |
 

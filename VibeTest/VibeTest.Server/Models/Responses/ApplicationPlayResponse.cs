@@ -2,7 +2,7 @@ namespace VibeTest.Server.Models.Responses;
 
 public class ApplicationPlayResponse
 {
-    public string ParticipantName { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
     public bool HideResultsFromParticipant { get; set; }
     public bool IsCompleted { get; set; }
     public int Id { get; set; }

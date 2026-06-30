@@ -11,19 +11,48 @@ public class ApplicationService(
     IApplicationRepository applications,
     ITestRepository tests,
     IResultRepository results,
+    IUserRepository users,
     ILogger<ApplicationService> logger) : IApplicationService
 {
     public async Task<ApplicationResponse> CreateApplication(int authorId, CreateApplicationRequest request)
     {
         logger.LogDebug(
-            "CreateApplication author={AuthorId} test={TestId} participant={ParticipantName}",
+            "CreateApplication author={AuthorId} test={TestId} title={Title} type={Type} recipient={RecipientUserId}",
             authorId,
             request.TestId,
-            request.ParticipantName);
+            request.Title,
+            request.Type,
+            request.RecipientUserId);
 
-        var name = request.ParticipantName.Trim();
-        if (string.IsNullOrWhiteSpace(name))
-            throw new ValidationException("Укажите имя участника");
+        var title = request.Title.Trim();
+        if (string.IsNullOrWhiteSpace(title))
+            throw new ValidationException("Укажите название заявки");
+
+        int? recipientUserId = null;
+
+        switch (request.Type)
+        {
+            case ApplicationType.Link:
+                if (request.RecipientUserId.HasValue)
+                    throw new ValidationException("Для заявки по ссылке нельзя указывать получателя");
+                break;
+
+            case ApplicationType.InternalUser:
+                if (!request.RecipientUserId.HasValue)
+                    throw new ValidationException("Укажите пользователя для внутренней заявки");
+
+                if (request.RecipientUserId.Value == authorId)
+                    throw new ValidationException("Нельзя предложить заявку самому себе");
+
+                _ = await users.GetDisplayNameAsync(request.RecipientUserId.Value)
+                    ?? throw new NotFoundException("Пользователь не найден");
+
+                recipientUserId = request.RecipientUserId.Value;
+                break;
+
+            default:
+                throw new ValidationException("Недопустимый тип заявки");
+        }
 
         var test = await tests.GetByIdAsync(request.TestId)
             ?? throw new NotFoundException("Тест не найден");
@@ -40,7 +69,9 @@ public class ApplicationService(
             Token = token,
             AuthorId = authorId,
             TestId = test.Id,
-            ParticipantName = name,
+            Title = title,
+            Type = request.Type,
+            RecipientUserId = recipientUserId,
             HideResultsFromParticipant = request.HideResultsFromParticipant,
             CreatedAt = DateTime.UtcNow
         };
@@ -76,7 +107,8 @@ public class ApplicationService(
         {
             Id = row.Id,
             Token = row.Token,
-            ParticipantName = row.ParticipantName,
+            Title = row.Title,
+            Type = row.Type,
             TestId = row.TestId,
             TestName = row.TestName,
             CreatedAt = row.CreatedAt,
@@ -86,24 +118,62 @@ public class ApplicationService(
             ScorePercent = row.ScorePercent,
             CompletedAt = row.CompletedAt,
             HideResultsFromParticipant = row.HideResultsFromParticipant,
+            RecipientUserId = row.RecipientUserId,
+            PlayUrl = row.Type == ApplicationType.Link ? BuildPlayUrl(row.Token) : string.Empty
+        }).ToList();
+
+        return PaginationHelper.Create(items, normalizedPage, normalizedSize, totalCount);
+    }
+
+    public async Task<PagedResponse<IncomingApplicationListItem>> GetIncomingApplications(
+        int recipientUserId,
+        int page,
+        int pageSize)
+    {
+        logger.LogDebug(
+            "GetIncomingApplications recipient={RecipientUserId} page={Page} pageSize={PageSize}",
+            recipientUserId,
+            page,
+            pageSize);
+
+        var normalizedPage = Math.Max(1, page);
+        var normalizedSize = Math.Clamp(pageSize, 1, 100);
+        var offset = (normalizedPage - 1) * normalizedSize;
+
+        var totalCount = await applications.CountIncomingAsync(recipientUserId);
+        var rows = await applications.GetIncomingPageAsync(recipientUserId, offset, normalizedSize);
+
+        var items = rows.Select(row => new IncomingApplicationListItem
+        {
+            Id = row.Id,
+            Token = row.Token,
+            Title = row.Title,
+            AuthorName = row.AuthorName,
+            TestId = row.TestId,
+            TestName = row.TestName,
+            CreatedAt = row.CreatedAt,
+            IsCompleted = row.CompletedAt.HasValue,
+            HideResultsFromParticipant = row.HideResultsFromParticipant,
             PlayUrl = BuildPlayUrl(row.Token)
         }).ToList();
 
         return PaginationHelper.Create(items, normalizedPage, normalizedSize, totalCount);
     }
 
-    public async Task<ApplicationPlayResponse> GetApplicationPlayDetail(Guid token)
+    public async Task<ApplicationPlayResponse> GetApplicationPlayDetail(Guid token, int? currentUserId)
     {
         logger.LogDebug("GetApplicationPlayDetail token={Token}", token);
 
         var application = await applications.GetByTokenAsync(token)
             ?? throw new NotFoundException("Заявка не найдена");
 
+        EnsureCanPlay(application, currentUserId);
+
         var testDetail = MapTestDetail(application.Test);
 
         return new ApplicationPlayResponse
         {
-            ParticipantName = application.ParticipantName,
+            Title = application.Title,
             HideResultsFromParticipant = application.HideResultsFromParticipant,
             IsCompleted = application.CompletedAt.HasValue,
             Id = testDetail.Id,
@@ -114,7 +184,7 @@ public class ApplicationService(
         };
     }
 
-    public async Task<SubmitResponse> SubmitAnswer(Guid token, SubmitAnswerRequest request)
+    public async Task<SubmitResponse> SubmitAnswer(Guid token, SubmitAnswerRequest request, int? currentUserId)
     {
         logger.LogDebug(
             "SubmitAnswer application token={Token} question={QuestionOrder} answer={AnswerOrder}",
@@ -124,6 +194,8 @@ public class ApplicationService(
 
         var application = await applications.GetByTokenAsync(token)
             ?? throw new NotFoundException("Заявка не найдена");
+
+        EnsureCanPlay(application, currentUserId);
 
         if (application.CompletedAt.HasValue)
             throw new ValidationException("Тест по этой заявке уже пройден");
@@ -163,12 +235,14 @@ public class ApplicationService(
         return new SubmitResponse { CorrectAnswerOrder = correctOrder, Explanation = explanation };
     }
 
-    public async Task<TestResultResponse> GetApplicationResult(Guid token)
+    public async Task<TestResultResponse> GetApplicationResult(Guid token, int? currentUserId)
     {
         logger.LogDebug("GetApplicationResult token={Token}", token);
 
         var application = await applications.GetByTokenAsync(token)
             ?? throw new NotFoundException("Заявка не найдена");
+
+        EnsureCanPlay(application, currentUserId);
 
         if (application.HideResultsFromParticipant)
             throw new ForbiddenException("Результат недоступен");
@@ -203,16 +277,26 @@ public class ApplicationService(
         };
     }
 
+    private static void EnsureCanPlay(TestApplication app, int? currentUserId)
+    {
+        if (app.Type != ApplicationType.InternalUser)
+            return;
+
+        if (currentUserId != app.RecipientUserId)
+            throw new ForbiddenException("Доступ к этой заявке только для назначенного пользователя");
+    }
+
     private static ApplicationResponse MapResponse(TestApplication application, string testName) => new()
     {
         Id = application.Id,
         Token = application.Token,
-        ParticipantName = application.ParticipantName,
+        Title = application.Title,
+        Type = application.Type,
         TestId = application.TestId,
         TestName = testName,
         CreatedAt = application.CreatedAt,
         HideResultsFromParticipant = application.HideResultsFromParticipant,
-        PlayUrl = BuildPlayUrl(application.Token)
+        PlayUrl = application.Type == ApplicationType.Link ? BuildPlayUrl(application.Token) : string.Empty
     };
 
     private static TestDetailResponse MapTestDetail(Test test) => new()

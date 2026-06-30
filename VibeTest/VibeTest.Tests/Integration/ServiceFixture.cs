@@ -25,6 +25,7 @@ public sealed class ServiceFixture : IDisposable
             ApplicationRepository,
             TestRepository,
             ResultRepository,
+            UserRepository,
             NullLogger<ApplicationService>.Instance);
         UserService = new UserService(UserRepository, NullLogger<UserService>.Instance);
     }

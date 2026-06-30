@@ -4,3 +4,4 @@ export { apiClient, configureApiClient, getAccessToken, setAccessToken } from '.
 export { ApiError } from './errors';
 export { resultsApi } from './results';
 export { testsApi } from './tests';
+export { usersApi } from './users';

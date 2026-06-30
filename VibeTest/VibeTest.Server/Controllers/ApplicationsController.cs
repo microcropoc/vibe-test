@@ -23,18 +23,28 @@ public class ApplicationsController(IApplicationService applicationService) : Co
         [FromQuery] int pageSize = 10) =>
         applicationService.GetMyApplications(User.GetUserId(), page, pageSize);
 
+    [HttpGet("incoming")]
+    [Authorize]
+    public Task<PagedResponse<IncomingApplicationListItem>> GetIncoming(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10) =>
+        applicationService.GetIncomingApplications(User.GetUserId(), page, pageSize);
+
     [HttpGet("{token:guid}")]
     [AllowAnonymous]
     public Task<ApplicationPlayResponse> GetDetail(Guid token) =>
-        applicationService.GetApplicationPlayDetail(token);
+        applicationService.GetApplicationPlayDetail(token, GetCurrentUserId());
 
     [HttpPost("{token:guid}/submit")]
     [AllowAnonymous]
     public Task<SubmitResponse> SubmitAnswer(Guid token, [FromBody] SubmitAnswerRequest request) =>
-        applicationService.SubmitAnswer(token, request);
+        applicationService.SubmitAnswer(token, request, GetCurrentUserId());
 
     [HttpGet("{token:guid}/result")]
     [AllowAnonymous]
     public Task<TestResultResponse> GetResult(Guid token) =>
-        applicationService.GetApplicationResult(token);
+        applicationService.GetApplicationResult(token, GetCurrentUserId());
+
+    private int? GetCurrentUserId() =>
+        User.Identity?.IsAuthenticated == true ? User.GetUserId() : null;
 }
