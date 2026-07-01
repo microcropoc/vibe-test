@@ -282,4 +282,59 @@ public class ResultServiceTests
         Assert.Equal(test.Id, history.Items[0].TestId);
         Assert.Equal(100, history.Items[0].ScorePercent);
     }
+
+    [Fact]
+    public async Task GetUserTestProgress_returns_bulk_progress_for_requested_tests()
+    {
+        using var fx = new ServiceFixture();
+        var author = await fx.SeedUserAsync();
+        var test = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
+        await fx.TestService.PublishTest(test.Id, author.Id);
+        var untouched = await fx.TestService.CreateTest(author.Id, new CreateTestRequest
+        {
+            Name = "Untouched",
+            Questions = ServiceFixture.SampleTestRequest().Questions
+        });
+        await fx.TestService.PublishTest(untouched.Id, author.Id);
+
+        await fx.ResultService.SubmitAnswer(author.Id, test.Id, new SubmitAnswerRequest
+        {
+            QuestionOrder = 0,
+            SelectedAnswerOrder = 0
+        });
+        await fx.ResultService.SubmitAnswer(author.Id, test.Id, new SubmitAnswerRequest
+        {
+            QuestionOrder = 1,
+            SelectedAnswerOrder = 1
+        });
+
+        var progress = await fx.ResultService.GetUserTestProgress(
+            author.Id,
+            [test.Id, untouched.Id, 99999]);
+
+        Assert.Equal(2, progress.Items.Count);
+
+        var started = progress.Items.Single(item => item.TestId == test.Id);
+        Assert.Equal(2, started.AnsweredCount);
+        Assert.Equal(1, started.CorrectCount);
+        Assert.Equal(1, started.IncorrectCount);
+        Assert.NotNull(started.StartedAt);
+        Assert.NotNull(started.CompletedAt);
+
+        var empty = progress.Items.Single(item => item.TestId == untouched.Id);
+        Assert.Equal(0, empty.AnsweredCount);
+        Assert.Equal(0, empty.CorrectCount);
+        Assert.Equal(0, empty.IncorrectCount);
+    }
+
+    [Fact]
+    public async Task GetUserTestProgress_returns_empty_for_no_ids()
+    {
+        using var fx = new ServiceFixture();
+        var author = await fx.SeedUserAsync();
+
+        var progress = await fx.ResultService.GetUserTestProgress(author.Id, []);
+
+        Assert.Empty(progress.Items);
+    }
 }

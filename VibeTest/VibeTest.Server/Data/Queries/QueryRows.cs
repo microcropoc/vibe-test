@@ -59,3 +59,14 @@ public class AnsweredQuestionRow
     public int IsCorrect { get; set; }
     public string? Explanation { get; set; }
 }
+
+public class TestProgressRow
+{
+    public int TestId { get; set; }
+    public int TotalQuestions { get; set; }
+    public int AnsweredCount { get; set; }
+    public int CorrectCount { get; set; }
+    public int IncorrectCount { get; set; }
+    public DateTime? StartedAt { get; set; }
+    public DateTime? CompletedAt { get; set; }
+}

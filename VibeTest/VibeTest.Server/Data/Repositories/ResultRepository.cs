@@ -229,6 +229,50 @@ public class ResultRepository(AppDbContext db) : IResultRepository
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<List<TestProgressRow>> GetUserTestProgressAsync(
+        int userId,
+        IReadOnlyList<int> testIds,
+        CancellationToken cancellationToken = default)
+    {
+        if (testIds.Count == 0)
+            return [];
+
+        var distinctIds = testIds.Distinct().ToList();
+        var placeholders = string.Join(", ", distinctIds.Select((_, index) => "{" + (index + 1) + "}"));
+        var parameters = new object[distinctIds.Count + 1];
+        parameters[0] = userId;
+        for (var i = 0; i < distinctIds.Count; i++)
+            parameters[i + 1] = distinctIds[i];
+
+        var sql =
+            """
+            SELECT
+                t.Id AS TestId,
+                t.QuestionsCount AS TotalQuestions,
+                COALESCE(utr.CorrectAnswer, 0) + COALESCE(utr.IncorrectAnswer, 0) AS AnsweredCount,
+                COALESCE(utr.CorrectAnswer, 0) AS CorrectCount,
+                COALESCE(utr.IncorrectAnswer, 0) AS IncorrectCount,
+                (
+                    SELECT MIN(r.AnsweredAt)
+                    FROM Results r
+                    WHERE r.UserId = {0} AND r.TestId = t.Id
+                ) AS StartedAt,
+                (
+                    SELECT MAX(r.AnsweredAt)
+                    FROM Results r
+                    WHERE r.UserId = {0} AND r.TestId = t.Id
+                ) AS CompletedAt
+            FROM Tests t
+            LEFT JOIN UserTestResults utr
+                ON utr.TestId = t.Id AND utr.UserId = {0}
+            WHERE t.Id IN (
+            """ + placeholders + ")";
+
+        return await db.Database
+            .SqlQueryRaw<TestProgressRow>(sql, parameters)
+            .ToListAsync(cancellationToken);
+    }
+
     public Task SaveChangesAsync(CancellationToken cancellationToken = default) =>
         db.SaveChangesAsync(cancellationToken);
 }

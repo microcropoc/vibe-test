@@ -114,6 +114,20 @@ export interface TestResultResponse {
   completedAt?: string;
 }
 
+export interface TestProgressResponse {
+  testId: number;
+  totalQuestions: number;
+  answeredCount: number;
+  correctCount: number;
+  incorrectCount: number;
+  startedAt?: string;
+  completedAt?: string;
+}
+
+export interface TestProgressListResponse {
+  items: TestProgressResponse[];
+}
+
 export interface TestHistoryItem {
   testId: number;
   testName: string;

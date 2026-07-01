@@ -1,4 +1,4 @@
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { TestPlayer } from '@/components/tests/TestPlayer';
 import { useAuth } from '@/full/context/AuthContext';
 import { myTestsPath } from '@/utils/appPaths';
@@ -6,23 +6,11 @@ import { myTestsPath } from '@/utils/appPaths';
 export function PlayPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
   const { isAuthenticated, isLoading } = useAuth();
   const testId = Number(id);
 
   if (isLoading) {
     return <p className="full-muted">Загрузка…</p>;
-  }
-
-  if (!isAuthenticated) {
-    return (
-      <section className="full-page">
-        <p className="full-muted">Войдите, чтобы пройти тест с сохранением результата.</p>
-        <Link to="/login" state={{ from: location.pathname }}>
-          Вход
-        </Link>
-      </section>
-    );
   }
 
   if (!Number.isFinite(testId)) {
@@ -32,11 +20,13 @@ export function PlayPage() {
   return (
     <section className="full-page">
       <p>
-        <Link to={myTestsPath('cloud')}>← К моим тестам</Link>
+        <Link to={isAuthenticated ? myTestsPath('cloud') : '/tests'}>
+          ← {isAuthenticated ? 'К моим тестам' : 'К публичным тестам'}
+        </Link>
       </p>
       <TestPlayer
-        source={{ type: 'api', testId }}
-        onExit={() => navigate(myTestsPath('cloud'))}
+        source={{ type: 'api', testId, authenticated: isAuthenticated }}
+        onExit={() => navigate(isAuthenticated ? myTestsPath('cloud') : '/tests')}
       />
     </section>
   );

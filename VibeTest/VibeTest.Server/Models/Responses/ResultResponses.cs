@@ -40,3 +40,19 @@ public class AnsweredQuestionsResponse
 {
     public List<AnsweredQuestionResponse> Answers { get; set; } = [];
 }
+
+public class TestProgressResponse
+{
+    public int TestId { get; set; }
+    public int TotalQuestions { get; set; }
+    public int AnsweredCount { get; set; }
+    public int CorrectCount { get; set; }
+    public int IncorrectCount { get; set; }
+    public DateTime? StartedAt { get; set; }
+    public DateTime? CompletedAt { get; set; }
+}
+
+public class TestProgressListResponse
+{
+    public List<TestProgressResponse> Items { get; set; } = [];
+}

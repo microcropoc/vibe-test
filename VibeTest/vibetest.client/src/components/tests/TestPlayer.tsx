@@ -3,7 +3,7 @@ import { applicationsApi, testsApi } from '@/full/api';
 import { getApiErrorMessage } from '@/full/context/AuthContext';
 import { TestResultSummary } from '@/components/tests/TestResultSummary';
 import type { PlayerPhase, PlayerProgress, PlayerQuestion } from '@/types/player';
-import type { AnsweredQuestionResponse, QuestionDefinition, TestResultResponse } from '@/types';
+import type { AnsweredQuestionResponse, QuestionDefinition, TestFullResponse, TestResultResponse } from '@/types';
 import {
   clearApiTestProgress,
   clearApplicationProgress,
@@ -33,7 +33,7 @@ import '@/components/tests/tests.css';
 
 export type TestPlayerSource =
   | { type: 'local'; testId: string }
-  | { type: 'api'; testId: number }
+  | { type: 'api'; testId: number; authenticated?: boolean }
   | { type: 'application'; token: string; hideResults?: boolean; isCompleted?: boolean };
 
 interface TestPlayerProps {
@@ -45,6 +45,14 @@ function emptyProgress(): PlayerProgress {
   return { answers: {}, currentQuestionOrder: 0, updatedAt: new Date().toISOString() };
 }
 
+function isAuthenticatedApiSource(source: TestPlayerSource): boolean {
+  return source.type === 'api' && source.authenticated !== false;
+}
+
+function isGuestApiSource(source: TestPlayerSource): boolean {
+  return source.type === 'api' && source.authenticated === false;
+}
+
 function loadProgress(source: TestPlayerSource): PlayerProgress {
   if (source.type === 'local') {
     return getTestProgress(source.testId) ?? emptyProgress();
@@ -52,7 +60,10 @@ function loadProgress(source: TestPlayerSource): PlayerProgress {
   if (source.type === 'application') {
     return getApplicationProgress(source.token) ?? emptyProgress();
   }
-  return getApiTestProgress(source.testId) ?? emptyProgress();
+  if (isGuestApiSource(source)) {
+    return getApiTestProgress(source.testId) ?? emptyProgress();
+  }
+  return emptyProgress();
 }
 
 function persistProgress(source: TestPlayerSource, progress: PlayerProgress): void {
@@ -61,9 +72,20 @@ function persistProgress(source: TestPlayerSource, progress: PlayerProgress): vo
     saveTestProgress(source.testId, payload);
   } else if (source.type === 'application') {
     saveApplicationProgress(source.token, payload);
-  } else {
+  } else if (isGuestApiSource(source)) {
     saveApiTestProgress(source.testId, payload);
   }
+}
+
+function definitionsFromPublicPlay(full: TestFullResponse): QuestionDefinition[] {
+  return [...full.questions]
+    .sort((a, b) => a.order - b.order)
+    .map((question) => ({
+      text: question.text,
+      answers: question.answers,
+      correct: question.correct,
+      ...(question.explanation ? { explanation: question.explanation } : {}),
+    }));
 }
 
 const ALREADY_ANSWERED_MESSAGE = 'На этот вопрос уже дан ответ';
@@ -257,6 +279,23 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
           return;
         }
 
+        if (isGuestApiSource(source)) {
+          const full = await testsApi.getPublicPlay(source.testId);
+          if (cancelled) return;
+
+          const definitions = definitionsFromPublicPlay(full);
+          const qs = toPlayerQuestions(definitions);
+          const prog = loadProgress(source);
+
+          setTestName(full.name);
+          setQuestions(qs);
+          setLocalDefinitions(definitions);
+          setApiResult(null);
+          setProgress(prog);
+          refreshPhase(qs, prog, null);
+          return;
+        }
+
         const [detail, result, serverAnswers] = await Promise.all([
           testsApi.getDetail(source.testId),
           testsApi.getResult(source.testId).catch(() => null),
@@ -274,17 +313,13 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
             .map((a, answerIndex) => ({ order: answerIndex, text: a.text })),
         }));
 
-        const localProg = loadProgress(source);
         const serverProg = progressFromServerAnswers(serverAnswers.answers, qs.length);
-        const prog = resolveProgressFromSources(localProg, serverProg);
-        if (prog !== localProg) {
-          persistProgress(source, prog);
-        }
         setTestName(detail.name);
         setQuestions(qs);
+        setLocalDefinitions([]);
         setApiResult(result);
-        setProgress(prog);
-        refreshPhase(qs, prog, result);
+        setProgress(serverProg);
+        refreshPhase(qs, serverProg, result);
       } catch (err) {
         if (!cancelled) setError(getApiErrorMessage(err));
       }
@@ -389,10 +424,14 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
 
     if (isTestFullyAnswered(questions.length, progress)) {
       if (source.type === 'api') {
-        void testsApi.getResult(source.testId).then((r) => {
-          setApiResult(r);
+        if (isGuestApiSource(source)) {
           setPhase('completed');
-        });
+        } else {
+          void testsApi.getResult(source.testId).then((r) => {
+            setApiResult(r);
+            setPhase('completed');
+          });
+        }
       } else if (source.type === 'application') {
         if (applicationHideResults) {
           setApplicationIsCompleted(true);
@@ -427,7 +466,7 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
       let isCorrect: boolean;
       let explanation: string | undefined;
 
-      if (source.type === 'local') {
+      if (source.type === 'local' || isGuestApiSource(source)) {
         const def = localDefinitions[currentOrder];
         correctOrder = getCorrectAnswerOrder(def);
         isCorrect = answerOrder === correctOrder;
@@ -475,7 +514,7 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
       persistProgress(source, nextProgress);
       setPhase('result');
 
-      if (source.type === 'api') {
+      if (source.type === 'api' && isAuthenticatedApiSource(source)) {
         const allDone = isTestFullyAnswered(questions.length, nextProgress);
         if (allDone) {
           const result = await testsApi.getResult(source.testId);
@@ -496,7 +535,7 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
       }
     } catch (err) {
       if (
-        (source.type === 'api' || source.type === 'application') &&
+        ((source.type === 'api' && isAuthenticatedApiSource(source)) || source.type === 'application') &&
         isAlreadyAnsweredError(err)
       ) {
         try {
@@ -513,7 +552,9 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
               updatedAt: new Date().toISOString(),
             };
             setProgress(nextProgress);
-            persistProgress(source, nextProgress);
+            if (source.type === 'application') {
+              persistProgress(source, nextProgress);
+            }
             setSelectedOrder(existing.selectedAnswerOrder);
             setPhase('result');
             setError(null);
@@ -533,13 +574,14 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
 
     if (source.type === 'local') {
       clearTestProgress(source.testId);
+    } else if (isGuestApiSource(source)) {
+      clearApiTestProgress(source.testId);
     } else {
       try {
         await testsApi.deleteResult(source.testId);
       } catch {
         /* ignore if no result */
       }
-      clearApiTestProgress(source.testId);
     }
     const fresh = emptyProgress();
     setProgress(fresh);
@@ -585,11 +627,11 @@ export function TestPlayer({ source, onExit }: TestPlayerProps) {
   const showNavOverlay = showingResult || isChecking;
   const canGoNext = showingResult;
   const canGoBack = currentOrder > 0;
-  const nextLabel = isTestFullyAnswered(questions.length, progress) ? 'Итог' : 'Далее';
+  const nextLabel = 'Далее';
 
   const rawExplanation =
     showingResult && activeRecord
-      ? source.type === 'local'
+      ? source.type === 'local' || isGuestApiSource(source)
         ? localDefinitions[currentOrder]?.explanation
         : activeRecord.explanation
       : undefined;

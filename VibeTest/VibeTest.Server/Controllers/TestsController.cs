@@ -38,6 +38,11 @@ public class TestsController(
     public Task<UserStatsResponse> GetMyStats() =>
         userService.GetStats(User.GetUserId());
 
+    [HttpGet("progress")]
+    [Authorize]
+    public Task<TestProgressListResponse> GetTestsProgress([FromQuery] int[] ids) =>
+        resultService.GetUserTestProgress(User.GetUserId(), ids);
+
     [HttpGet("{id:int}")]
     [AllowAnonymous]
     public Task<TestDetailResponse> GetTestDetail(int id) =>
@@ -47,6 +52,11 @@ public class TestsController(
     [Authorize]
     public Task<TestFullResponse> GetTestFull(int id) =>
         testService.GetTestFull(id, User.GetUserId());
+
+    [HttpGet("{id:int}/play-public")]
+    [AllowAnonymous]
+    public Task<TestFullResponse> GetPublicPlayTest(int id) =>
+        testService.GetPublicPlayTest(id);
 
     [HttpPost]
     [Authorize]

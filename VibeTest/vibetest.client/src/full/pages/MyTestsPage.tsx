@@ -7,10 +7,10 @@ import { TestDifficultyBadge } from '@/components/tests/TestDifficultyBadge';
 import { TestListToolbar } from '@/components/tests/TestListToolbar';
 import { testsApi } from '@/full/api';
 import { getApiErrorMessage, useAuth } from '@/full/context/AuthContext';
-import type { TestListItem } from '@/types';
+import type { TestListItem, TestProgressResponse } from '@/types';
 import { editorPath, parseMyTestsTab, type MyTestsTab } from '@/utils/appPaths';
 import { type PageSize } from '@/utils/pagination';
-import { getTestProgressStats } from '@/utils/playerHelpers';
+import { statsFromDbProgress } from '@/utils/playerHelpers';
 import type { SortOrder, TestSortBy } from '@/utils/sortTests';
 import {
   downloadCloudTestJson,
@@ -18,7 +18,6 @@ import {
   uploadLocalTestToCloud,
 } from '@/utils/testTransfer';
 import { downloadTestJson } from '@/utils/export';
-import { getApiTestProgress } from '@/utils/storage';
 import '@/components/tests/tests.css';
 
 type Filter = 'all' | 'published' | 'private';
@@ -34,6 +33,7 @@ export function MyTestsPage() {
   const [order, setOrder] = useState<SortOrder>('desc');
   const [filter, setFilter] = useState<Filter>('all');
   const [items, setItems] = useState<TestListItem[]>([]);
+  const [progressByTestId, setProgressByTestId] = useState<Record<number, TestProgressResponse>>({});
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [hasPreviousPage, setHasPreviousPage] = useState(false);
@@ -56,6 +56,18 @@ export function MyTestsPage() {
         setTotalPages(response.totalPages);
         setHasPreviousPage(response.hasPreviousPage);
         setHasNextPage(response.hasNextPage);
+
+        if (response.items.length > 0) {
+          const progress = await testsApi.getProgress(response.items.map((test) => test.id));
+          setProgressByTestId(
+            Object.fromEntries(progress.items.map((item) => [item.testId, item])) as Record<
+              number,
+              TestProgressResponse
+            >,
+          );
+        } else {
+          setProgressByTestId({});
+        }
       } catch (err) {
         setError(getApiErrorMessage(err));
       } finally {
@@ -239,7 +251,7 @@ export function MyTestsPage() {
 
               <ul className="full-list">
                 {items.map((test) => {
-                  const stats = getTestProgressStats(test.questionsCount, getApiTestProgress(test.id));
+                  const stats = statsFromDbProgress(test.questionsCount, progressByTestId[test.id]);
 
                   return (
                     <li key={test.id} className="full-list__item">

@@ -232,6 +232,27 @@ public class TestService(
         };
     }
 
+    public async Task<TestFullResponse> GetPublicPlayTest(int testId)
+    {
+        logger.LogDebug("GetPublicPlayTest test={TestId}", testId);
+
+        var test = await tests.GetByIdWithStructureAsync(testId)
+            ?? throw new NotFoundException("Тест не найден");
+
+        if (!test.IsPublic)
+            throw new NotFoundException("Тест не найден");
+
+        return new TestFullResponse
+        {
+            Id = test.Id,
+            Name = test.Name,
+            Description = test.Description,
+            IsPublic = test.IsPublic,
+            Difficulty = test.Difficulty,
+            Questions = TqaGrouper.ToFullQuestions(test.QuestionAnswers)
+        };
+    }
+
     private async Task AddQuestionsAsync(Test test, IReadOnlyList<QuestionInput> questions, int startQuestionOrder)
     {
         for (var qi = 0; qi < questions.Count; qi++)

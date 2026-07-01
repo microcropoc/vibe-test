@@ -19,5 +19,6 @@ public interface IResultRepository
     Task DeleteByUserAndTestAsync(int userId, int testId, CancellationToken cancellationToken = default);
     Task<int> CountUserHistoryAsync(int userId, CancellationToken cancellationToken = default);
     Task<List<TestHistoryRow>> GetUserHistoryPageAsync(int userId, string sortBy, string order, int offset, int pageSize, CancellationToken cancellationToken = default);
+    Task<List<TestProgressRow>> GetUserTestProgressAsync(int userId, IReadOnlyList<int> testIds, CancellationToken cancellationToken = default);
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
 }

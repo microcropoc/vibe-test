@@ -227,4 +227,29 @@ public class TestServiceTests
         Assert.Equal(publicTest.Id, page.Items[0].Id);
         Assert.DoesNotContain(page.Items, i => i.Id == privateTest.Id);
     }
+
+    [Fact]
+    public async Task GetPublicPlayTest_returns_full_payload_for_published_test()
+    {
+        using var fx = new ServiceFixture();
+        var author = await fx.SeedUserAsync();
+        var created = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
+        await fx.TestService.PublishTest(created.Id, author.Id);
+
+        var play = await fx.TestService.GetPublicPlayTest(created.Id);
+
+        Assert.Equal(created.Id, play.Id);
+        Assert.Equal(2, play.Questions.Count);
+        Assert.Equal(0, play.Questions[0].Correct);
+    }
+
+    [Fact]
+    public async Task GetPublicPlayTest_rejects_private_test()
+    {
+        using var fx = new ServiceFixture();
+        var author = await fx.SeedUserAsync();
+        var created = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
+
+        await Assert.ThrowsAsync<NotFoundException>(() => fx.TestService.GetPublicPlayTest(created.Id));
+    }
 }

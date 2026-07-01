@@ -60,3 +60,25 @@ export function getTestProgressStats(
     incorrect: answered - correct,
   };
 }
+
+export function statsFromDbProgress(
+  totalQuestions: number,
+  progress:
+    | {
+        answeredCount: number;
+        correctCount: number;
+        incorrectCount: number;
+      }
+    | undefined,
+): TestProgressStats {
+  if (!progress || progress.answeredCount === 0) {
+    return getTestProgressStats(totalQuestions, null);
+  }
+
+  return {
+    total: totalQuestions,
+    answered: progress.answeredCount,
+    correct: progress.correctCount,
+    incorrect: progress.incorrectCount,
+  };
+}

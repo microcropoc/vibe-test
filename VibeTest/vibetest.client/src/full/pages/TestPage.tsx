@@ -50,15 +50,17 @@ export function TestPage() {
       <p className="full-muted">Автор: {test.authorName}</p>
       <p className="full-muted">Вопросов: {test.questions.length}</p>
 
+      <p>
+        <Link to={`/tests/${testId}/play`} className="full-button">
+          Пройти тест
+        </Link>
+      </p>
       {isAuthenticated ? (
-        <p>
-          <Link to={`/tests/${testId}/play`} className="full-button">
-            Пройти тест
-          </Link>
-        </p>
+        <p className="full-muted">Результат будет сохранён в вашем аккаунте.</p>
       ) : (
         <p className="full-muted">
-          <Link to="/login">Войдите</Link>, чтобы пройти тест с сохранением результата.
+          Результат сохранится только в этом браузере.{' '}
+          <Link to="/login">Войдите</Link>, чтобы сохранять прогресс в аккаунте.
         </p>
       )}
     </section>

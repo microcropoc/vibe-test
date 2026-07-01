@@ -10,4 +10,5 @@ public interface IResultService
     Task<AnsweredQuestionsResponse> GetAnsweredQuestions(int userId, int testId);
     Task DeleteResult(int userId, int testId);
     Task<PagedResponse<TestHistoryItem>> GetUserResults(int userId, int page, int pageSize, string sortBy, string order);
+    Task<TestProgressListResponse> GetUserTestProgress(int userId, IReadOnlyList<int> testIds);
 }

@@ -184,4 +184,37 @@ public class ResultService(
             }).ToList()
         };
     }
+
+    public async Task<TestProgressListResponse> GetUserTestProgress(int userId, IReadOnlyList<int> testIds)
+    {
+        logger.LogDebug(
+            "GetUserTestProgress user={UserId} count={Count}",
+            userId,
+            testIds.Count);
+
+        if (testIds.Count == 0)
+            return new TestProgressListResponse();
+
+        var normalizedIds = testIds
+            .Where(id => id > 0)
+            .Distinct()
+            .Take(100)
+            .ToList();
+
+        var rows = await results.GetUserTestProgressAsync(userId, normalizedIds);
+
+        return new TestProgressListResponse
+        {
+            Items = rows.Select(row => new TestProgressResponse
+            {
+                TestId = row.TestId,
+                TotalQuestions = row.TotalQuestions,
+                AnsweredCount = row.AnsweredCount,
+                CorrectCount = row.CorrectCount,
+                IncorrectCount = row.IncorrectCount,
+                StartedAt = row.StartedAt,
+                CompletedAt = row.CompletedAt
+            }).ToList()
+        };
+    }
 }

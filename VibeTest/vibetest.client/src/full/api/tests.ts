@@ -6,6 +6,7 @@ import type {
   TestDetailResponse,
   TestFullResponse,
   TestListItem,
+  TestProgressListResponse,
   TestResponse,
   TestResultResponse,
   UserStatsResponse,
@@ -33,6 +34,16 @@ export const testsApi = {
     ),
 
   getMyStats: () => apiClient.get<UserStatsResponse>('/tests/my/stats'),
+
+  getProgress: (ids: number[]) => {
+    if (ids.length === 0) {
+      return Promise.resolve({ items: [] } satisfies TestProgressListResponse);
+    }
+    const query = ids.map((id) => `ids=${id}`).join('&');
+    return apiClient.get<TestProgressListResponse>(`/tests/progress?${query}`);
+  },
+
+  getPublicPlay: (id: number) => apiClient.get<TestFullResponse>(`/tests/${id}/play-public`),
 
   create: (payload: CreateTestPayload) =>
     apiClient.post<TestResponse>('/tests', payload),

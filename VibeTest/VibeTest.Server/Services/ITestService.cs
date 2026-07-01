@@ -17,4 +17,5 @@ public interface ITestService
 
     Task<PagedResponse<TestListItem>> GetMyTests(int authorId, int page, int pageSize, string filter, string sortBy, string order);
     Task<TestFullResponse> GetTestFull(int testId, int authorId);
+    Task<TestFullResponse> GetPublicPlayTest(int testId);
 }
