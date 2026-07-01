@@ -11,6 +11,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Answer> Answers => Set<Answer>();
     public DbSet<TestQuestionAnswer> TestQuestionAnswers => Set<TestQuestionAnswer>();
     public DbSet<Result> Results => Set<Result>();
+    public DbSet<UserTestResult> UserTestResults => Set<UserTestResult>();
     public DbSet<TestApplication> TestApplications => Set<TestApplication>();
     public DbSet<ApplicationResult> ApplicationResults => Set<ApplicationResult>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
@@ -61,6 +62,21 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .WithMany(a => a.TestQuestionAnswers)
                 .HasForeignKey(tqa => tqa.AnswerId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<UserTestResult>(entity =>
+        {
+            entity.HasIndex(utr => new { utr.UserId, utr.TestId }).IsUnique();
+
+            entity.HasOne(utr => utr.User)
+                .WithMany(u => u.UserTestResults)
+                .HasForeignKey(utr => utr.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(utr => utr.Test)
+                .WithMany(t => t.UserTestResults)
+                .HasForeignKey(utr => utr.TestId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Result>(entity =>

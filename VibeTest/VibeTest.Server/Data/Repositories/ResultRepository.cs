@@ -7,30 +7,23 @@ namespace VibeTest.Server.Data.Repositories;
 public class ResultRepository(AppDbContext db) : IResultRepository
 {
     private const string HistoryBaseCte = """
-        WITH question_counts AS (
-            SELECT TestId, COUNT(DISTINCT QuestionOrder) AS QuestionCount
-            FROM TestQuestionAnswers
-            GROUP BY TestId
-        ),
-        attempt_scores AS (
+        WITH attempt_scores AS (
             SELECT
-                r.TestId,
+                utr.TestId,
                 t.Name AS TestName,
-                qc.QuestionCount AS TotalQuestions,
-                SUM(CASE WHEN sel.IsCorrect = 1 THEN 1 ELSE 0 END) AS CorrectAnswers,
-                CAST(SUM(CASE WHEN sel.IsCorrect = 1 THEN 1 ELSE 0 END) AS REAL)
-                    / qc.QuestionCount * 100.0 AS ScorePercent,
-                MAX(r.AnsweredAt) AS CompletedAt
-            FROM Results r
-            INNER JOIN Tests t ON t.Id = r.TestId
-            INNER JOIN question_counts qc ON qc.TestId = r.TestId
-            INNER JOIN TestQuestionAnswers sel
-                ON sel.TestId = r.TestId
-               AND sel.QuestionId = r.QuestionId
-               AND sel.AnswerId = r.AnswerId
-            WHERE r.UserId = {0}
-            GROUP BY r.TestId, t.Name, qc.QuestionCount
-            HAVING COUNT(r.Id) > 0
+                t.QuestionsCount AS TotalQuestions,
+                utr.CorrectAnswer AS CorrectAnswers,
+                CAST(utr.CorrectAnswer AS REAL) / t.QuestionsCount * 100.0 AS ScorePercent,
+                (
+                    SELECT MAX(r.AnsweredAt)
+                    FROM Results r
+                    WHERE r.UserId = utr.UserId AND r.TestId = utr.TestId
+                ) AS CompletedAt
+            FROM UserTestResults utr
+            INNER JOIN Tests t ON t.Id = utr.TestId
+            WHERE utr.UserId = {0}
+              AND t.QuestionsCount > 0
+              AND (utr.CorrectAnswer + utr.IncorrectAnswer) > 0
         )
         """;
 
@@ -95,24 +88,23 @@ public class ResultRepository(AppDbContext db) : IResultRepository
                 SELECT
                     t.Id AS TestId,
                     t.Name AS TestName,
+                    t.QuestionsCount AS TotalQuestions,
+                    COALESCE(utr.CorrectAnswer, 0) AS CorrectAnswers,
+                    COALESCE(utr.IncorrectAnswer, 0) AS IncorrectAnswers,
                     (
-                        SELECT COUNT(DISTINCT QuestionOrder)
-                        FROM TestQuestionAnswers
-                        WHERE TestId = {1}
-                    ) AS TotalQuestions,
-                    COALESCE(SUM(CASE WHEN sel.IsCorrect = 1 THEN 1 ELSE 0 END), 0) AS CorrectAnswers,
-                    COALESCE(SUM(CASE WHEN sel.IsCorrect = 0 THEN 1 ELSE 0 END), 0) AS IncorrectAnswers,
-                    MIN(r.AnsweredAt) AS StartedAt,
-                    MAX(r.AnsweredAt) AS CompletedAt
+                        SELECT MIN(r.AnsweredAt)
+                        FROM Results r
+                        WHERE r.UserId = {0} AND r.TestId = {1}
+                    ) AS StartedAt,
+                    (
+                        SELECT MAX(r.AnsweredAt)
+                        FROM Results r
+                        WHERE r.UserId = {0} AND r.TestId = {1}
+                    ) AS CompletedAt
                 FROM Tests t
-                LEFT JOIN Results r
-                    ON r.TestId = t.Id AND r.UserId = {0}
-                LEFT JOIN TestQuestionAnswers sel
-                    ON sel.TestId = r.TestId
-                   AND sel.QuestionId = r.QuestionId
-                   AND sel.AnswerId = r.AnswerId
+                LEFT JOIN UserTestResults utr
+                    ON utr.TestId = t.Id AND utr.UserId = {0}
                 WHERE t.Id = {1}
-                GROUP BY t.Id, t.Name
                 """,
                 userId,
                 testId)
@@ -121,6 +113,27 @@ public class ResultRepository(AppDbContext db) : IResultRepository
     public async Task InsertAsync(Result result, CancellationToken cancellationToken = default)
     {
         db.Results.Add(result);
+    }
+
+    public Task<UserTestResult?> GetUserTestResultAsync(
+        int userId,
+        int testId,
+        CancellationToken cancellationToken = default) =>
+        db.UserTestResults
+            .FirstOrDefaultAsync(utr => utr.UserId == userId && utr.TestId == testId, cancellationToken);
+
+    public Task InsertUserTestResultAsync(UserTestResult aggregate, CancellationToken cancellationToken = default)
+    {
+        db.UserTestResults.Add(aggregate);
+        return Task.CompletedTask;
+    }
+
+    public async Task DeleteUserTestResultAsync(int userId, int testId, CancellationToken cancellationToken = default)
+    {
+        await db.Database.ExecuteSqlRawAsync(
+            "DELETE FROM UserTestResults WHERE UserId = {0} AND TestId = {1}",
+            userId,
+            testId);
     }
 
     public Task<bool> HasAnswerForQuestionAsync(

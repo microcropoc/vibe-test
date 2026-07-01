@@ -95,6 +95,46 @@ public class TestServiceTests
     }
 
     [Fact]
+    public async Task CreateTest_persists_questions_count()
+    {
+        using var fx = new ServiceFixture();
+        var author = await fx.SeedUserAsync();
+
+        var created = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
+
+        Assert.Equal(2, created.QuestionsCount);
+
+        var test = await fx.Db.Tests.FindAsync(created.Id);
+        Assert.NotNull(test);
+        Assert.Equal(2, test!.QuestionsCount);
+    }
+
+    [Fact]
+    public async Task AppendQuestions_increments_questions_count()
+    {
+        using var fx = new ServiceFixture();
+        var author = await fx.SeedUserAsync();
+        var created = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
+
+        await fx.TestService.AppendQuestions(created.Id, author.Id, new AddQuestionsRequest
+        {
+            Questions =
+            [
+                new QuestionInput
+                {
+                    Text = "New question",
+                    Answers = ["A", "B"],
+                    Correct = 0
+                }
+            ]
+        });
+
+        var test = await fx.Db.Tests.FindAsync(created.Id);
+        Assert.NotNull(test);
+        Assert.Equal(3, test!.QuestionsCount);
+    }
+
+    [Fact]
     public async Task AppendQuestions_assigns_next_question_orders()
     {
         using var fx = new ServiceFixture();

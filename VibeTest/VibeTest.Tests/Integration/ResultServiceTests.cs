@@ -1,9 +1,101 @@
+using Microsoft.EntityFrameworkCore;
 using VibeTest.Server.Models.Requests;
 
 namespace VibeTest.Tests.Integration;
 
 public class ResultServiceTests
 {
+    [Fact]
+    public async Task SubmitAnswer_updates_user_test_result_aggregate()
+    {
+        using var fx = new ServiceFixture();
+        var author = await fx.SeedUserAsync();
+        var test = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
+        await fx.TestService.PublishTest(test.Id, author.Id);
+
+        await fx.ResultService.SubmitAnswer(author.Id, test.Id, new SubmitAnswerRequest
+        {
+            QuestionOrder = 0,
+            SelectedAnswerOrder = 0
+        });
+
+        var aggregate = await fx.Db.UserTestResults
+            .FirstOrDefaultAsync(utr => utr.UserId == author.Id && utr.TestId == test.Id);
+
+        Assert.NotNull(aggregate);
+        Assert.Equal(1, aggregate!.CorrectAnswer);
+        Assert.Equal(0, aggregate.IncorrectAnswer);
+
+        await fx.ResultService.SubmitAnswer(author.Id, test.Id, new SubmitAnswerRequest
+        {
+            QuestionOrder = 1,
+            SelectedAnswerOrder = 1
+        });
+
+        await fx.Db.Entry(aggregate).ReloadAsync();
+        Assert.Equal(1, aggregate.CorrectAnswer);
+        Assert.Equal(1, aggregate.IncorrectAnswer);
+    }
+
+    [Fact]
+    public async Task DeleteResult_clears_user_test_result_aggregate()
+    {
+        using var fx = new ServiceFixture();
+        var author = await fx.SeedUserAsync();
+        var test = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
+        await fx.TestService.PublishTest(test.Id, author.Id);
+
+        await fx.ResultService.SubmitAnswer(author.Id, test.Id, new SubmitAnswerRequest
+        {
+            QuestionOrder = 0,
+            SelectedAnswerOrder = 0
+        });
+
+        Assert.NotEmpty(fx.Db.UserTestResults.Where(utr => utr.UserId == author.Id && utr.TestId == test.Id));
+
+        await fx.ResultService.DeleteResult(author.Id, test.Id);
+
+        Assert.Empty(fx.Db.UserTestResults.Where(utr => utr.UserId == author.Id && utr.TestId == test.Id));
+    }
+
+    [Fact]
+    public async Task AppendQuestions_keeps_existing_aggregate_and_updates_total_questions()
+    {
+        using var fx = new ServiceFixture();
+        var author = await fx.SeedUserAsync();
+        var test = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
+        await fx.TestService.PublishTest(test.Id, author.Id);
+
+        await fx.ResultService.SubmitAnswer(author.Id, test.Id, new SubmitAnswerRequest { QuestionOrder = 0, SelectedAnswerOrder = 0 });
+        await fx.ResultService.SubmitAnswer(author.Id, test.Id, new SubmitAnswerRequest { QuestionOrder = 1, SelectedAnswerOrder = 0 });
+
+        await fx.TestService.AppendQuestions(test.Id, author.Id, new AddQuestionsRequest
+        {
+            Questions =
+            [
+                new QuestionInput
+                {
+                    Text = "Extra",
+                    Answers = ["Yes", "No"],
+                    Correct = 0
+                }
+            ]
+        });
+
+        var aggregate = await fx.Db.UserTestResults
+            .FirstAsync(utr => utr.UserId == author.Id && utr.TestId == test.Id);
+        var updatedTest = await fx.Db.Tests.FindAsync(test.Id);
+
+        Assert.Equal(2, aggregate.CorrectAnswer);
+        Assert.Equal(0, aggregate.IncorrectAnswer);
+        Assert.Equal(3, updatedTest!.QuestionsCount);
+
+        var afterAppend = await fx.ResultService.GetResult(author.Id, test.Id);
+        Assert.Equal(3, afterAppend.TotalQuestions);
+        Assert.Equal(2, afterAppend.CorrectAnswers);
+        Assert.Equal(0, afterAppend.IncorrectAnswers);
+    }
+
     [Fact]
     public async Task SubmitAnswer_returns_explanation_when_present()
     {

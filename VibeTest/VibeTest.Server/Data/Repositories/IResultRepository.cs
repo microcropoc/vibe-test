@@ -13,6 +13,9 @@ public interface IResultRepository
     Task<bool> HasAnswerForQuestionAsync(int userId, int testId, int questionId, CancellationToken cancellationToken = default);
     Task<List<AnsweredQuestionRow>> GetAnsweredQuestionsAsync(int userId, int testId, CancellationToken cancellationToken = default);
     Task InsertAsync(Result result, CancellationToken cancellationToken = default);
+    Task<UserTestResult?> GetUserTestResultAsync(int userId, int testId, CancellationToken cancellationToken = default);
+    Task InsertUserTestResultAsync(UserTestResult aggregate, CancellationToken cancellationToken = default);
+    Task DeleteUserTestResultAsync(int userId, int testId, CancellationToken cancellationToken = default);
     Task DeleteByUserAndTestAsync(int userId, int testId, CancellationToken cancellationToken = default);
     Task<int> CountUserHistoryAsync(int userId, CancellationToken cancellationToken = default);
     Task<List<TestHistoryRow>> GetUserHistoryPageAsync(int userId, string sortBy, string order, int offset, int pageSize, CancellationToken cancellationToken = default);

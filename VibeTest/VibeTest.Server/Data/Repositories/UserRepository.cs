@@ -41,79 +41,35 @@ public class UserRepository(AppDbContext db) : IUserRepository
                     (SELECT COUNT(*) FROM Tests WHERE AuthorId = {0} AND IsPublic = 1) AS TotalPublished,
                     (
                         SELECT COUNT(*)
-                        FROM (
-                            SELECT r.TestId
-                            FROM Results r
-                            INNER JOIN Tests t ON t.Id = r.TestId AND t.AuthorId = {0}
-                            INNER JOIN (
-                                SELECT TestId, COUNT(DISTINCT QuestionOrder) AS QuestionCount
-                                FROM TestQuestionAnswers
-                                GROUP BY TestId
-                            ) qc ON qc.TestId = r.TestId
-                            WHERE r.UserId = {0}
-                            GROUP BY r.TestId, qc.QuestionCount
-                            HAVING COUNT(r.Id) = qc.QuestionCount
-                        ) passed
+                        FROM UserTestResults utr
+                        INNER JOIN Tests t ON t.Id = utr.TestId AND t.AuthorId = {0}
+                        WHERE utr.UserId = {0}
+                          AND t.QuestionsCount > 0
+                          AND utr.CorrectAnswer + utr.IncorrectAnswer = t.QuestionsCount
                     ) AS TotalPassedOwn,
                     (
                         SELECT COUNT(*)
-                        FROM (
-                            SELECT r.TestId
-                            FROM Results r
-                            INNER JOIN Tests t ON t.Id = r.TestId AND t.AuthorId <> {0}
-                            INNER JOIN (
-                                SELECT TestId, COUNT(DISTINCT QuestionOrder) AS QuestionCount
-                                FROM TestQuestionAnswers
-                                GROUP BY TestId
-                            ) qc ON qc.TestId = r.TestId
-                            WHERE r.UserId = {0}
-                            GROUP BY r.TestId, qc.QuestionCount
-                            HAVING COUNT(r.Id) = qc.QuestionCount
-                        ) passed
+                        FROM UserTestResults utr
+                        INNER JOIN Tests t ON t.Id = utr.TestId AND t.AuthorId <> {0}
+                        WHERE utr.UserId = {0}
+                          AND t.QuestionsCount > 0
+                          AND utr.CorrectAnswer + utr.IncorrectAnswer = t.QuestionsCount
                     ) AS TotalPassedOthers,
                     COALESCE((
-                        SELECT AVG(score)
-                        FROM (
-                            SELECT
-                                CAST(SUM(CASE WHEN sel.IsCorrect = 1 THEN 1 ELSE 0 END) AS REAL)
-                                    / qc.QuestionCount * 100.0 AS score
-                            FROM Results r
-                            INNER JOIN Tests t ON t.Id = r.TestId AND t.AuthorId = {0}
-                            INNER JOIN (
-                                SELECT TestId, COUNT(DISTINCT QuestionOrder) AS QuestionCount
-                                FROM TestQuestionAnswers
-                                GROUP BY TestId
-                            ) qc ON qc.TestId = r.TestId
-                            INNER JOIN TestQuestionAnswers sel
-                                ON sel.TestId = r.TestId
-                               AND sel.QuestionId = r.QuestionId
-                               AND sel.AnswerId = r.AnswerId
-                            WHERE r.UserId = {0}
-                            GROUP BY r.TestId, qc.QuestionCount
-                            HAVING COUNT(r.Id) = qc.QuestionCount
-                        ) scores
+                        SELECT AVG(CAST(utr.CorrectAnswer AS REAL) / t.QuestionsCount * 100.0)
+                        FROM UserTestResults utr
+                        INNER JOIN Tests t ON t.Id = utr.TestId AND t.AuthorId = {0}
+                        WHERE utr.UserId = {0}
+                          AND t.QuestionsCount > 0
+                          AND utr.CorrectAnswer + utr.IncorrectAnswer = t.QuestionsCount
                     ), 0.0) AS AverageScoreOwn,
                     COALESCE((
-                        SELECT AVG(score)
-                        FROM (
-                            SELECT
-                                CAST(SUM(CASE WHEN sel.IsCorrect = 1 THEN 1 ELSE 0 END) AS REAL)
-                                    / qc.QuestionCount * 100.0 AS score
-                            FROM Results r
-                            INNER JOIN Tests t ON t.Id = r.TestId AND t.AuthorId <> {0}
-                            INNER JOIN (
-                                SELECT TestId, COUNT(DISTINCT QuestionOrder) AS QuestionCount
-                                FROM TestQuestionAnswers
-                                GROUP BY TestId
-                            ) qc ON qc.TestId = r.TestId
-                            INNER JOIN TestQuestionAnswers sel
-                                ON sel.TestId = r.TestId
-                               AND sel.QuestionId = r.QuestionId
-                               AND sel.AnswerId = r.AnswerId
-                            WHERE r.UserId = {0}
-                            GROUP BY r.TestId, qc.QuestionCount
-                            HAVING COUNT(r.Id) = qc.QuestionCount
-                        ) scores
+                        SELECT AVG(CAST(utr.CorrectAnswer AS REAL) / t.QuestionsCount * 100.0)
+                        FROM UserTestResults utr
+                        INNER JOIN Tests t ON t.Id = utr.TestId AND t.AuthorId <> {0}
+                        WHERE utr.UserId = {0}
+                          AND t.QuestionsCount > 0
+                          AND utr.CorrectAnswer + utr.IncorrectAnswer = t.QuestionsCount
                     ), 0.0) AS AverageScoreOthers
                 """,
                 userId)

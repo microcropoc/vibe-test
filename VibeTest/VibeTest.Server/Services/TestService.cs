@@ -59,6 +59,7 @@ public class TestService(
             Description = request.Description?.Trim(),
             IsPublic = false,
             Difficulty = request.Difficulty ?? TestDifficulty.Easy,
+            QuestionsCount = request.Questions.Count,
             CreatedAt = now,
             UpdatedAt = now
         };
@@ -93,6 +94,7 @@ public class TestService(
 
         var maxOrder = await tests.GetMaxQuestionOrderAsync(testId);
         await AddQuestionsAsync(test, request.Questions, startQuestionOrder: maxOrder + 1);
+        test.QuestionsCount += request.Questions.Count;
         test.UpdatedAt = DateTime.UtcNow;
         await tests.SaveChangesAsync();
 
@@ -316,7 +318,7 @@ public class TestService(
         Description = test.Description,
         IsPublic = test.IsPublic,
         Difficulty = test.Difficulty,
-        QuestionsCount = TqaGrouper.CountQuestions(test.QuestionAnswers),
+        QuestionsCount = test.QuestionsCount,
         CreatedAt = test.CreatedAt
     };
 }

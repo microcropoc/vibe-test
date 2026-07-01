@@ -63,16 +63,14 @@ public class TestRepository(AppDbContext db) : ITestRepository
                 t.Name AS Name,
                 t.Description AS Description,
                 u.DisplayName AS AuthorName,
-                CAST(COUNT(DISTINCT tqa.QuestionOrder) AS INTEGER) AS QuestionsCount,
+                t.QuestionsCount AS QuestionsCount,
                 t.IsPublic AS IsPublic,
                 t.Difficulty AS Difficulty,
                 t.CreatedAt AS CreatedAt,
                 t.UpdatedAt AS UpdatedAt
             FROM Tests t
             INNER JOIN Users u ON u.Id = t.AuthorId
-            LEFT JOIN TestQuestionAnswers tqa ON tqa.TestId = t.Id
             WHERE t.IsPublic = 1
-            GROUP BY t.Id, t.Name, t.Description, u.DisplayName, t.IsPublic, t.Difficulty, t.CreatedAt, t.UpdatedAt
             ORDER BY 
             """ + sortColumn + " " + sortDirection + """
 
@@ -121,19 +119,17 @@ public class TestRepository(AppDbContext db) : ITestRepository
                 t.Name AS Name,
                 t.Description AS Description,
                 u.DisplayName AS AuthorName,
-                CAST(COUNT(DISTINCT tqa.QuestionOrder) AS INTEGER) AS QuestionsCount,
+                t.QuestionsCount AS QuestionsCount,
                 t.IsPublic AS IsPublic,
                 t.Difficulty AS Difficulty,
                 t.CreatedAt AS CreatedAt,
                 t.UpdatedAt AS UpdatedAt
             FROM Tests t
             INNER JOIN Users u ON u.Id = t.AuthorId
-            LEFT JOIN TestQuestionAnswers tqa ON tqa.TestId = t.Id
             WHERE t.AuthorId = {2}
               AND ({3} = 'all'
                    OR ({3} = 'published' AND t.IsPublic = 1)
                    OR ({3} = 'private' AND t.IsPublic = 0))
-            GROUP BY t.Id, t.Name, t.Description, u.DisplayName, t.IsPublic, t.Difficulty, t.CreatedAt, t.UpdatedAt
             ORDER BY 
             """ + sortColumn + " " + sortDirection + """
 

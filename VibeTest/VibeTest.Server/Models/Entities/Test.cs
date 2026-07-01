@@ -8,10 +8,12 @@ public class Test
     public string? Description { get; set; }
     public bool IsPublic { get; set; }
     public TestDifficulty Difficulty { get; set; } = TestDifficulty.Easy;
+    public int QuestionsCount { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
     public User Author { get; set; } = null!;
     public ICollection<TestQuestionAnswer> QuestionAnswers { get; set; } = [];
     public ICollection<Result> Results { get; set; } = [];
+    public ICollection<UserTestResult> UserTestResults { get; set; } = [];
 }

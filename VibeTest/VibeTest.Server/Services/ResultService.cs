@@ -44,9 +44,30 @@ public class ResultService(
             AnswerId = selected.AnswerId,
             AnsweredAt = DateTime.UtcNow
         });
-        await results.SaveChangesAsync();
 
         var isCorrect = request.SelectedAnswerOrder == correctOrder;
+        var aggregate = await results.GetUserTestResultAsync(userId, testId);
+        if (aggregate is null)
+        {
+            await results.InsertUserTestResultAsync(new UserTestResult
+            {
+                UserId = userId,
+                TestId = testId,
+                CorrectAnswer = isCorrect ? 1 : 0,
+                IncorrectAnswer = isCorrect ? 0 : 1
+            });
+        }
+        else if (isCorrect)
+        {
+            aggregate.CorrectAnswer++;
+        }
+        else
+        {
+            aggregate.IncorrectAnswer++;
+        }
+
+        await results.SaveChangesAsync();
+
         logger.LogInformation(
             "Answer submitted user={UserId} test={TestId} question={QuestionOrder} correct={IsCorrect}",
             userId,
@@ -93,6 +114,7 @@ public class ResultService(
             ?? throw new NotFoundException("Тест не найден");
 
         await results.DeleteByUserAndTestAsync(userId, testId);
+        await results.DeleteUserTestResultAsync(userId, testId);
         await results.SaveChangesAsync();
 
         logger.LogInformation("Result deleted user={UserId} test={TestId}", userId, testId);
