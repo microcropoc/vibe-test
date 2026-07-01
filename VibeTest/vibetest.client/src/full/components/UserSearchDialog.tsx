@@ -11,6 +11,7 @@ type UserSearchDialogProps = {
 
 export function UserSearchDialog({ open, onClose, onSelect }: UserSearchDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const searchRequestId = useRef(0);
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<UserSearchResult[]>([]);
   const [searching, setSearching] = useState(false);
@@ -19,15 +20,24 @@ export function UserSearchDialog({ open, onClose, onSelect }: UserSearchDialogPr
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
+    let resetTimer: number | undefined;
 
     if (open) {
       dialog.showModal();
-      setQuery('');
-      setResults([]);
-      setError(null);
+      resetTimer = window.setTimeout(() => {
+        setQuery('');
+        setResults([]);
+        setError(null);
+      }, 0);
     } else if (dialog.open) {
       dialog.close();
     }
+
+    return () => {
+      if (resetTimer !== undefined) {
+        window.clearTimeout(resetTimer);
+      }
+    };
   }, [open]);
 
   useEffect(() => {
@@ -35,23 +45,31 @@ export function UserSearchDialog({ open, onClose, onSelect }: UserSearchDialogPr
 
     const trimmed = query.trim();
     if (trimmed.length < 2) {
-      setResults([]);
-      setError(null);
-      return;
+      searchRequestId.current += 1;
+      const resetTimer = window.setTimeout(() => {
+        setResults([]);
+        setError(null);
+      }, 0);
+      return () => window.clearTimeout(resetTimer);
     }
 
     const timer = window.setTimeout(() => {
       void (async () => {
+        const requestId = ++searchRequestId.current;
         setSearching(true);
         setError(null);
         try {
           const users = await usersApi.search(trimmed);
+          if (requestId !== searchRequestId.current) return;
           setResults(users);
         } catch (err) {
+          if (requestId !== searchRequestId.current) return;
           setError(getApiErrorMessage(err));
           setResults([]);
         } finally {
-          setSearching(false);
+          if (requestId === searchRequestId.current) {
+            setSearching(false);
+          }
         }
       })();
     }, 300);

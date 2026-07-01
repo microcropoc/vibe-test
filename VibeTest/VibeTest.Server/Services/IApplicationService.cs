@@ -10,6 +10,7 @@ public interface IApplicationService
     Task<PagedResponse<IncomingApplicationListItem>> GetIncomingApplications(int recipientUserId, int page, int pageSize);
     Task<ApplicationPlayResponse> GetApplicationPlayDetail(Guid token, int? currentUserId);
     Task<SubmitResponse> SubmitAnswer(Guid token, SubmitAnswerRequest request, int? currentUserId);
+    Task<AnsweredQuestionsResponse> GetApplicationAnsweredQuestions(Guid token, int? currentUserId);
     Task<TestResultResponse> GetApplicationResult(Guid token, int? currentUserId);
     Task<TestResultResponse> GetApplicationResultById(int applicationId, int authorId);
 }

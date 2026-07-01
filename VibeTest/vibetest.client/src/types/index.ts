@@ -47,6 +47,8 @@ export type {
 
 export type {
   ApiErrorBody,
+  AnsweredQuestionResponse,
+  AnsweredQuestionsResponse,
   ApplicationListItem,
   ApplicationPlayResponse,
   ApplicationResponse,

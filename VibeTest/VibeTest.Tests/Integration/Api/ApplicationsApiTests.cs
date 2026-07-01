@@ -172,6 +172,165 @@ public class ApplicationsApiTests : IClassFixture<ApiFixture>
         Assert.Equal(HttpStatusCode.Forbidden, detail.StatusCode);
     }
 
+    [Fact]
+    public async Task Create_rejects_invalid_application_rules()
+    {
+        var authorClient = _factory.CreateClient();
+        var author = await RegisterUserAndReadAsync(authorClient, $"author-{Guid.NewGuid():N}@test.com", "Author");
+        _factory.Authorize(authorClient, author.AccessToken);
+
+        var privateTest = await CreatePrivateTestAsync(authorClient);
+        var publicTest = await CreatePrivateTestAsync(authorClient);
+        await authorClient.PutAsync($"/api/tests/{publicTest.Id}/publish", null);
+
+        var recipientClient = _factory.CreateClient();
+        var recipient = await RegisterUserAndReadAsync(recipientClient, $"recipient-{Guid.NewGuid():N}@test.com", "Recipient");
+
+        var publicApplication = await authorClient.PostAsJsonAsync("/api/applications", new CreateApplicationRequest
+        {
+            Title = "Public",
+            TestId = publicTest.Id
+        });
+        Assert.Equal(HttpStatusCode.BadRequest, publicApplication.StatusCode);
+
+        var otherClient = _factory.CreateClient();
+        var other = await RegisterUserAndReadAsync(otherClient, $"other-{Guid.NewGuid():N}@test.com", "Other");
+        _factory.Authorize(otherClient, other.AccessToken);
+        var foreignTest = await otherClient.PostAsJsonAsync("/api/applications", new CreateApplicationRequest
+        {
+            Title = "Foreign",
+            TestId = privateTest.Id
+        });
+        Assert.Equal(HttpStatusCode.Forbidden, foreignTest.StatusCode);
+
+        var internalWithoutRecipient = await authorClient.PostAsJsonAsync("/api/applications", new CreateApplicationRequest
+        {
+            Title = "No recipient",
+            Type = ApplicationType.InternalUser,
+            TestId = privateTest.Id
+        });
+        Assert.Equal(HttpStatusCode.BadRequest, internalWithoutRecipient.StatusCode);
+
+        var linkWithRecipient = await authorClient.PostAsJsonAsync("/api/applications", new CreateApplicationRequest
+        {
+            Title = "Link recipient",
+            Type = ApplicationType.Link,
+            TestId = privateTest.Id,
+            RecipientUserId = recipient.User.Id
+        });
+        Assert.Equal(HttpStatusCode.BadRequest, linkWithRecipient.StatusCode);
+
+        var selfRecipient = await authorClient.PostAsJsonAsync("/api/applications", new CreateApplicationRequest
+        {
+            Title = "Self",
+            Type = ApplicationType.InternalUser,
+            TestId = privateTest.Id,
+            RecipientUserId = author.User.Id
+        });
+        Assert.Equal(HttpStatusCode.BadRequest, selfRecipient.StatusCode);
+    }
+
+    [Fact]
+    public async Task Submit_after_completion_and_hidden_results_are_rejected()
+    {
+        var client = _factory.CreateClient();
+        var token = await _factory.RegisterAndGetTokenAsync(client, $"submit-{Guid.NewGuid():N}@test.com");
+        _factory.Authorize(client, token);
+
+        var test = await CreatePrivateTestAsync(client);
+        var createApp = await client.PostAsJsonAsync("/api/applications", new CreateApplicationRequest
+        {
+            Title = "Complete",
+            TestId = test.Id,
+            HideResultsFromParticipant = true
+        });
+        var application = await createApp.Content.ReadFromJsonAsync<ApplicationResponse>(_factory.JsonOptions);
+
+        client.DefaultRequestHeaders.Authorization = null;
+        await client.PostAsJsonAsync(
+            $"/api/applications/{application!.Token}/submit",
+            new SubmitAnswerRequest { QuestionOrder = 0, SelectedAnswerOrder = 0 });
+        await client.PostAsJsonAsync(
+            $"/api/applications/{application.Token}/submit",
+            new SubmitAnswerRequest { QuestionOrder = 1, SelectedAnswerOrder = 0 });
+
+        var afterCompletion = await client.PostAsJsonAsync(
+            $"/api/applications/{application.Token}/submit",
+            new SubmitAnswerRequest { QuestionOrder = 0, SelectedAnswerOrder = 0 });
+        Assert.Equal(HttpStatusCode.BadRequest, afterCompletion.StatusCode);
+
+        var hiddenResult = await client.GetAsync($"/api/applications/{application.Token}/result");
+        Assert.Equal(HttpStatusCode.Forbidden, hiddenResult.StatusCode);
+    }
+
+    [Fact]
+    public async Task Submit_rejects_reanswer_and_get_answers_returns_progress()
+    {
+        var client = _factory.CreateClient();
+        var token = await _factory.RegisterAndGetTokenAsync(client, $"reanswer-{Guid.NewGuid():N}@test.com");
+        _factory.Authorize(client, token);
+
+        var test = await CreatePrivateTestAsync(client);
+        var createApp = await client.PostAsJsonAsync("/api/applications", new CreateApplicationRequest
+        {
+            Title = "Reanswer",
+            TestId = test.Id
+        });
+        var application = await createApp.Content.ReadFromJsonAsync<ApplicationResponse>(_factory.JsonOptions);
+
+        client.DefaultRequestHeaders.Authorization = null;
+        var first = await client.PostAsJsonAsync(
+            $"/api/applications/{application!.Token}/submit",
+            new SubmitAnswerRequest { QuestionOrder = 0, SelectedAnswerOrder = 0 });
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+
+        var answers = await client.GetAsync($"/api/applications/{application.Token}/answers");
+        Assert.Equal(HttpStatusCode.OK, answers.StatusCode);
+        var answersBody = await answers.Content.ReadFromJsonAsync<AnsweredQuestionsResponse>(_factory.JsonOptions);
+        Assert.Single(answersBody!.Answers);
+        Assert.Equal(0, answersBody.Answers[0].QuestionOrder);
+
+        var repeat = await client.PostAsJsonAsync(
+            $"/api/applications/{application.Token}/submit",
+            new SubmitAnswerRequest { QuestionOrder = 0, SelectedAnswerOrder = 1 });
+        Assert.Equal(HttpStatusCode.BadRequest, repeat.StatusCode);
+    }
+
+    [Fact]
+    public async Task Result_access_uses_application_token_and_internal_recipient()
+    {
+        var invalid = await _factory.CreateClient().GetAsync($"/api/applications/{Guid.NewGuid()}/result");
+        Assert.Equal(HttpStatusCode.NotFound, invalid.StatusCode);
+
+        var authorClient = _factory.CreateClient();
+        var author = await RegisterUserAndReadAsync(authorClient, $"access-author-{Guid.NewGuid():N}@test.com", "Access Author");
+        _factory.Authorize(authorClient, author.AccessToken);
+
+        var recipientClient = _factory.CreateClient();
+        var recipient = await RegisterUserAndReadAsync(recipientClient, $"access-recipient-{Guid.NewGuid():N}@test.com", "Access Recipient");
+
+        var otherClient = _factory.CreateClient();
+        var other = await RegisterUserAndReadAsync(otherClient, $"access-other-{Guid.NewGuid():N}@test.com", "Access Other");
+
+        var test = await CreatePrivateTestAsync(authorClient);
+        var createApp = await authorClient.PostAsJsonAsync("/api/applications", new CreateApplicationRequest
+        {
+            Title = "Internal result",
+            Type = ApplicationType.InternalUser,
+            TestId = test.Id,
+            RecipientUserId = recipient.User.Id
+        });
+        var application = await createApp.Content.ReadFromJsonAsync<ApplicationResponse>(_factory.JsonOptions);
+
+        _factory.Authorize(recipientClient, recipient.AccessToken);
+        var recipientResult = await recipientClient.GetAsync($"/api/applications/{application!.Token}/result");
+        Assert.Equal(HttpStatusCode.OK, recipientResult.StatusCode);
+
+        _factory.Authorize(otherClient, other.AccessToken);
+        var otherResult = await otherClient.GetAsync($"/api/applications/{application.Token}/result");
+        Assert.Equal(HttpStatusCode.Forbidden, otherResult.StatusCode);
+    }
+
     private async Task<string> RegisterUserAsync(HttpClient client, string email, string displayName)
     {
         var response = await client.PostAsJsonAsync("/api/auth/register", new RegisterRequest
@@ -183,5 +342,24 @@ public class ApplicationsApiTests : IClassFixture<ApiFixture>
         response.EnsureSuccessStatusCode();
         var auth = await response.Content.ReadFromJsonAsync<AuthResponse>(_factory.JsonOptions);
         return auth!.AccessToken;
+    }
+
+    private async Task<AuthResponse> RegisterUserAndReadAsync(HttpClient client, string email, string displayName)
+    {
+        var response = await client.PostAsJsonAsync("/api/auth/register", new RegisterRequest
+        {
+            Email = email,
+            Password = "password123",
+            DisplayName = displayName
+        });
+        response.EnsureSuccessStatusCode();
+        return (await response.Content.ReadFromJsonAsync<AuthResponse>(_factory.JsonOptions))!;
+    }
+
+    private async Task<TestResponse> CreatePrivateTestAsync(HttpClient client)
+    {
+        var response = await client.PostAsJsonAsync("/api/tests", ServiceFixture.SampleTestRequest());
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        return (await response.Content.ReadFromJsonAsync<TestResponse>(_factory.JsonOptions))!;
     }
 }

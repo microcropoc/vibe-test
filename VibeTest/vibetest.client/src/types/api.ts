@@ -92,6 +92,18 @@ export interface SubmitResponse {
   explanation?: string;
 }
 
+export interface AnsweredQuestionResponse {
+  questionOrder: number;
+  selectedAnswerOrder: number;
+  correctAnswerOrder: number;
+  isCorrect: boolean;
+  explanation?: string;
+}
+
+export interface AnsweredQuestionsResponse {
+  answers: AnsweredQuestionResponse[];
+}
+
 export interface TestResultResponse {
   testId: number;
   testName: string;

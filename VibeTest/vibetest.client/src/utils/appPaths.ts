@@ -33,9 +33,14 @@ export function parseMyTestsTab(search: string): MyTestsTab {
   return new URLSearchParams(search).get('tab') === 'cloud' ? 'cloud' : 'local';
 }
 
+export function applicationPlayPath(token: string): string {
+  return `/application/${token}`;
+}
+
 export function applicationPlayUrl(token: string): string {
   const base = routerBasename();
-  const path = base ? `${base}/application/${token}` : `/application/${token}`;
+  const relativePath = applicationPlayPath(token);
+  const path = base ? `${base}${relativePath}` : relativePath;
   return `${window.location.origin}${path}`;
 }
 

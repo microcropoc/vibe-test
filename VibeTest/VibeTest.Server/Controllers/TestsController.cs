@@ -85,6 +85,11 @@ public class TestsController(
     public Task<SubmitResponse> SubmitAnswer(int id, [FromBody] SubmitAnswerRequest request) =>
         resultService.SubmitAnswer(User.GetUserId(), id, request);
 
+    [HttpGet("{id:int}/answers")]
+    [Authorize]
+    public Task<AnsweredQuestionsResponse> GetAnsweredQuestions(int id) =>
+        resultService.GetAnsweredQuestions(User.GetUserId(), id);
+
     [HttpGet("{id:int}/result")]
     [Authorize]
     public Task<TestResultResponse> GetResult(int id) =>

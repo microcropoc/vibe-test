@@ -118,21 +118,52 @@ public class ResultRepository(AppDbContext db) : IResultRepository
                 testId)
             .FirstOrDefaultAsync(cancellationToken);
 
-    public async Task UpsertAsync(Result result, CancellationToken cancellationToken = default)
+    public async Task InsertAsync(Result result, CancellationToken cancellationToken = default)
     {
-        var existing = await db.Results.FirstOrDefaultAsync(
-            r => r.UserId == result.UserId && r.TestId == result.TestId && r.QuestionId == result.QuestionId,
+        db.Results.Add(result);
+    }
+
+    public Task<bool> HasAnswerForQuestionAsync(
+        int userId,
+        int testId,
+        int questionId,
+        CancellationToken cancellationToken = default) =>
+        db.Results.AnyAsync(
+            r => r.UserId == userId && r.TestId == testId && r.QuestionId == questionId,
             cancellationToken);
 
-        if (existing is null)
-        {
-            db.Results.Add(result);
-            return;
-        }
-
-        existing.AnswerId = result.AnswerId;
-        existing.AnsweredAt = result.AnsweredAt;
-    }
+    public Task<List<AnsweredQuestionRow>> GetAnsweredQuestionsAsync(
+        int userId,
+        int testId,
+        CancellationToken cancellationToken = default) =>
+        db.Database
+            .SqlQueryRaw<AnsweredQuestionRow>(
+                """
+                SELECT
+                    sel.QuestionOrder AS QuestionOrder,
+                    sel.AnswerOrder AS SelectedAnswerOrder,
+                    correct.AnswerOrder AS CorrectAnswerOrder,
+                    sel.IsCorrect AS IsCorrect,
+                    expl.Explanation AS Explanation
+                FROM Results r
+                INNER JOIN TestQuestionAnswers sel
+                    ON sel.TestId = r.TestId
+                   AND sel.QuestionId = r.QuestionId
+                   AND sel.AnswerId = r.AnswerId
+                INNER JOIN TestQuestionAnswers correct
+                    ON correct.TestId = r.TestId
+                   AND correct.QuestionOrder = sel.QuestionOrder
+                   AND correct.IsCorrect = 1
+                LEFT JOIN TestQuestionAnswers expl
+                    ON expl.TestId = r.TestId
+                   AND expl.QuestionOrder = sel.QuestionOrder
+                   AND expl.AnswerOrder = 0
+                WHERE r.UserId = {0} AND r.TestId = {1}
+                ORDER BY sel.QuestionOrder
+                """,
+                userId,
+                testId)
+            .ToListAsync(cancellationToken);
 
     public async Task DeleteByUserAndTestAsync(int userId, int testId, CancellationToken cancellationToken = default)
     {

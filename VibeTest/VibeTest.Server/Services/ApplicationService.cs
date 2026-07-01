@@ -164,10 +164,10 @@ public class ApplicationService(
     {
         logger.LogDebug("GetApplicationPlayDetail token={Token}", token);
 
-        var application = await applications.GetByTokenAsync(token)
+        var application = await applications.GetPlayDetailByTokenAsync(token)
             ?? throw new NotFoundException("Заявка не найдена");
 
-        EnsureCanPlay(application, currentUserId);
+        ApplicationAccessPolicy.EnsureCanPlay(application, currentUserId);
 
         var testDetail = MapTestDetail(application.Test);
 
@@ -192,10 +192,10 @@ public class ApplicationService(
             request.QuestionOrder,
             request.SelectedAnswerOrder);
 
-        var application = await applications.GetByTokenAsync(token)
+        var application = await applications.GetByTokenForAccessAsync(token)
             ?? throw new NotFoundException("Заявка не найдена");
 
-        EnsureCanPlay(application, currentUserId);
+        ApplicationAccessPolicy.EnsureCanPlay(application, currentUserId);
 
         if (application.CompletedAt.HasValue)
             throw new ValidationException("Тест по этой заявке уже пройден");
@@ -209,22 +209,18 @@ public class ApplicationService(
             ?? throw new ValidationException("Для вопроса не задан правильный ответ");
 
         var now = DateTime.UtcNow;
-        await applications.UpsertAnswerAsync(new ApplicationResult
+        var status = await applications.SubmitAnswerAsync(
+            application.Id,
+            testId,
+            selected.QuestionId,
+            selected.AnswerId,
+            now);
+        switch (status)
         {
-            ApplicationId = application.Id,
-            QuestionId = selected.QuestionId,
-            AnswerId = selected.AnswerId,
-            AnsweredAt = now
-        });
-
-        await applications.SaveChangesAsync();
-
-        var totalQuestions = await applications.GetQuestionCountAsync(testId);
-        var answerCount = await applications.GetAnswerCountAsync(application.Id);
-        if (answerCount >= totalQuestions && totalQuestions > 0 && !application.CompletedAt.HasValue)
-        {
-            application.CompletedAt = now;
-            await applications.SaveChangesAsync();
+            case ApplicationSubmitStatus.QuestionAlreadyAnswered:
+                throw new ValidationException("На этот вопрос уже дан ответ");
+            case ApplicationSubmitStatus.ApplicationCompleted:
+                throw new ValidationException("Тест по этой заявке уже пройден");
         }
 
         if (application.HideResultsFromParticipant)
@@ -239,10 +235,10 @@ public class ApplicationService(
     {
         logger.LogDebug("GetApplicationResult token={Token}", token);
 
-        var application = await applications.GetByTokenAsync(token)
+        var application = await applications.GetByTokenForAccessAsync(token)
             ?? throw new NotFoundException("Заявка не найдена");
 
-        EnsureCanPlay(application, currentUserId);
+        ApplicationAccessPolicy.EnsureCanPlay(application, currentUserId);
 
         if (application.HideResultsFromParticipant)
             throw new ForbiddenException("Результат недоступен");
@@ -277,15 +273,6 @@ public class ApplicationService(
         };
     }
 
-    private static void EnsureCanPlay(TestApplication app, int? currentUserId)
-    {
-        if (app.Type != ApplicationType.InternalUser)
-            return;
-
-        if (currentUserId != app.RecipientUserId)
-            throw new ForbiddenException("Доступ к этой заявке только для назначенного пользователя");
-    }
-
     private static ApplicationResponse MapResponse(TestApplication application, string testName) => new()
     {
         Id = application.Id,
@@ -309,4 +296,38 @@ public class ApplicationService(
     };
 
     private static string BuildPlayUrl(Guid token) => $"/application/{token}";
+
+    public async Task<AnsweredQuestionsResponse> GetApplicationAnsweredQuestions(Guid token, int? currentUserId)
+    {
+        logger.LogDebug("GetApplicationAnsweredQuestions token={Token}", token);
+
+        var application = await applications.GetByTokenForAccessAsync(token)
+            ?? throw new NotFoundException("Заявка не найдена");
+
+        ApplicationAccessPolicy.EnsureCanPlay(application, currentUserId);
+
+        var rows = await applications.GetAnsweredQuestionsAsync(application.Id);
+        var hideResults = application.HideResultsFromParticipant;
+
+        return new AnsweredQuestionsResponse
+        {
+            Answers = rows.Select(row => hideResults
+                ? new AnsweredQuestionResponse
+                {
+                    QuestionOrder = row.QuestionOrder,
+                    SelectedAnswerOrder = row.SelectedAnswerOrder,
+                    CorrectAnswerOrder = row.SelectedAnswerOrder,
+                    IsCorrect = true,
+                    Explanation = null
+                }
+                : new AnsweredQuestionResponse
+                {
+                    QuestionOrder = row.QuestionOrder,
+                    SelectedAnswerOrder = row.SelectedAnswerOrder,
+                    CorrectAnswerOrder = row.CorrectAnswerOrder,
+                    IsCorrect = row.IsCorrect == 1,
+                    Explanation = string.IsNullOrWhiteSpace(row.Explanation) ? null : row.Explanation
+                }).ToList()
+        };
+    }
 }

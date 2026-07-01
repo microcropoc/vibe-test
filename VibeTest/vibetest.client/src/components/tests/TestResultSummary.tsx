@@ -8,6 +8,7 @@ interface TestResultSummaryProps {
   completedAt?: string;
   variant?: 'full' | 'submitted';
   onRetry?: () => void;
+  onReviewAnswers?: () => void;
   onExit?: () => void;
   exitLabel?: string;
 }
@@ -19,6 +20,7 @@ export function TestResultSummary({
   completedAt,
   variant = 'full',
   onRetry,
+  onReviewAnswers,
   onExit,
   exitLabel = 'К списку',
 }: TestResultSummaryProps) {
@@ -60,6 +62,11 @@ export function TestResultSummary({
         <p className="vt-muted">Завершено: {new Date(completedAt).toLocaleString()}</p>
       )}
       <div className="vt-actions">
+        {onReviewAnswers && (
+          <button type="button" className="vt-btn vt-btn--ghost" onClick={onReviewAnswers}>
+            Посмотреть ответы
+          </button>
+        )}
         {onRetry && (
           <button type="button" className="vt-btn vt-btn--ghost" onClick={onRetry}>
             Пройти снова
@@ -75,7 +82,7 @@ export function TestResultSummary({
   );
 }
 
-export function resultFromApi(r: TestResultResponse): Omit<TestResultSummaryProps, 'onRetry' | 'onExit'> {
+export function resultFromApi(r: TestResultResponse): Omit<TestResultSummaryProps, 'onRetry' | 'onReviewAnswers' | 'onExit'> {
   return {
     testName: r.testName,
     totalQuestions: r.totalQuestions,

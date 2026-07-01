@@ -1,6 +1,7 @@
 import { apiClient } from '@/full/api/client';
 import type {
   PagedResponse,
+  AnsweredQuestionsResponse,
   SubmitResponse,
   TestDetailResponse,
   TestFullResponse,
@@ -50,6 +51,8 @@ export const testsApi = {
 
   submitAnswer: (id: number, payload: SubmitAnswerPayload) =>
     apiClient.post<SubmitResponse>(`/tests/${id}/submit`, payload),
+
+  getAnswers: (id: number) => apiClient.get<AnsweredQuestionsResponse>(`/tests/${id}/answers`),
 
   getResult: (id: number) => apiClient.get<TestResultResponse>(`/tests/${id}/result`),
 

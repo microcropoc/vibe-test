@@ -22,6 +22,7 @@ public class UserRepository(AppDbContext db) : IUserRepository
         CancellationToken cancellationToken = default)
     {
         var lower = query.ToLower();
+
         return db.Users
             .Where(u => u.Id != excludeUserId
                 && (u.DisplayName.ToLower().Contains(lower) || u.Email.ToLower().Contains(lower)))

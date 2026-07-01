@@ -32,18 +32,61 @@ public class ResultServiceTests
         });
         Assert.Equal(0, wrong.CorrectAnswerOrder);
         Assert.Equal("SQL expands to Structured Query Language.", wrong.Explanation);
-
-        var correct = await fx.ResultService.SubmitAnswer(author.Id, test.Id, new SubmitAnswerRequest
-        {
-            QuestionOrder = 0,
-            SelectedAnswerOrder = 0
-        });
-        Assert.Equal(0, correct.CorrectAnswerOrder);
-        Assert.Equal("SQL expands to Structured Query Language.", correct.Explanation);
     }
 
     [Fact]
-    public async Task SubmitAnswer_returns_correct_order_and_allows_reanswer()
+    public async Task SubmitAnswer_rejects_reanswer_on_same_question()
+    {
+        using var fx = new ServiceFixture();
+        var author = await fx.SeedUserAsync();
+        var test = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
+        await fx.TestService.PublishTest(test.Id, author.Id);
+
+        await fx.ResultService.SubmitAnswer(author.Id, test.Id, new SubmitAnswerRequest
+        {
+            QuestionOrder = 0,
+            SelectedAnswerOrder = 1
+        });
+
+        var ex = await Assert.ThrowsAsync<VibeTest.Server.Exceptions.ValidationException>(() =>
+            fx.ResultService.SubmitAnswer(author.Id, test.Id, new SubmitAnswerRequest
+            {
+                QuestionOrder = 0,
+                SelectedAnswerOrder = 0
+            }));
+
+        Assert.Equal("На этот вопрос уже дан ответ", ex.Message);
+
+        var result = await fx.ResultService.GetResult(author.Id, test.Id);
+        Assert.Equal(1, result.IncorrectAnswers);
+        Assert.Equal(0, result.CorrectAnswers);
+    }
+
+    [Fact]
+    public async Task GetAnsweredQuestions_returns_saved_answers()
+    {
+        using var fx = new ServiceFixture();
+        var author = await fx.SeedUserAsync();
+        var test = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
+        await fx.TestService.PublishTest(test.Id, author.Id);
+
+        await fx.ResultService.SubmitAnswer(author.Id, test.Id, new SubmitAnswerRequest
+        {
+            QuestionOrder = 0,
+            SelectedAnswerOrder = 1
+        });
+
+        var answers = await fx.ResultService.GetAnsweredQuestions(author.Id, test.Id);
+
+        Assert.Single(answers.Answers);
+        Assert.Equal(0, answers.Answers[0].QuestionOrder);
+        Assert.Equal(1, answers.Answers[0].SelectedAnswerOrder);
+        Assert.Equal(0, answers.Answers[0].CorrectAnswerOrder);
+        Assert.False(answers.Answers[0].IsCorrect);
+    }
+
+    [Fact]
+    public async Task SubmitAnswer_returns_correct_order_without_reanswer()
     {
         using var fx = new ServiceFixture();
         var author = await fx.SeedUserAsync();
@@ -61,15 +104,16 @@ public class ResultServiceTests
         Assert.Equal(1, result.IncorrectAnswers);
         Assert.Equal(0, result.CorrectAnswers);
 
-        await fx.ResultService.SubmitAnswer(author.Id, test.Id, new SubmitAnswerRequest
-        {
-            QuestionOrder = 0,
-            SelectedAnswerOrder = 0
-        });
+        await Assert.ThrowsAsync<VibeTest.Server.Exceptions.ValidationException>(() =>
+            fx.ResultService.SubmitAnswer(author.Id, test.Id, new SubmitAnswerRequest
+            {
+                QuestionOrder = 0,
+                SelectedAnswerOrder = 0
+            }));
 
         result = await fx.ResultService.GetResult(author.Id, test.Id);
-        Assert.Equal(1, result.CorrectAnswers);
-        Assert.Equal(0, result.IncorrectAnswers);
+        Assert.Equal(1, result.IncorrectAnswers);
+        Assert.Equal(0, result.CorrectAnswers);
     }
 
     [Fact]

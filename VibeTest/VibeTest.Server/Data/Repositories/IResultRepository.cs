@@ -10,7 +10,9 @@ public interface IResultRepository
     Task<int?> GetCorrectAnswerOrderAsync(int testId, int questionOrder, CancellationToken cancellationToken = default);
     Task<string?> GetQuestionExplanationAsync(int testId, int questionOrder, CancellationToken cancellationToken = default);
     Task<TestResultSummaryRow?> GetTestResultSummaryAsync(int userId, int testId, CancellationToken cancellationToken = default);
-    Task UpsertAsync(Result result, CancellationToken cancellationToken = default);
+    Task<bool> HasAnswerForQuestionAsync(int userId, int testId, int questionId, CancellationToken cancellationToken = default);
+    Task<List<AnsweredQuestionRow>> GetAnsweredQuestionsAsync(int userId, int testId, CancellationToken cancellationToken = default);
+    Task InsertAsync(Result result, CancellationToken cancellationToken = default);
     Task DeleteByUserAndTestAsync(int userId, int testId, CancellationToken cancellationToken = default);
     Task<int> CountUserHistoryAsync(int userId, CancellationToken cancellationToken = default);
     Task<List<TestHistoryRow>> GetUserHistoryPageAsync(int userId, string sortBy, string order, int offset, int pageSize, CancellationToken cancellationToken = default);

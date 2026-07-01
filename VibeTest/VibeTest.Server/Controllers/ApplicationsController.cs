@@ -40,6 +40,11 @@ public class ApplicationsController(IApplicationService applicationService) : Co
     public Task<SubmitResponse> SubmitAnswer(Guid token, [FromBody] SubmitAnswerRequest request) =>
         applicationService.SubmitAnswer(token, request, GetCurrentUserId());
 
+    [HttpGet("{token:guid}/answers")]
+    [AllowAnonymous]
+    public Task<AnsweredQuestionsResponse> GetAnsweredQuestions(Guid token) =>
+        applicationService.GetApplicationAnsweredQuestions(token, GetCurrentUserId());
+
     [HttpGet("{token:guid}/result")]
     [AllowAnonymous]
     public Task<TestResultResponse> GetResult(Guid token) =>

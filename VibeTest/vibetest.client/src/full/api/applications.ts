@@ -4,6 +4,7 @@ import type {
   ApplicationPlayResponse,
   ApplicationResponse,
   ApplicationType,
+  AnsweredQuestionsResponse,
   IncomingApplicationListItem,
   PagedResponse,
   SubmitResponse,
@@ -38,6 +39,9 @@ export const applicationsApi = {
 
   submitAnswer: (token: string, payload: SubmitAnswerPayload) =>
     apiClient.post<SubmitResponse>(`/applications/${token}/submit`, payload),
+
+  getAnswers: (token: string) =>
+    apiClient.get<AnsweredQuestionsResponse>(`/applications/${token}/answers`),
 
   getResult: (token: string) =>
     apiClient.get<TestResultResponse>(`/applications/${token}/result`),

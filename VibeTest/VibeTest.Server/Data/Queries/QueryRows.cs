@@ -50,3 +50,12 @@ public class ScalarIntRow
 {
     public int Value { get; set; }
 }
+
+public class AnsweredQuestionRow
+{
+    public int QuestionOrder { get; set; }
+    public int SelectedAnswerOrder { get; set; }
+    public int CorrectAnswerOrder { get; set; }
+    public int IsCorrect { get; set; }
+    public string? Explanation { get; set; }
+}

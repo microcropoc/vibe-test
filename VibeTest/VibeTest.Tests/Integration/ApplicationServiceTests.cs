@@ -131,11 +131,13 @@ public class ApplicationServiceTests
         }, null);
         Assert.Equal(0, wrong.CorrectAnswerOrder);
 
-        await fx.ApplicationService.SubmitAnswer(app.Token, new SubmitAnswerRequest
-        {
-            QuestionOrder = 0,
-            SelectedAnswerOrder = 0
-        }, null);
+        await Assert.ThrowsAsync<ValidationException>(() =>
+            fx.ApplicationService.SubmitAnswer(app.Token, new SubmitAnswerRequest
+            {
+                QuestionOrder = 0,
+                SelectedAnswerOrder = 0
+            }, null));
+
         await fx.ApplicationService.SubmitAnswer(app.Token, new SubmitAnswerRequest
         {
             QuestionOrder = 1,
@@ -143,14 +145,15 @@ public class ApplicationServiceTests
         }, null);
 
         var result = await fx.ApplicationService.GetApplicationResult(app.Token, null);
-        Assert.Equal(2, result.CorrectAnswers);
+        Assert.Equal(1, result.CorrectAnswers);
+        Assert.Equal(1, result.IncorrectAnswers);
         Assert.Equal(2, result.TotalQuestions);
         Assert.NotNull(result.CompletedAt);
 
         var list = await fx.ApplicationService.GetMyApplications(author.Id, 1, 10);
         Assert.Single(list.Items);
         Assert.True(list.Items[0].IsCompleted);
-        Assert.Equal(100, list.Items[0].ScorePercent);
+        Assert.Equal(50, list.Items[0].ScorePercent);
     }
 
     [Fact]
@@ -191,6 +194,59 @@ public class ApplicationServiceTests
 
         var list = await fx.ApplicationService.GetMyApplications(author.Id, 1, 10);
         Assert.True(list.Items[0].HideResultsFromParticipant);
+    }
+
+    [Fact]
+    public async Task SubmitAnswer_rejects_reanswer_before_completion()
+    {
+        using var fx = new ServiceFixture();
+        var author = await fx.SeedUserAsync();
+        var test = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
+        var app = await fx.ApplicationService.CreateApplication(author.Id, new CreateApplicationRequest
+        {
+            Title = "No reanswer",
+            TestId = test.Id
+        });
+
+        await fx.ApplicationService.SubmitAnswer(app.Token, new SubmitAnswerRequest
+        {
+            QuestionOrder = 0,
+            SelectedAnswerOrder = 1
+        }, null);
+
+        var ex = await Assert.ThrowsAsync<ValidationException>(() =>
+            fx.ApplicationService.SubmitAnswer(app.Token, new SubmitAnswerRequest
+            {
+                QuestionOrder = 0,
+                SelectedAnswerOrder = 0
+            }, null));
+
+        Assert.Equal("На этот вопрос уже дан ответ", ex.Message);
+    }
+
+    [Fact]
+    public async Task GetApplicationAnsweredQuestions_returns_saved_answers()
+    {
+        using var fx = new ServiceFixture();
+        var author = await fx.SeedUserAsync();
+        var test = await fx.TestService.CreateTest(author.Id, ServiceFixture.SampleTestRequest());
+        var app = await fx.ApplicationService.CreateApplication(author.Id, new CreateApplicationRequest
+        {
+            Title = "Answers",
+            TestId = test.Id
+        });
+
+        await fx.ApplicationService.SubmitAnswer(app.Token, new SubmitAnswerRequest
+        {
+            QuestionOrder = 0,
+            SelectedAnswerOrder = 0
+        }, null);
+
+        var answers = await fx.ApplicationService.GetApplicationAnsweredQuestions(app.Token, null);
+
+        Assert.Single(answers.Answers);
+        Assert.Equal(0, answers.Answers[0].QuestionOrder);
+        Assert.True(answers.Answers[0].IsCorrect);
     }
 
     [Fact]

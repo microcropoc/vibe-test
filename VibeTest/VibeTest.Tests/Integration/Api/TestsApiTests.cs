@@ -102,6 +102,19 @@ public class TestsApiTests : IClassFixture<ApiFixture>
         var submitBody = await submit.Content.ReadFromJsonAsync<SubmitResponse>(_factory.JsonOptions);
         Assert.Equal(0, submitBody!.CorrectAnswerOrder);
 
+        var answers = await client.GetAsync($"/api/tests/{created.Id}/answers");
+        Assert.Equal(HttpStatusCode.OK, answers.StatusCode);
+        var answersBody = await answers.Content.ReadFromJsonAsync<AnsweredQuestionsResponse>(_factory.JsonOptions);
+        Assert.Single(answersBody!.Answers);
+        Assert.Equal(0, answersBody.Answers[0].QuestionOrder);
+
+        var repeat = await client.PostAsJsonAsync($"/api/tests/{created.Id}/submit", new SubmitAnswerRequest
+        {
+            QuestionOrder = 0,
+            SelectedAnswerOrder = 1
+        });
+        Assert.Equal(HttpStatusCode.BadRequest, repeat.StatusCode);
+
         var result = await client.GetAsync($"/api/tests/{created.Id}/result");
         var resultBody = await result.Content.ReadFromJsonAsync<TestResultResponse>(_factory.JsonOptions);
         Assert.Equal(1, resultBody!.CorrectAnswers);

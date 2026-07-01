@@ -33,7 +33,10 @@ public class ResultService(
         var correctOrder = await results.GetCorrectAnswerOrderAsync(testId, request.QuestionOrder)
             ?? throw new ValidationException("Для вопроса не задан правильный ответ");
 
-        await results.UpsertAsync(new Result
+        if (await results.HasAnswerForQuestionAsync(userId, testId, selected.QuestionId))
+            throw new ValidationException("На этот вопрос уже дан ответ");
+
+        await results.InsertAsync(new Result
         {
             UserId = userId,
             TestId = testId,
@@ -136,5 +139,27 @@ public class ResultService(
             totalCount);
 
         return Helpers.PaginationHelper.Create(items, normalizedPage, normalizedSize, totalCount);
+    }
+
+    public async Task<AnsweredQuestionsResponse> GetAnsweredQuestions(int userId, int testId)
+    {
+        logger.LogDebug("GetAnsweredQuestions user={UserId} test={TestId}", userId, testId);
+
+        _ = await tests.GetByIdAsync(testId)
+            ?? throw new NotFoundException("Тест не найден");
+
+        var rows = await results.GetAnsweredQuestionsAsync(userId, testId);
+
+        return new AnsweredQuestionsResponse
+        {
+            Answers = rows.Select(row => new AnsweredQuestionResponse
+            {
+                QuestionOrder = row.QuestionOrder,
+                SelectedAnswerOrder = row.SelectedAnswerOrder,
+                CorrectAnswerOrder = row.CorrectAnswerOrder,
+                IsCorrect = row.IsCorrect == 1,
+                Explanation = string.IsNullOrWhiteSpace(row.Explanation) ? null : row.Explanation
+            }).ToList()
+        };
     }
 }
